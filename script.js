@@ -305,8 +305,8 @@ function initSubscribeForm() {
 
     const name  = form.querySelector('#sub-name').value.trim();
     const email = form.querySelector('#sub-email').value.trim();
-    const phone = (form.querySelector('#sub-phone')?.value || '').trim();
-    if (!name || !email) return;
+    const phone = form.querySelector('#sub-phone').value.trim();
+    if (!name || !email || !phone) return;
 
     btn.disabled = true;
     btn.querySelector('.subscribe-btn-text').textContent = 'Subscribing…';
@@ -316,7 +316,7 @@ function initSubscribeForm() {
         await db.collection('subscribers').add({
           name,
           email,
-          phone:     phone || null,
+          phone,
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         });
       }
@@ -345,6 +345,46 @@ function initSubscribeForm() {
   });
 }
 
+/* ─── VISITOR TRACKING ──────────────────────────────────────── */
+function initVisitorTracking() {
+  if (typeof firebase === 'undefined' || typeof db === 'undefined') return;
+  const visitStart = Date.now();
+  let visitDocId = null;
+
+  const visitData = {
+    page:      window.location.pathname,
+    referrer:  document.referrer || '',
+    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    duration:  0,
+  };
+
+  // Write initial visit record, then enrich with geo data
+  db.collection('visitors').add(visitData)
+    .then(ref => {
+      visitDocId = ref.id;
+      return fetch('https://ipapi.co/json/');
+    })
+    .then(r => r.json())
+    .then(geo => {
+      if (!visitDocId) return;
+      db.collection('visitors').doc(visitDocId).update({
+        country: geo.country_name || '',
+        city:    geo.city         || '',
+        region:  geo.region       || '',
+      }).catch(() => {});
+    })
+    .catch(() => {});
+
+  window.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden' && visitDocId) {
+      const secs = Math.round((Date.now() - visitStart) / 1000);
+      if (secs > 0 && secs < 7200) {
+        db.collection('visitors').doc(visitDocId).update({ duration: secs }).catch(() => {});
+      }
+    }
+  });
+}
+
 /* ─── INIT ──────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
   initPreloader();
@@ -358,4 +398,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initActiveNav();
   initGalleryModal();
   initSubscribeForm();
+  initVisitorTracking();
 });

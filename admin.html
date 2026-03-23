@@ -143,6 +143,8 @@
 
       <!-- ─── DASHBOARD ─── -->
       <section id="sec-dashboard" class="admin-section active">
+
+        <!-- Row 1: Core stats -->
         <div class="stats-grid">
           <div class="stat-card">
             <div class="stat-icon" style="background:rgba(11,29,58,0.06);">
@@ -174,6 +176,39 @@
           </div>
         </div>
 
+        <!-- Row 2: Visitor analytics -->
+        <div class="stats-section-label">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          Visitor Analytics
+        </div>
+        <div class="stats-grid stats-grid-3" style="margin-bottom:28px;">
+          <div class="stat-card stat-card-visitor">
+            <div class="stat-icon" style="background:rgba(11,29,58,0.06);">
+              <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div class="stat-label">Total Visitors</div>
+            <div class="stat-value" id="stat-visitors"><span class="stat-loading"></span></div>
+            <div class="stat-sub" id="stat-lastvisit"></div>
+          </div>
+          <div class="stat-card stat-card-visitor">
+            <div class="stat-icon" style="background:rgba(201,168,76,0.10);">
+              <svg viewBox="0 0 24 24" stroke="var(--gold)"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+            </div>
+            <div class="stat-label">Top Location</div>
+            <div class="stat-value stat-value-sm" id="stat-location"><span class="stat-loading"></span></div>
+            <div class="stat-sub" id="stat-location-count"></div>
+          </div>
+          <div class="stat-card stat-card-visitor">
+            <div class="stat-icon" style="background:rgba(22,163,74,0.08);">
+              <svg viewBox="0 0 24 24" stroke="var(--success)"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div class="stat-label">Avg Time on Site</div>
+            <div class="stat-value stat-value-sm" id="stat-avgtime"><span class="stat-loading"></span></div>
+            <div class="stat-sub" id="stat-avgtime-sub"></div>
+          </div>
+        </div>
+
+        <!-- Recent activity panels -->
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
           <div class="card">
             <div class="card-header">
@@ -194,6 +229,18 @@
             </div>
           </div>
         </div>
+
+        <!-- Visitor locations breakdown -->
+        <div class="card" style="margin-top:20px;">
+          <div class="card-header">
+            <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:var(--navy);stroke-width:2;stroke-linecap:round;vertical-align:middle;margin-right:6px;"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            Visitor Locations
+          </div>
+          <div class="card-body" id="dash-visitor-locations">
+            <div class="spinner-wrap" style="padding:28px;"><div class="spinner"></div></div>
+          </div>
+        </div>
+
       </section>
 
       <!-- ─── BLOG ─── -->
@@ -397,15 +444,19 @@ document.getElementById('logoutBtn').addEventListener('click', async () => {
 });
 
 auth.onAuthStateChanged(user => {
+  const loginPageEl = document.getElementById('loginPage');
+  const appEl       = document.getElementById('app');
   if (user) {
-    document.getElementById('loginPage').style.display = 'none';
-    document.getElementById('app').classList.add('visible');
-    document.getElementById('userEmail').textContent = user.email;
-    document.getElementById('userAvatar').textContent = (user.email[0] || 'A').toUpperCase();
+    loginPageEl.style.display = 'none';
+    appEl.classList.add('visible');
+    appEl.style.display = 'flex';           /* inline style — highest specificity fallback */
+    document.getElementById('userEmail').textContent  = user.email || '';
+    document.getElementById('userAvatar').textContent = ((user.email || 'Admin')[0]).toUpperCase();
     loadDashboard();
   } else {
-    document.getElementById('loginPage').style.display = 'flex';
-    document.getElementById('app').classList.remove('visible');
+    loginPageEl.style.display = 'flex';
+    appEl.style.display       = '';        /* clear inline style so CSS takes over */
+    appEl.classList.remove('visible');
   }
 });
 
@@ -615,15 +666,16 @@ function isPermissionError(err) {
 ══════════════════════════════════════════════════════════════ */
 
 async function loadDashboard() {
-  /* Run all 4 stat queries independently — one failing won't kill the others */
-  const [postsR, galleryR, subsR, msgsR] = await Promise.allSettled([
-    db.collection('posts').get(),
+  /* Run all stat queries independently — one failing won't kill the others */
+  const [postsR, galleryR, subsR, msgsR, visitorsR] = await Promise.allSettled([
+    db.collection('blog').get(),
     db.collection('gallery').get(),
     db.collection('subscribers').get(),
     db.collection('messages').where('read', '==', false).get(),
+    db.collection('visitors').get(),
   ]);
 
-  /* Stats */
+  /* Core stats */
   document.getElementById('stat-posts').textContent =
     postsR.status   === 'fulfilled' ? postsR.value.size   : '—';
   document.getElementById('stat-gallery').textContent =
@@ -638,6 +690,84 @@ async function loadDashboard() {
   const badge = document.getElementById('unreadBadge');
   badge.textContent   = unreadCount;
   badge.style.display = unreadCount > 0 ? 'inline-block' : 'none';
+
+  /* Visitor analytics */
+  if (visitorsR.status === 'fulfilled') {
+    const vDocs = visitorsR.value.docs;
+    document.getElementById('stat-visitors').textContent = vDocs.length;
+
+    /* Latest visit date */
+    let latestDate = null;
+    /* Location counts */
+    const countryCounts = {};
+    /* Duration */
+    let totalDuration = 0, durationCount = 0;
+
+    vDocs.forEach(d => {
+      const v = d.data();
+      if (v.timestamp) {
+        const dt = v.timestamp.toDate ? v.timestamp.toDate() : new Date(v.timestamp);
+        if (!latestDate || dt > latestDate) latestDate = dt;
+      }
+      if (v.country) {
+        countryCounts[v.country] = (countryCounts[v.country] || 0) + 1;
+      }
+      if (v.duration > 0 && v.duration < 7200) {
+        totalDuration += v.duration;
+        durationCount++;
+      }
+    });
+
+    /* Last visit */
+    document.getElementById('stat-lastvisit').textContent =
+      latestDate ? 'Last: ' + latestDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+
+    /* Top location */
+    const sortedCountries = Object.entries(countryCounts).sort((a, b) => b[1] - a[1]);
+    if (sortedCountries.length) {
+      document.getElementById('stat-location').textContent = sortedCountries[0][0];
+      document.getElementById('stat-location-count').textContent =
+        `${sortedCountries[0][1]} visit${sortedCountries[0][1] !== 1 ? 's' : ''}`;
+    } else {
+      document.getElementById('stat-location').textContent = '—';
+      document.getElementById('stat-location-count').textContent = 'No geo data yet';
+    }
+
+    /* Avg time */
+    if (durationCount > 0) {
+      const avg = Math.round(totalDuration / durationCount);
+      const m   = Math.floor(avg / 60);
+      const s   = avg % 60;
+      document.getElementById('stat-avgtime').textContent = m > 0 ? `${m}m ${s}s` : `${s}s`;
+      document.getElementById('stat-avgtime-sub').textContent = `Based on ${durationCount} session${durationCount !== 1 ? 's' : ''}`;
+    } else {
+      document.getElementById('stat-avgtime').textContent = '—';
+      document.getElementById('stat-avgtime-sub').textContent = 'No sessions tracked yet';
+    }
+
+    /* Visitor locations breakdown */
+    const locEl = document.getElementById('dash-visitor-locations');
+    if (!sortedCountries.length) {
+      locEl.innerHTML = '<p style="color:var(--muted);font-size:0.82rem;">No location data yet — locations appear after visitors browse the site.</p>';
+    } else {
+      const maxCount = sortedCountries[0][1];
+      locEl.innerHTML = `<div style="display:flex;flex-direction:column;gap:10px;">` +
+        sortedCountries.slice(0, 10).map(([country, count]) => `
+          <div style="display:flex;align-items:center;gap:12px;">
+            <span style="font-size:0.83rem;color:var(--text);min-width:160px;">${escHtml(country)}</span>
+            <div style="flex:1;background:var(--bg);border-radius:4px;height:8px;overflow:hidden;">
+              <div style="width:${Math.round((count/maxCount)*100)}%;height:100%;background:var(--navy);border-radius:4px;transition:width 0.6s ease;"></div>
+            </div>
+            <span style="font-size:0.78rem;color:var(--muted);min-width:40px;text-align:right;">${count}</span>
+          </div>`).join('') + '</div>';
+    }
+  } else {
+    ['stat-visitors','stat-location','stat-avgtime'].forEach(id => {
+      document.getElementById(id).textContent = '—';
+    });
+    document.getElementById('dash-visitor-locations').innerHTML =
+      `<p style="color:var(--muted);font-size:0.82rem;">${isPermissionError(visitorsR.reason) ? 'Permission denied — check Firestore rules.' : 'Could not load visitor data.'}</p>`;
+  }
 
   /* Permission banner */
   const anyDenied = [postsR, galleryR, subsR, msgsR].some(r =>
@@ -698,7 +828,7 @@ async function loadBlog() {
   const el = document.getElementById('blog-list');
   spinner(el);
   try {
-    const snap = await safeGet('posts', 'createdAt', 'desc');
+    const snap = await safeGet('blog', 'createdAt', 'desc');
     if (snap.empty) { empty(el, 'No blog posts yet. Add your first post.'); return; }
 
     const rows = snap.docs.map(d => {
@@ -773,7 +903,7 @@ function openBlogForm(id = null, post = {}) {
 
 async function editBlog(id) {
   try {
-    const doc = await db.collection('posts').doc(id).get();
+    const doc = await db.collection('blog').doc(id).get();
     if (!doc.exists) { toast('Post not found.', 'warning'); return; }
     openBlogForm(id, doc.data());
   } catch (err) { toast('Could not load post: ' + err.message, 'error'); }
@@ -796,7 +926,7 @@ async function saveBlog() {
   try {
     let coverUrl = '';
     if (_editingId) {
-      const existing = await db.collection('posts').doc(_editingId).get();
+      const existing = await db.collection('blog').doc(_editingId).get();
       coverUrl = existing.data()?.coverUrl || '';
     }
     if (fileInput.files[0]) {
@@ -809,11 +939,11 @@ async function saveBlog() {
     };
 
     if (_editingId) {
-      await db.collection('posts').doc(_editingId).update(data);
+      await db.collection('blog').doc(_editingId).update(data);
       toast('Post updated successfully.');
     } else {
       data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-      await db.collection('posts').add(data);
+      await db.collection('blog').add(data);
       toast('Post added successfully.');
     }
     closeModal();
@@ -827,7 +957,7 @@ async function saveBlog() {
 async function deleteBlog(id) {
   if (!confirm('Permanently delete this post?')) return;
   try {
-    await db.collection('posts').doc(id).delete();
+    await db.collection('blog').doc(id).delete();
     toast('Post deleted.');
     loadBlog();
     loadDashboard();
@@ -958,7 +1088,7 @@ async function loadMusic() {
   const el = document.getElementById('music-list');
   spinner(el);
   try {
-    const snap = await safeGet('releases', 'createdAt', 'desc');
+    const snap = await safeGet('music', 'createdAt', 'desc');
     if (snap.empty) { empty(el, 'No releases yet. Add your first release.'); return; }
 
     el.className = 'release-list';
@@ -1032,7 +1162,7 @@ function openMusicForm(id = null, r = {}) {
 
 async function editMusic(id) {
   try {
-    const doc = await db.collection('releases').doc(id).get();
+    const doc = await db.collection('music').doc(id).get();
     if (!doc.exists) { toast('Release not found.', 'warning'); return; }
     openMusicForm(id, doc.data());
   } catch (err) { toast('Could not load release: ' + err.message, 'error'); }
@@ -1047,7 +1177,7 @@ async function saveMusic() {
   try {
     let coverUrl = '';
     if (_editingId) {
-      const doc = await db.collection('releases').doc(_editingId).get();
+      const doc = await db.collection('music').doc(_editingId).get();
       coverUrl = doc.data()?.coverUrl || '';
     }
     const fileInput = document.getElementById('mf-cover');
@@ -1066,11 +1196,11 @@ async function saveMusic() {
     };
 
     if (_editingId) {
-      await db.collection('releases').doc(_editingId).update(data);
+      await db.collection('music').doc(_editingId).update(data);
       toast('Release updated.');
     } else {
       data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-      await db.collection('releases').add(data);
+      await db.collection('music').add(data);
       toast('Release added.');
     }
     closeModal();
@@ -1084,7 +1214,7 @@ async function saveMusic() {
 async function deleteMusic(id) {
   if (!confirm('Delete this release?')) return;
   try {
-    await db.collection('releases').doc(id).delete();
+    await db.collection('music').doc(id).delete();
     toast('Release deleted.');
     loadMusic();
   } catch (err) { toast('Delete failed: ' + err.message, 'error'); }
@@ -1098,7 +1228,7 @@ async function loadAcademic() {
   const el = document.getElementById('academic-list');
   spinner(el);
   try {
-    const snap = await safeGet('publications', 'createdAt', 'desc');
+    const snap = await safeGet('academic', 'createdAt', 'desc');
     if (snap.empty) { empty(el, 'No publications yet. Add your first publication.'); return; }
 
     const rows = snap.docs.map(d => {
@@ -1179,7 +1309,7 @@ function openAcademicForm(id = null, p = {}) {
 
 async function editAcademic(id) {
   try {
-    const doc = await db.collection('publications').doc(id).get();
+    const doc = await db.collection('academic').doc(id).get();
     if (!doc.exists) { toast('Publication not found.', 'warning'); return; }
     openAcademicForm(id, doc.data());
   } catch (err) { toast('Could not load publication: ' + err.message, 'error'); }
@@ -1194,7 +1324,7 @@ async function saveAcademic() {
   try {
     let pdfUrl = '';
     if (_editingId) {
-      const doc = await db.collection('publications').doc(_editingId).get();
+      const doc = await db.collection('academic').doc(_editingId).get();
       pdfUrl = doc.data()?.pdfUrl || '';
     }
     const pdfInput = document.getElementById('af-pdf');
@@ -1214,11 +1344,11 @@ async function saveAcademic() {
     };
 
     if (_editingId) {
-      await db.collection('publications').doc(_editingId).update(data);
+      await db.collection('academic').doc(_editingId).update(data);
       toast('Publication updated.');
     } else {
       data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-      await db.collection('publications').add(data);
+      await db.collection('academic').add(data);
       toast('Publication added.');
     }
     closeModal();
@@ -1232,7 +1362,7 @@ async function saveAcademic() {
 async function deleteAcademic(id) {
   if (!confirm('Delete this publication?')) return;
   try {
-    await db.collection('publications').doc(id).delete();
+    await db.collection('academic').doc(id).delete();
     toast('Publication deleted.');
     loadAcademic();
   } catch (err) { toast('Delete failed: ' + err.message, 'error'); }
