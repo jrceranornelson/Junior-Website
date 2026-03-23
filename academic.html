@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Academic Profile — Junior Ceranor Nelson</title>
+  <meta name="description" content="Academic profile of Junior Ceranor Nelson — PhD Candidate in UN Peace &amp; Security Negotiations, publications, affiliations, and research areas." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon-180.png" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ─── Page-level overrides for static navbar on academic page ─── */
+    #navbar {
+      background: var(--navy);
+      box-shadow: var(--shadow-sm);
+      padding: 16px 0;
+    }
+    #navbar .nav-link       { color: var(--white); opacity: 0.85; }
+    #navbar .nav-link:hover { color: var(--white); opacity: 1; }
+    #navbar .nav-link.active { color: var(--gold-light) !important; opacity: 1; }
+    #navbar .nav-cta         { border-color: rgba(255,255,255,0.5); color: var(--white); }
+    #navbar .nav-cta:hover   { background: var(--white); color: var(--navy); }
+    #navbar .nav-toggle span { background: var(--white); }
+
+    /* ─── ACADEMIC HERO ─── */
+    .acad-hero {
+      background: linear-gradient(135deg, #060c18 0%, var(--navy) 60%, #0e254a 100%);
+      padding: 160px 0 100px;
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+    }
+    .acad-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 80px 80px;
+      pointer-events: none;
+    }
+    .acad-hero-label {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
+      opacity: 0;
+      animation: fadeUp 0.7s ease 0.1s forwards;
+    }
+    .acad-hero-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      color: var(--white);
+      margin-bottom: 20px;
+      opacity: 0;
+      animation: fadeUp 0.7s ease 0.2s forwards;
+    }
+    .acad-hero-sub {
+      font-family: 'Montserrat', sans-serif;
+      font-size: clamp(0.8rem, 2vw, 1rem);
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+      opacity: 0;
+      animation: fadeUp 0.7s ease 0.35s forwards;
+    }
+    .acad-hero-divider {
+      width: 56px;
+      height: 3px;
+      background: var(--gold);
+      border-radius: 2px;
+      margin: 28px auto 0;
+      opacity: 0;
+      animation: fadeUp 0.7s ease 0.45s forwards;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── SECTION BACKGROUNDS ─── */
+    .acad-section-light { background: var(--white); }
+    .acad-section-warm  { background: var(--light); }
+    .acad-section-navy  { background: var(--navy); }
+
+    /* ─── SHARED LABEL ─── */
+    .acad-label {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    /* ═══════════════════════════════════════════
+       1. PhD DISSERTATION — FEATURED
+    ═══════════════════════════════════════════ */
+    .phd-featured {
+      background: var(--navy);
+      border-radius: 4px;
+      padding: 56px 60px;
+      position: relative;
+      overflow: hidden;
+    }
+    .phd-featured::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 6px;
+      height: 100%;
+      background: var(--gold);
+      border-radius: 4px 0 0 4px;
+    }
+    .phd-featured::after {
+      content: '"';
+      position: absolute;
+      right: 48px;
+      top: 24px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 12rem;
+      font-weight: 900;
+      color: rgba(201,168,76,0.07);
+      line-height: 1;
+      pointer-events: none;
+    }
+    .phd-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      background: rgba(201,168,76,0.12);
+      border: 1px solid rgba(201,168,76,0.35);
+      padding: 6px 14px;
+      border-radius: 100px;
+      margin-bottom: 28px;
+    }
+    .phd-status-badge::before {
+      content: '';
+      width: 7px;
+      height: 7px;
+      background: var(--gold);
+      border-radius: 50%;
+      animation: pulse 2s ease infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.5; transform: scale(0.75); }
+    }
+    .phd-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: clamp(1.2rem, 2.5vw, 1.7rem);
+      font-weight: 800;
+      color: var(--white);
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+      margin-bottom: 20px;
+      max-width: 860px;
+    }
+    .phd-institution {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 24px;
+    }
+    .phd-description {
+      font-size: 1rem;
+      line-height: 1.85;
+      color: rgba(255,255,255,0.72);
+      max-width: 760px;
+      margin-bottom: 36px;
+    }
+    .btn-gold {
+      background: var(--gold);
+      color: var(--navy);
+      border-color: var(--gold);
+      font-weight: 700;
+    }
+    .btn-gold:hover {
+      background: var(--gold-light);
+      border-color: var(--gold-light);
+      color: var(--navy);
+      box-shadow: 0 8px 24px rgba(201,168,76,0.35);
+    }
+
+    /* ═══════════════════════════════════════════
+       2. THESES GRID
+    ═══════════════════════════════════════════ */
+    .thesis-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 28px;
+      margin-top: 52px;
+    }
+    .thesis-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px 36px;
+      position: relative;
+      background: var(--white);
+      transition: box-shadow var(--transition), transform var(--transition);
+    }
+    .thesis-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-4px);
+    }
+    .thesis-card-level {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      background: rgba(201,168,76,0.1);
+      border: 1px solid rgba(201,168,76,0.3);
+      padding: 4px 12px;
+      border-radius: 100px;
+      display: inline-block;
+      margin-bottom: 16px;
+    }
+    .thesis-card-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1.4;
+      margin-bottom: 14px;
+    }
+    .thesis-card-meta {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .thesis-card-meta span {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .thesis-card-meta span svg {
+      display: inline;
+      width: 12px;
+      height: 12px;
+      margin-right: 4px;
+      vertical-align: middle;
+    }
+    .thesis-card-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--navy);
+      border-bottom: 2px solid var(--gold);
+      padding-bottom: 2px;
+      transition: color var(--transition-fast), gap var(--transition-fast);
+    }
+    .thesis-card-btn:hover { color: var(--gold); gap: 12px; }
+    .thesis-card-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+    /* ═══════════════════════════════════════════
+       3. PUBLICATIONS GRID
+    ═══════════════════════════════════════════ */
+    .pub-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+      margin-top: 52px;
+    }
+    .pub-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 30px 28px;
+      background: var(--white);
+      display: flex;
+      flex-direction: column;
+      transition: box-shadow var(--transition), transform var(--transition);
+    }
+    .pub-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-4px);
+    }
+    .pub-card-journal {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 14px;
+    }
+    .pub-card-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.97rem;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1.4;
+      margin-bottom: 12px;
+    }
+    .pub-card-date {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+    .pub-card-abstract {
+      font-size: 0.88rem;
+      line-height: 1.75;
+      color: var(--muted);
+      flex-grow: 1;
+      margin-bottom: 24px;
+    }
+    .pub-card-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--navy);
+      border-bottom: 2px solid var(--gold);
+      padding-bottom: 2px;
+      transition: color var(--transition-fast), gap var(--transition-fast);
+      align-self: flex-start;
+    }
+    .pub-card-btn:hover { color: var(--gold); gap: 12px; }
+    .pub-card-btn svg { width: 13px; height: 13px; }
+
+    /* ═══════════════════════════════════════════
+       4. AFFILIATIONS
+    ═══════════════════════════════════════════ */
+    .affil-list {
+      margin-top: 52px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .affil-row {
+      display: grid;
+      grid-template-columns: 1fr 1.6fr auto;
+      align-items: center;
+      gap: 24px;
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border);
+      transition: background var(--transition-fast);
+    }
+    .affil-row:first-child { border-top: 1px solid var(--border); }
+    .affil-row:hover { background: var(--light); margin: 0 -20px; padding: 24px 20px; }
+    .affil-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1.3;
+    }
+    .affil-institution {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .affil-year {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      white-space: nowrap;
+    }
+
+    /* ═══════════════════════════════════════════
+       5. AWARDS
+    ═══════════════════════════════════════════ */
+    .awards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+      margin-top: 52px;
+    }
+    .award-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px 28px;
+      position: relative;
+      overflow: hidden;
+      transition: box-shadow var(--transition), transform var(--transition);
+    }
+    .award-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    }
+    .award-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-4px);
+    }
+    .award-icon {
+      width: 44px;
+      height: 44px;
+      background: rgba(201,168,76,0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 18px;
+    }
+    .award-icon svg {
+      width: 20px;
+      height: 20px;
+      color: var(--gold);
+    }
+    .award-name {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.97rem;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1.4;
+      margin-bottom: 8px;
+    }
+    .award-from {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+    .award-year {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+    .award-desc {
+      font-size: 0.87rem;
+      line-height: 1.72;
+      color: var(--muted);
+    }
+
+    /* ═══════════════════════════════════════════
+       6. RESEARCH AREAS
+    ═══════════════════════════════════════════ */
+    .research-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 52px;
+    }
+    .research-tag {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--navy);
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      padding: 12px 22px;
+      border-radius: 100px;
+      transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+    }
+    .research-tag:hover {
+      background: var(--navy);
+      color: var(--white);
+      border-color: var(--navy);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* ═══════════════════════════════════════════
+       7. CALL TO ACTION
+    ═══════════════════════════════════════════ */
+    .acad-cta-section {
+      background: var(--navy);
+      padding: 100px 0;
+      text-align: center;
+    }
+    .acad-cta-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: clamp(1.6rem, 4vw, 2.6rem);
+      font-weight: 800;
+      color: var(--white);
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+    .acad-cta-sub {
+      font-size: 1rem;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 40px;
+      line-height: 1.7;
+    }
+
+    /* ═══════════════════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════════════════ */
+    @media (max-width: 1024px) {
+      .phd-featured { padding: 44px 44px; }
+      .pub-grid { grid-template-columns: repeat(2, 1fr); }
+      .awards-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 768px) {
+      .acad-hero { padding: 130px 0 72px; }
+      .phd-featured { padding: 32px 28px; }
+      .phd-featured::after { display: none; }
+      .thesis-grid { grid-template-columns: 1fr; gap: 20px; }
+      .pub-grid { grid-template-columns: 1fr; gap: 20px; }
+      .affil-row {
+        grid-template-columns: 1fr;
+        gap: 6px;
+      }
+      .affil-row:hover { margin: 0; padding: 24px 0; }
+      .affil-year { margin-top: 4px; }
+      .awards-grid { grid-template-columns: 1fr; gap: 20px; }
+      .research-tags { gap: 10px; }
+      .research-tag { font-size: 0.7rem; padding: 10px 18px; }
+      .thesis-card { padding: 24px 22px; }
+      .pub-card { padding: 24px 22px; }
+    }
+
+    @media (max-width: 480px) {
+      .acad-hero { padding: 110px 0 60px; }
+      .phd-featured { padding: 24px 20px; }
+      .phd-title { font-size: 1.1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="preloader-logo-wrap">
+      <svg class="preloader-ring" viewBox="0 0 126 126" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="63" cy="63" r="59" />
+      </svg>
+      <img src="logo.png" alt="Junior Ceranor Nelson" class="preloader-logo" />
+    </div>
+    <p class="preloader-name">Junior Ceranor Nelson</p>
+    <div class="preloader-bar-wrap">
+      <div class="preloader-bar"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       NAVIGATION
+  ═══════════════════════════════════════════ -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="logo.png" alt="Junior Ceranor Nelson" class="nav-logo-img" />
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html#home"     class="nav-link">Home</a></li>
+        <li><a href="index.html#about"    class="nav-link">About Me</a></li>
+        <li><a href="index.html#projects" class="nav-link">Projects</a></li>
+        <li><a href="gallery.html" class="nav-link">Gallery</a></li>
+        <li><a href="music.html" class="nav-link">Music</a></li>
+        <li><a href="academic.html"       class="nav-link active">Academic</a></li>
+        <li><a href="index.html#blog"     class="nav-link">Blog &amp; Library</a></li>
+        <li><a href="index.html#contact"  class="nav-link">Contact</a></li>
+      </ul>
+      <a href="index.html#contact" class="nav-cta">Contact Us</a>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════════════════
+       1. PAGE HERO
+  ═══════════════════════════════════════════ -->
+  <header class="acad-hero">
+    <div class="container">
+      <p class="acad-hero-label">Junior Ceranor Nelson</p>
+      <h1 class="acad-hero-title">Academic Profile</h1>
+      <p class="acad-hero-sub">Research &nbsp;·&nbsp; Diplomacy &nbsp;·&nbsp; International Relations</p>
+      <div class="acad-hero-divider"></div>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ═══════════════════════════════════════════
+         2. PhD DISSERTATION — FEATURED
+    ═══════════════════════════════════════════ -->
+    <section class="section-pad acad-section-warm">
+      <div class="container">
+        <div class="reveal-wrap">
+          <h2 class="section-heading reveal-line">PhD Dissertation</h2>
+        </div>
+
+        <div class="phd-featured reveal" style="margin-top: 52px;">
+          <div class="phd-status-badge">PhD Dissertation — In Progress</div>
+          <!-- ✏️ EDIT HERE: dissertation title -->
+          <h2 class="phd-title">
+            Agenda control in United Nations peace and security negotiations (2015–2023): a state-level analysis of procedural advantage, diplomatic network centrality, and influence outcomes
+          </h2>
+          <!-- ✏️ EDIT HERE: institution name -->
+          <p class="phd-institution">Euclid University</p>
+          <!-- ✏️ EDIT HERE: short description -->
+          <p class="phd-description">
+            This dissertation examines how states leverage procedural mechanisms and diplomatic network positioning to shape negotiation outcomes within the UN Security Council framework. Through a combination of network analysis and qualitative case studies spanning 2015–2023, it identifies the structural advantages that enable smaller states to exert disproportionate influence in multilateral security deliberations.
+          </p>
+          <a href="mailto:me@juniorceranornelson.com?subject=Request%20for%20PhD%20Abstract" class="btn btn-gold">
+            Request Abstract
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         3. THESES & DISSERTATIONS
+    ═══════════════════════════════════════════ -->
+    <section class="section-pad acad-section-light">
+      <div class="container">
+        <div class="reveal-wrap">
+          <h2 class="section-heading reveal-line">Theses &amp; Dissertations</h2>
+        </div>
+
+        <div class="thesis-grid">
+
+          <!-- PhD card (mirrors the featured section) -->
+          <article class="thesis-card reveal">
+            <span class="thesis-card-level">PhD Candidate</span>
+            <h3 class="thesis-card-title">
+              Agenda control in United Nations peace and security negotiations (2015–2023): a state-level analysis of procedural advantage, diplomatic network centrality, and influence outcomes
+            </h3>
+            <div class="thesis-card-meta">
+              <span>Euclid University</span>
+              <span>2025 – Present</span>
+            </div>
+            <a href="mailto:me@juniorceranornelson.com?subject=Request%20for%20PhD%20Abstract" class="thesis-card-btn">
+              Request Abstract
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+          </article>
+
+          <!-- ✏️ EDIT HERE: add your Master's thesis or other dissertations -->
+          <article class="thesis-card reveal">
+            <span class="thesis-card-level">Master's Thesis</span>
+            <h3 class="thesis-card-title">
+              <!-- ✏️ EDIT HERE: Master's thesis title -->
+              The Impact of Social Media on International Relations: The Role of Twitter (X), Facebook, and TikTok in Shaping International Narratives
+            </h3>
+            <div class="thesis-card-meta">
+              <!-- ✏️ EDIT HERE: institution, year -->
+              <span><!-- ✏️ Institution Name --></span>
+              <span><!-- ✏️ Year --></span>
+            </div>
+            <a href="https://zenodo.org/records/15650506" target="_blank" rel="noopener" class="thesis-card-btn">
+              View Thesis
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         4. PUBLICATIONS & PAPERS
+    ═══════════════════════════════════════════ -->
+    <section class="section-pad acad-section-warm">
+      <div class="container">
+        <div class="reveal-wrap">
+          <h2 class="section-heading reveal-line">Publications &amp; Papers</h2>
+        </div>
+
+        <div class="pub-grid">
+
+          <article class="pub-card reveal">
+            <p class="pub-card-journal">Zenodo · Research Paper</p>
+            <h3 class="pub-card-title">
+              The Haitian President's Assassination and Its Aftermath Diplomatically
+            </h3>
+            <p class="pub-card-date">February 23, 2022</p>
+            <p class="pub-card-abstract">
+              Examines the diplomatic consequences following President Jovenel Moïse's assassination — analyzing the power vacuum, gang violence, and responses from the UN, US, Colombia, and CARICOM. Evaluates MINUSTAH and BINUH through an international law lens, addressing sovereignty, governance, and crisis diplomacy in the Caribbean.
+            </p>
+            <a href="https://zenodo.org/records/15653765" target="_blank" rel="noopener" class="pub-card-btn">
+              Read Paper
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+          </article>
+
+          <!-- ✏️ EDIT HERE: Publication 2 -->
+          <article class="pub-card reveal">
+            <p class="pub-card-journal"><!-- ✏️ Journal / Conference name --> Policy Brief</p>
+            <h3 class="pub-card-title">
+              <!-- ✏️ EDIT HERE: paper title -->
+              Education as National Infrastructure: A Framework for Post-Crisis Development in Haiti
+            </h3>
+            <p class="pub-card-date"><!-- ✏️ EDIT HERE: date --> 2022</p>
+            <p class="pub-card-abstract">
+              <!-- ✏️ EDIT HERE: short abstract -->
+              Argues that sustained national recovery in Haiti requires treating educational investment with the same strategic priority as physical infrastructure, drawing on comparative policy analysis from post-conflict states.
+            </p>
+            <a href="blog-education-infrastructure.html" class="pub-card-btn">
+              Read Paper
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+          </article>
+
+          <article class="pub-card reveal">
+            <p class="pub-card-journal">Zenodo · Research Paper</p>
+            <h3 class="pub-card-title">
+              The Effectiveness of the United Nations Security Council in Maintaining Global Peace: The Case of Ukraine
+            </h3>
+            <p class="pub-card-date">March 1, 2025</p>
+            <p class="pub-card-abstract">
+              Examines how effectively the UN Security Council maintains global peace through the lens of the Ukraine conflict. Identifies structural, political, and operational constraints — including the use of veto power by permanent members — limiting the Council's response. Recommends institutional reforms to strengthen multilateral effectiveness in humanitarian crises.
+            </p>
+            <a href="https://zenodo.org/records/16900121" target="_blank" rel="noopener" class="pub-card-btn">
+              Read Paper
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+          </article>
+
+          <article class="pub-card reveal">
+            <p class="pub-card-journal">Zenodo · Research Paper</p>
+            <h3 class="pub-card-title">
+              Small States in a World of Giants: Strategies for Survival and Influence
+            </h3>
+            <p class="pub-card-date">January 28, 2026</p>
+            <p class="pub-card-abstract">
+              Explores how smaller nations navigate and maintain relevance within international systems dominated by powerful states, examining diplomatic approaches, survival mechanisms, and methods for exerting influence in global politics.
+            </p>
+            <a href="https://zenodo.org/records/18407604" target="_blank" rel="noopener" class="pub-card-btn">
+              Read Paper
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+          </article>
+
+          <article class="pub-card reveal">
+            <p class="pub-card-journal">Academia.edu · Research Paper</p>
+            <h3 class="pub-card-title">
+              The Role of Non-State Actors in Modern Conflict Negotiation: Case Study of Ukraine
+            </h3>
+            <p class="pub-card-date">January 2025</p>
+            <p class="pub-card-abstract">
+              Examines how NGOs, multinational corporations, and community leaders shape peace negotiations in Ukraine through humanitarian assistance, economic measures, and local mediation. Argues that sustainable conflict resolution depends on coordinating non-state actors alongside traditional diplomatic channels.
+            </p>
+            <a href="https://www.academia.edu/128047534/THE_ROLE_OF_NON_STATE_ACTORS_IN_MODERN_CONFLICT_NEGOTIATION_CASE_STUDY_OF_UKRAINE" target="_blank" rel="noopener" class="pub-card-btn">
+              Read Paper
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+          </article>
+
+          <article class="pub-card reveal">
+            <p class="pub-card-journal">Academia.edu · Research Paper</p>
+            <h3 class="pub-card-title">
+              The Implication of COVID-19 on International Law
+            </h3>
+            <p class="pub-card-date">2024</p>
+            <p class="pub-card-abstract">
+              Investigates the multifaceted implications of the COVID-19 pandemic on international legal norms, institutions, and practices — revealing both strengths and deficiencies within the existing framework of international law and human rights governance.
+            </p>
+            <a href="https://www.academia.edu/120969042/THE_IMPLICATION_OF_COVID_19_ON_INTERNATIONAL_LAW" target="_blank" rel="noopener" class="pub-card-btn">
+              Read Paper
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+          </article>
+
+          <article class="pub-card reveal">
+            <p class="pub-card-journal">Academia.edu · Research Paper</p>
+            <h3 class="pub-card-title">
+              The Role of the United Nations in Global Peacekeeping: Assessing the Effectiveness and Challenges of UN Peacekeeping Operations
+            </h3>
+            <p class="pub-card-date">2024</p>
+            <p class="pub-card-abstract">
+              Analyzes UN peacekeeping structure, stakeholders, and collective security principles through case studies on counter-terrorism and human rights promotion. Identifies key operational challenges and proposes reforms to strengthen peacekeeping missions for sustainable global peace.
+            </p>
+            <a href="https://www.academia.edu/124291706/THE_ROLE_OF_THE_UNITED_NATIONS_IN_GLOBAL_PEACEKEEPING_ASSESSING_THE_EFFECTIVENESS_AND_CHALLENGES_OF_UN_PEACEKEEPING_OPERATIONS" target="_blank" rel="noopener" class="pub-card-btn">
+              Read Paper
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+          </article>
+
+          <article class="pub-card reveal">
+            <p class="pub-card-journal">Academia.edu · Essay</p>
+            <h3 class="pub-card-title">
+              Analysis of a Debate on Capital Punishment (The New Yorker)
+            </h3>
+            <p class="pub-card-date">2020</p>
+            <p class="pub-card-abstract">
+              Analyzes contemporary arguments for and against capital punishment through three analytical lenses — Utilitarian, Moral, and Practical — examining the ongoing debate on its effect on criminal behavior and its ethical implications.
+            </p>
+            <a href="https://www.academia.edu/77318223/Analysis_of_a_debate_on_capital_punishment_The_New_yorker_" target="_blank" rel="noopener" class="pub-card-btn">
+              Read Paper
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         5. ACADEMIC AFFILIATIONS
+    ═══════════════════════════════════════════ -->
+    <section class="section-pad acad-section-light">
+      <div class="container">
+        <div class="reveal-wrap">
+          <h2 class="section-heading reveal-line">Academic &amp; Professional Affiliations</h2>
+        </div>
+
+        <div class="affil-list">
+
+          <div class="affil-row reveal">
+            <div class="affil-title">PhD Candidate — International Relations &amp; Diplomacy</div>
+            <div class="affil-institution">Euclid University</div>
+            <div class="affil-year">2025 – Present</div>
+          </div>
+
+          <div class="affil-row reveal">
+            <div class="affil-title">Master's Degree — Diplomacy &amp; International Relations</div>
+            <div class="affil-institution">Euclid University</div>
+            <div class="affil-year">March 2025</div>
+          </div>
+
+          <div class="affil-row reveal">
+            <div class="affil-title">International Cooperation Officer</div>
+            <div class="affil-institution">Quisqueya University (UniQ), Haiti</div>
+            <div class="affil-year">2024 – Present</div>
+          </div>
+
+          <div class="affil-row reveal">
+            <div class="affil-title">Secretary General</div>
+            <div class="affil-institution">UNHDIP — United Honorary Diplomats</div>
+            <div class="affil-year">2024 – Present</div>
+          </div>
+
+          <div class="affil-row reveal">
+            <div class="affil-title">Co-founder &amp; Executive Manager</div>
+            <div class="affil-institution">Haiti Stole My Heart Foundation</div>
+            <div class="affil-year">2018 – Present</div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         6. AWARDS & RECOGNITIONS
+    ═══════════════════════════════════════════ -->
+    <section class="section-pad acad-section-warm">
+      <div class="container">
+        <div class="reveal-wrap">
+          <h2 class="section-heading reveal-line">Awards &amp; Recognitions</h2>
+        </div>
+
+        <div class="awards-grid">
+
+          <!-- Award 1 — Coursera / Let's Move Haiti -->
+          <article class="award-card reveal">
+            <div class="award-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 15l-5 3 1.4-5.5L4 8.5l5.6-.5L12 3l2.4 5 5.6.5-4.4 4 1.4 5.5z"/></svg>
+            </div>
+            <h3 class="award-name">Leadership Recognition — "Let's Move Haiti" Program</h3>
+            <p class="award-from">Holistic Action for The Transformation of Haiti (HAFTH) &amp; Coursera</p>
+            <p class="award-year">22 November 2020</p>
+            <p class="award-desc">
+              Recognized for leadership as program administrator of the "Let's Move Haiti" upskilling initiative, which delivered over 100 free Coursera scholarships to HAFTH beneficiaries through the Haiti Stole My Heart Foundation. The program created measurable access to professional development for Haitian youth in underserved communities.
+            </p>
+          </article>
+
+          <!-- ✏️ EDIT HERE: Award 2 -->
+          <article class="award-card reveal">
+            <div class="award-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+            </div>
+            <!-- ✏️ EDIT HERE -->
+            <h3 class="award-name"><!-- ✏️ Award Name --></h3>
+            <p class="award-from"><!-- ✏️ Awarding Institution --></p>
+            <p class="award-year"><!-- ✏️ Year --></p>
+            <p class="award-desc"><!-- ✏️ Short description of the award and what it recognizes. --></p>
+          </article>
+
+          <!-- ✏️ EDIT HERE: Award 3 -->
+          <article class="award-card reveal">
+            <div class="award-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 21h8M12 17v4M7 4H4a1 1 0 0 0-1 1v3c0 5.523 3.477 10.243 9 11 5.523-.757 9-5.477 9-11V5a1 1 0 0 0-1-1h-3"/><path d="M12 4V2M9 4h6"/></svg>
+            </div>
+            <!-- ✏️ EDIT HERE -->
+            <h3 class="award-name"><!-- ✏️ Award Name --></h3>
+            <p class="award-from"><!-- ✏️ Awarding Institution --></p>
+            <p class="award-year"><!-- ✏️ Year --></p>
+            <p class="award-desc"><!-- ✏️ Short description of the award and what it recognizes. --></p>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         7. RESEARCH AREAS
+    ═══════════════════════════════════════════ -->
+    <section class="section-pad acad-section-light">
+      <div class="container">
+        <div class="reveal-wrap">
+          <h2 class="section-heading reveal-line">Research Areas</h2>
+        </div>
+
+        <!-- ✏️ EDIT HERE: add or remove tags as needed -->
+        <div class="research-tags reveal">
+          <span class="research-tag">UN Peace &amp; Security Negotiations</span>
+          <span class="research-tag">Agenda Control</span>
+          <span class="research-tag">Diplomatic Network Analysis</span>
+          <span class="research-tag">International Cooperation</span>
+          <span class="research-tag">Institution Building</span>
+          <span class="research-tag">Educational Development</span>
+          <span class="research-tag">Haitian Affairs</span>
+          <span class="research-tag">Soft Power</span>
+          <span class="research-tag">Caribbean Multilateralism</span>
+          <span class="research-tag">Post-Crisis Development</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         8. CALL TO ACTION
+    ═══════════════════════════════════════════ -->
+    <section class="acad-cta-section">
+      <div class="container">
+        <h2 class="acad-cta-title reveal">Interested in my research or academic collaboration?</h2>
+        <p class="acad-cta-sub reveal">
+          I welcome dialogue on diplomacy, UN negotiations, Haitian development, and educational policy.
+        </p>
+        <!-- ✏️ EDIT HERE: update email if needed -->
+        <a href="mailto:me@juniorceranornelson.com" class="btn btn-gold reveal">Get in Touch</a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ═══════════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════════ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <span class="footer-name">Junior Ceranor Nelson</span>
+          <span class="footer-location">Haiti &nbsp;/&nbsp; USA &nbsp;/&nbsp; Australia</span>
+        </div>
+        <div class="footer-socials">
+          <a href="https://www.linkedin.com/in/jrceranornelson/" target="_blank" rel="noopener" aria-label="LinkedIn" class="social-link">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          </a>
+          <a href="https://www.instagram.com/jrceranornelson" target="_blank" rel="noopener" aria-label="Instagram" class="social-link">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+          </a>
+          <a href="https://www.facebook.com/jrceranornelson" target="_blank" rel="noopener" aria-label="Facebook" class="social-link">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          </a>
+          <a href="https://www.youtube.com/@jrceranornelson" target="_blank" rel="noopener" aria-label="YouTube" class="social-link">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          </a>
+          <a href="https://www.tiktok.com/@jrceranornelson" target="_blank" rel="noopener" aria-label="TikTok" class="social-link">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.79a4.85 4.85 0 0 1-1.01-.1z"/></svg>
+          </a>
+        </div>
+        <div class="footer-legal">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms</a>
+        </div>
+      </div>
+      <div class="footer-copy">
+        Junior Ceranor Nelson &copy; 2026. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ── Navbar: toggle + scroll state ──────────────────────────
+    const navbar   = document.getElementById('navbar');
+    const toggle   = document.getElementById('navToggle');
+    const navLinks = document.getElementById('navLinks');
+
+    toggle.addEventListener('click', () => {
+      navLinks.classList.toggle('open');
+      toggle.classList.toggle('open');
+    });
+    navLinks.querySelectorAll('.nav-link').forEach(l => {
+      l.addEventListener('click', () => {
+        navLinks.classList.remove('open');
+        toggle.classList.remove('open');
+      });
+    });
+    // On this page the nav is always "scrolled" style (dark bg), but
+    // we still fire the class for the mobile-close-on-scroll behaviour.
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 10);
+    }, { passive: true });
+
+    // ── Intersection Observer: scroll reveal ───────────────────
+    const revealEls  = document.querySelectorAll('.reveal');
+    const revealLines = document.querySelectorAll('.reveal-line');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    revealEls.forEach(el  => observer.observe(el));
+    revealLines.forEach(el => observer.observe(el));
+  </script>
+  <script src="preloader.js"></script>
+  <!-- LIVE CHAT -->
+  <script src="live-chat.js"></script>
+</body>
+</html>

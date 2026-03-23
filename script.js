@@ -163,24 +163,46 @@ function initContactForm() {
   const form = document.getElementById('contactForm');
   if (!form) return;
 
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const btn = form.querySelector('button[type="submit"]');
+    const btn      = form.querySelector('button[type="submit"]');
     const original = btn.textContent;
+    const name     = (form.querySelector('[name="name"]')  || form.querySelector('#contact-name'))?.value.trim()    || '';
+    const email    = (form.querySelector('[name="email"]') || form.querySelector('#contact-email'))?.value.trim()   || '';
+    const message  = (form.querySelector('[name="message"]') || form.querySelector('#contact-message'))?.value.trim() || '';
 
-    btn.textContent = 'Message Sent ✓';
-    btn.style.background = '#2e6e44';
-    btn.style.borderColor = '#2e6e44';
-    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    btn.disabled    = true;
 
-    setTimeout(() => {
-      btn.textContent = original;
-      btn.style.background = '';
-      btn.style.borderColor = '';
-      btn.disabled = false;
-      form.reset();
-    }, 4000);
+    try {
+      if (typeof db !== 'undefined') {
+        await db.collection('messages').add({
+          name,
+          email,
+          message,
+          read:      false,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        });
+      }
+      btn.textContent   = 'Message Sent ✓';
+      btn.style.background  = '#2e6e44';
+      btn.style.borderColor = '#2e6e44';
+      setTimeout(() => {
+        btn.textContent       = original;
+        btn.style.background  = '';
+        btn.style.borderColor = '';
+        btn.disabled          = false;
+        form.reset();
+      }, 4000);
+    } catch (err) {
+      console.error('Contact form error:', err);
+      btn.textContent = 'Error — try again';
+      setTimeout(() => {
+        btn.textContent = original;
+        btn.disabled    = false;
+      }, 3000);
+    }
   });
 }
 
@@ -210,8 +232,122 @@ function initActiveNav() {
   sections.forEach(section => observer.observe(section));
 }
 
+/* ─── 0. PRELOADER ──────────────────────────────────────────── */
+function initPreloader() {
+  const preloader = document.getElementById('preloader');
+  if (!preloader) return;
+
+  document.body.classList.add('preloading');
+
+  // Dismiss after ~3s (animation completes at ~2.45s, fade-out takes 0.55s)
+  setTimeout(() => {
+    preloader.classList.add('preloader-done');
+    document.body.classList.remove('preloading');
+  }, 2700);
+
+  // Remove from DOM after fade-out transition ends
+  preloader.addEventListener('transitionend', () => {
+    if (preloader.classList.contains('preloader-done')) {
+      preloader.remove();
+    }
+  }, { once: true });
+}
+
+/* ─── GALLERY PHOTO MODAL ───────────────────────────────────── */
+function initGalleryModal() {
+  const modal    = document.getElementById('galleryModal');
+  if (!modal) return;
+
+  const backdrop  = modal.querySelector('.gallery-modal-backdrop');
+  const closeBtn  = modal.querySelector('.gallery-modal-close');
+  const gmCaption = document.getElementById('gm-caption');
+  const gmPlace   = document.getElementById('gm-place');
+  const gmDate    = document.getElementById('gm-date');
+  const gmDetails = document.getElementById('gm-details');
+
+  function openModal(item) {
+    gmCaption.textContent = item.dataset.caption || 'Photo Details';
+    gmPlace.textContent   = item.dataset.place   || '—';
+    gmDate.textContent    = item.dataset.date     || '—';
+    gmDetails.textContent = item.dataset.details  || '—';
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  document.querySelectorAll('.gallery-info-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      openModal(btn.closest('.gallery-item'));
+    });
+  });
+
+  backdrop.addEventListener('click', closeModal);
+  closeBtn.addEventListener('click', closeModal);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeModal();
+  });
+}
+
+/* ─── SUBSCRIBE FORM ─────────────────────────────────────────── */
+function initSubscribeForm() {
+  const form    = document.getElementById('subscribeForm');
+  if (!form) return;
+  const btn     = document.getElementById('subscribeBtn');
+  const success = document.getElementById('subscribeSuccess');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const name  = form.querySelector('#sub-name').value.trim();
+    const email = form.querySelector('#sub-email').value.trim();
+    const phone = (form.querySelector('#sub-phone')?.value || '').trim();
+    if (!name || !email) return;
+
+    btn.disabled = true;
+    btn.querySelector('.subscribe-btn-text').textContent = 'Subscribing…';
+
+    try {
+      if (typeof db !== 'undefined') {
+        await db.collection('subscribers').add({
+          name,
+          email,
+          phone:     phone || null,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        });
+      }
+      form.querySelectorAll('input').forEach(i => i.value = '');
+      success.classList.add('visible');
+      btn.querySelector('.subscribe-btn-text').textContent = 'Subscribed ✓';
+      btn.style.background = '#2e6e44';
+      btn.style.boxShadow  = 'none';
+
+      setTimeout(() => {
+        success.classList.remove('visible');
+        btn.querySelector('.subscribe-btn-text').textContent = 'Subscribe';
+        btn.style.background = '';
+        btn.style.boxShadow  = '';
+        btn.disabled = false;
+      }, 6000);
+    } catch (err) {
+      console.error('Subscribe error:', err);
+      btn.querySelector('.subscribe-btn-text').textContent = 'Error — try again';
+      btn.style.background = '';
+      setTimeout(() => {
+        btn.querySelector('.subscribe-btn-text').textContent = 'Subscribe';
+        btn.disabled = false;
+      }, 3000);
+    }
+  });
+}
+
 /* ─── INIT ──────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
+  initPreloader();
   initHeroAnimation();
   initNavbar();
   initMobileNav();
@@ -220,4 +356,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initSmoothScroll();
   initContactForm();
   initActiveNav();
+  initGalleryModal();
+  initSubscribeForm();
 });

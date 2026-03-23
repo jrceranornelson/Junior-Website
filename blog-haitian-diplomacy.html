@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reimagining Haitian Diplomacy in the 21st Century — Junior Ceranor Nelson</title>
+  <meta name="description" content="A new generation of Haitian institution builders is redefining the country's place on the world stage by advancing diplomacy through education, soft power, and international cooperation." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="about.css" />
+  <link rel="stylesheet" href="blog-article.css" />
+  <link rel="stylesheet" href="blog-engagement.css" />
+  <style>
+    /* ── Article-specific overrides ── */
+    .article-hero {
+      position: relative;
+      height: 520px;
+      overflow: hidden;
+      margin-top: 80px;
+    }
+
+    .article-hero img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+    }
+
+    .article-hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(11,29,58,0.35) 0%, rgba(11,29,58,0.72) 100%);
+    }
+
+    .article-hero-content {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 48px 5% 52px;
+      max-width: 860px;
+    }
+
+    .article-category {
+      display: inline-block;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #c9a84c;
+      background: rgba(201,168,76,0.15);
+      border: 1px solid rgba(201,168,76,0.4);
+      padding: 6px 14px;
+      border-radius: 2px;
+      margin-bottom: 18px;
+    }
+
+    .article-hero-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      color: #ffffff;
+      margin-bottom: 16px;
+    }
+
+    .article-meta {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .article-date {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.65);
+    }
+
+    .article-author {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: rgba(255,255,255,0.65);
+    }
+
+    .article-author span {
+      color: #c9a84c;
+    }
+
+    /* Article body */
+    .article-body {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 80px 5% 100px;
+    }
+
+    .article-excerpt {
+      font-size: 1.18rem;
+      line-height: 1.75;
+      color: #1a1a1a;
+      font-weight: 500;
+      border-left: 4px solid #c9a84c;
+      padding: 8px 0 8px 24px;
+      margin-bottom: 48px;
+    }
+
+    .article-text p {
+      font-size: 1.05rem;
+      line-height: 1.9;
+      color: #2a2a2a;
+      margin-bottom: 28px;
+    }
+
+    .article-text p:last-child { margin-bottom: 0; }
+
+    .article-divider {
+      width: 60px;
+      height: 3px;
+      background: #c9a84c;
+      border-radius: 2px;
+      margin: 48px 0;
+    }
+
+    /* Back link */
+    .article-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #0b1d3a;
+      border-bottom: 2px solid #c9a84c;
+      padding-bottom: 2px;
+      transition: color 0.22s ease, gap 0.22s ease;
+    }
+
+    .article-back:hover { color: #c9a84c; gap: 12px; }
+
+    .article-back svg { width: 16px; height: 16px; }
+
+    .article-nav {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 5% 80px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid #e2ddd0;
+      padding-top: 40px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="logo.png" alt="Junior Ceranor Nelson" class="nav-logo-img" />
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html#home"     class="nav-link">Home</a></li>
+        <li><a href="index.html#about"    class="nav-link">About Me</a></li>
+        <li><a href="index.html#projects" class="nav-link">Projects</a></li>
+        <li><a href="gallery.html"        class="nav-link">Gallery</a></li>
+        <li><a href="music.html"          class="nav-link">Music</a></li>
+        <li><a href="academic.html"       class="nav-link">Academic</a></li>
+        <li><a href="index.html#blog"     class="nav-link active">Blog &amp; Library</a></li>
+        <li><a href="index.html#contact"  class="nav-link">Contact</a></li>
+      </ul>
+      <a href="index.html#contact" class="nav-cta">Contact Us</a>
+    </div>
+  </nav>
+
+  <!-- WATERMARK BACKGROUND -->
+  <div class="watermarks" aria-hidden="true">
+    <img src="logos/unhdip.png"            class="wm wm-1" alt="" />
+    <img src="logos/omnedu.png"            class="wm wm-2" alt="" />
+    <img src="logos/bokatedral.png"        class="wm wm-3" alt="" />
+    <img src="logos/haitistolemyheart.png" class="wm wm-4" alt="" />
+    <img src="logos/sprintagility.png"     class="wm wm-5" alt="" />
+    <img src="logos/unhdip.png"            class="wm wm-6" alt="" />
+    <img src="logos/omnedu.png"            class="wm wm-7" alt="" />
+    <img src="logos/bokatedral.png"        class="wm wm-8" alt="" />
+    <img src="logos/haitistolemyheart.png" class="wm wm-9" alt="" />
+    <img src="logos/sprintagility.png"     class="wm wm-10" alt="" />
+  </div>
+
+  <!-- ARTICLE HERO -->
+  <header class="article-hero">
+    <img src="gallery/haitian-diplomacy.png" alt="Reimagining Haitian Diplomacy in the 21st Century" />
+    <div class="article-hero-overlay"></div>
+    <div class="article-hero-content">
+      <span class="article-category">Diplomacy &amp; Development</span>
+      <h1 class="article-hero-title">Reimagining Haitian Diplomacy<br />in the 21st Century</h1>
+      <div class="article-meta">
+        <span class="article-date">March 2026</span>
+        <span class="article-author">By <span>Junior Ceranor Nelson</span></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ARTICLE BODY -->
+  <main>
+    <article class="article-body">
+
+      <p class="article-excerpt">
+        To help reintegrate Haiti into the world map of diplomacy, we must first understand that diplomacy in the 21st century is no longer built only through formal meetings, official speeches, and state-to-state relations. Today, influence is also shaped through education, ideas, culture, credibility, partnerships, and the ability to build trust across borders. Haiti must adapt to this reality if it wants to reclaim a stronger and more respected place internationally.
+      </p>
+
+      <div class="article-divider"></div>
+
+      <div class="article-text">
+        <p>
+          One of the first things we should do is invest in a new generation of Haitian institution builders. Haiti needs people and structures capable of representing the country not only through politics, but through competence, vision, and long-term engagement. We should support those who build educational platforms, research initiatives, international partnerships, cultural projects, and professional networks, because these are also tools of diplomacy.
+        </p>
+        <p>
+          We should also place education at the center of Haiti's diplomatic strategy. Academic cooperation, training, student exchange, research partnerships, and knowledge-sharing can become powerful instruments of influence. When a country contributes ideas, develops talent, and builds intellectual bridges with the world, it strengthens its international position in a sustainable way.
+        </p>
+        <p>
+          At the same time, Haiti must make better use of soft power. For too long, the country has often been seen mainly through crisis and instability. While challenges are real, they should not be the only story told about Haiti. We should actively promote Haiti's culture, resilience, intellectual capacity, history, creativity, and human potential. A nation that knows how to project its values and strengths earns greater respect and opens more doors internationally.
+        </p>
+        <p>
+          Another important step is to build credible and lasting international cooperation. Haiti should not approach diplomacy only as a search for aid, but also as a platform for mutual partnership, shared learning, and strategic collaboration. Stronger links with universities, think tanks, diaspora communities, regional institutions, and global organizations can help reposition Haiti as a country that contributes, not only one that receives.
+        </p>
+        <p>
+          Above all, we must understand that reimagining Haitian diplomacy is not only about changing perception. It is about building real institutions, creating real opportunities, and developing a serious national presence that others can trust and respect. If Haiti wants to return strongly to the diplomatic map of the world, it must do so through knowledge, credibility, preparation, and a clear long-term vision.
+        </p>
+        <p>
+          In that sense, the path forward is clear: educate, build, connect, and represent Haiti with excellence. That is how we help the country regain its place in global diplomacy.
+        </p>
+      </div>
+
+    </article>
+
+    <!-- LIKE & COMMENTS -->
+    <section class="engagement-section" aria-label="Likes and comments">
+
+      <!-- Like -->
+      <div class="like-block">
+        <button class="like-btn" id="likeBtn" aria-pressed="false" aria-label="Like this article">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          <span id="likeCount">0</span>
+        </button>
+        <span class="like-label">people found this helpful</span>
+      </div>
+
+      <!-- Comments -->
+      <div class="comments-block">
+        <h2 class="comments-heading">
+          Comments
+          <span class="comment-count" id="commentCount">0</span>
+        </h2>
+
+        <form class="comment-form" id="commentForm" novalidate>
+          <div class="comment-form-row">
+            <div class="comment-form-group">
+              <label for="commentName">Your Name *</label>
+              <input type="text" id="commentName" placeholder="e.g. Marie Dupont" maxlength="60" required />
+            </div>
+            <div class="comment-form-group">
+              <label for="commentText">Your Comment *</label>
+              <input type="text" style="display:none" aria-hidden="true" tabindex="-1" />
+            </div>
+          </div>
+          <div class="comment-form-group" style="margin-bottom:0;">
+            <label for="commentText" class="sr-only">Your Comment</label>
+            <textarea id="commentText" placeholder="Share your thoughts on this article…" maxlength="1000" required></textarea>
+          </div>
+          <div class="comment-form-footer">
+            <span class="comment-form-note">Your comment will appear immediately.</span>
+            <button type="submit" class="comment-submit-btn" id="commentSubmit">
+              Post Comment
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+            </button>
+          </div>
+          <div class="comment-success" id="commentSuccess" aria-live="polite">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            Comment posted!
+          </div>
+        </form>
+
+        <div class="comment-list" id="commentList" aria-live="polite"></div>
+      </div>
+
+    </section>
+
+    <!-- BOTTOM NAV -->
+    <div class="article-nav">
+      <a href="index.html#blog" class="article-back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 12H5M5 12l7 7M5 12l7-7"/></svg>
+        Back to Blog
+      </a>
+      <a href="index.html#contact" class="btn btn-dark">Get in Touch</a>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="about-footer">
+    <div class="about-container">
+      <span class="footer-name">Junior Ceranor Nelson</span>
+      <span class="footer-copy">&copy; 2026. All rights reserved.</span>
+    </div>
+  </footer>
+
+  <script src="about.js"></script>
+  <script src="blog-engagement.js"></script>
+  <script>document.addEventListener('DOMContentLoaded', () => initEngagement('haitian-diplomacy'));</script>
+  <!-- LIVE CHAT -->
+  <script src="live-chat.js"></script>
+</body>
+</html>

@@ -1,0 +1,1547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — Junior Ceranor Nelson</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
+  <link rel="stylesheet" href="admin.css" />
+
+  <!-- Firebase CDN (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+  <script src="firebase-config.js"></script>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     LOGIN PAGE
+══════════════════════════════════════════ -->
+<div id="loginPage">
+  <div class="login-card">
+    <img src="logo.png" alt="JCN" class="login-logo" />
+    <p class="login-brand">Control Panel</p>
+    <h1 class="login-title">Admin Sign In</h1>
+
+    <form class="login-form" id="loginForm" novalidate>
+      <div class="login-field">
+        <label for="loginEmail">Email Address</label>
+        <input type="email" id="loginEmail" placeholder="admin@example.com" autocomplete="username" required />
+      </div>
+      <div class="login-field">
+        <label for="loginPassword">Password</label>
+        <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" required />
+      </div>
+      <button type="submit" class="login-btn" id="loginBtn">Sign In</button>
+    </form>
+
+    <!-- MFA step -->
+    <div class="login-2fa" id="login2fa">
+      <p>Enter the 6-digit code from Google Authenticator.</p>
+      <input type="text" id="totpCode" placeholder="000000" maxlength="6" inputmode="numeric" pattern="[0-9]*" />
+      <button class="login-btn" id="verify2faBtn">Verify Code</button>
+    </div>
+
+    <div class="login-error" id="loginError"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     DASHBOARD APP
+══════════════════════════════════════════ -->
+<div id="app">
+
+  <div id="sidebarOverlay"></div>
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo-wrap">
+      <img src="logo.png" alt="JCN" class="sidebar-logo" />
+      <div class="sidebar-brand">
+        <span class="sidebar-brand-name">Junior Ceranor Nelson</span>
+        <span class="sidebar-brand-sub">Admin Panel</span>
+      </div>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav" id="sidebarNav">
+        <li><a href="#" data-section="dashboard" class="active">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Dashboard
+        </a></li>
+        <li><a href="#" data-section="blog">
+          <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          Blog
+        </a></li>
+        <li><a href="#" data-section="gallery">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Gallery
+        </a></li>
+        <li><a href="#" data-section="music">
+          <svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          Music
+        </a></li>
+        <li><a href="#" data-section="academic">
+          <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          Academic
+        </a></li>
+        <li><a href="#" data-section="messages">
+          <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Messages
+          <span class="badge badge-red" id="unreadBadge" style="margin-left:auto;display:none;"></span>
+        </a></li>
+        <li><a href="#" data-section="subscribers">
+          <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Subscribers
+        </a></li>
+        <li><a href="#" data-section="projects">
+          <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Projects
+        </a></li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="sidebar-logout" id="logoutBtn">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </button>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <div class="main">
+
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="sidebar-toggle" id="sidebarToggle">
+          <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <h1 id="pageTitle">Dashboard</h1>
+      </div>
+      <div class="topbar-right">
+        <div class="user-pill">
+          <div class="user-avatar" id="userAvatar">A</div>
+          <span id="userEmail">admin</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Permission-denied warning banner -->
+    <div id="permBanner" style="display:none;background:#fef2f2;border-bottom:1px solid rgba(220,38,38,0.2);padding:10px 28px;font-size:0.8rem;color:#b91c1c;">
+      <strong>Firestore permission denied.</strong> Go to Firebase Console → Firestore → Rules and add:
+      <code style="background:rgba(0,0,0,0.07);padding:2px 6px;border-radius:4px;margin:0 4px;">allow read, write: if request.auth != null;</code>
+      then reload this page.
+    </div>
+
+    <main class="content">
+
+      <!-- ─── DASHBOARD ─── -->
+      <section id="sec-dashboard" class="admin-section active">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon" style="background:rgba(11,29,58,0.06);">
+              <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            </div>
+            <div class="stat-label">Blog Posts</div>
+            <div class="stat-value" id="stat-posts"><span class="stat-loading"></span></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:rgba(201,168,76,0.10);">
+              <svg viewBox="0 0 24 24" stroke="var(--gold)"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </div>
+            <div class="stat-label">Gallery Photos</div>
+            <div class="stat-value" id="stat-gallery"><span class="stat-loading"></span></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:rgba(22,163,74,0.08);">
+              <svg viewBox="0 0 24 24" stroke="var(--success)"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            </div>
+            <div class="stat-label">Subscribers</div>
+            <div class="stat-value" id="stat-subs"><span class="stat-loading"></span></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:rgba(220,38,38,0.07);">
+              <svg viewBox="0 0 24 24" stroke="var(--danger)"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <div class="stat-label">Unread Messages</div>
+            <div class="stat-value" id="stat-msgs"><span class="stat-loading"></span></div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+          <div class="card">
+            <div class="card-header">
+              <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:var(--navy);stroke-width:2;stroke-linecap:round;vertical-align:middle;margin-right:6px;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              Recent Messages
+            </div>
+            <div class="card-body" id="dash-recent-msgs">
+              <div class="spinner-wrap" style="padding:28px;"><div class="spinner"></div></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:var(--navy);stroke-width:2;stroke-linecap:round;vertical-align:middle;margin-right:6px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+              Recent Subscribers
+            </div>
+            <div class="card-body" id="dash-recent-subs">
+              <div class="spinner-wrap" style="padding:28px;"><div class="spinner"></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─── BLOG ─── -->
+      <section id="sec-blog" class="admin-section">
+        <div class="section-header">
+          <h2>Blog Posts</h2>
+          <button class="btn btn-primary" onclick="openBlogForm()">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add New Post
+          </button>
+        </div>
+        <div id="blog-list"><div class="spinner-wrap"><div class="spinner"></div></div></div>
+      </section>
+
+      <!-- ─── GALLERY ─── -->
+      <section id="sec-gallery" class="admin-section">
+        <div class="section-header">
+          <h2>Gallery Photos</h2>
+          <label class="btn btn-primary" style="cursor:pointer;">
+            <svg viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+            Upload Photo
+            <input type="file" id="galleryUploadInput" accept="image/*" style="display:none;" multiple />
+          </label>
+        </div>
+        <div class="upload-progress" id="galleryProgress"><div class="upload-progress-bar" id="galleryProgressBar"></div></div>
+        <div id="gallery-grid" class="photo-grid" style="margin-top:16px;">
+          <div class="spinner-wrap" style="grid-column:1/-1;"><div class="spinner"></div></div>
+        </div>
+      </section>
+
+      <!-- ─── MUSIC ─── -->
+      <section id="sec-music" class="admin-section">
+        <div class="section-header">
+          <h2>Music Releases</h2>
+          <button class="btn btn-primary" onclick="openMusicForm()">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Release
+          </button>
+        </div>
+        <div id="music-list" class="release-list"><div class="spinner-wrap"><div class="spinner"></div></div></div>
+      </section>
+
+      <!-- ─── ACADEMIC ─── -->
+      <section id="sec-academic" class="admin-section">
+        <div class="section-header">
+          <h2>Academic Publications</h2>
+          <button class="btn btn-primary" onclick="openAcademicForm()">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Publication
+          </button>
+        </div>
+        <div id="academic-list"><div class="spinner-wrap"><div class="spinner"></div></div></div>
+      </section>
+
+      <!-- ─── MESSAGES ─── -->
+      <section id="sec-messages" class="admin-section">
+        <div class="section-header">
+          <h2>Contact Messages</h2>
+          <span class="badge badge-navy" id="msg-count-badge"></span>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Name</th><th>Email</th><th>Date</th><th>Preview</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="messages-tbody">
+              <tr><td colspan="5"><div class="spinner-wrap"><div class="spinner"></div></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ─── SUBSCRIBERS ─── -->
+      <section id="sec-subscribers" class="admin-section">
+        <div class="section-header">
+          <h2>Fan Subscribers</h2>
+          <div class="section-subheader">
+            <div class="search-bar">
+              <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="subSearch" placeholder="Search subscribers…" oninput="filterSubscribers(this.value)" />
+            </div>
+            <button class="btn btn-gold" onclick="exportCSV()">
+              <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Export CSV
+            </button>
+          </div>
+        </div>
+        <p style="font-size:0.82rem;color:var(--muted);margin-bottom:14px;">
+          Total: <strong id="sub-total">0</strong> subscribers
+        </p>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr><th>Name</th><th>Email</th><th>Phone</th><th>Date Subscribed</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="subs-tbody">
+              <tr><td colspan="5"><div class="spinner-wrap"><div class="spinner"></div></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ─── PROJECTS ─── -->
+      <section id="sec-projects" class="admin-section">
+        <div class="section-header">
+          <h2>Projects</h2>
+          <button class="btn btn-primary" onclick="openProjectForm()">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Project
+          </button>
+        </div>
+        <div id="projects-list"><div class="spinner-wrap"><div class="spinner"></div></div></div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- ── MODAL ── -->
+<div id="modalOverlay">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3 id="modalTitle">Form</h3>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer" id="modalFooter">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" id="modalSaveBtn">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOAST ── -->
+<div id="toastWrap"></div>
+
+<script>
+'use strict';
+
+/* ══════════════════════════════════════════════════════════════
+   GLOBAL STATE
+══════════════════════════════════════════════════════════════ */
+let _allSubscribers = [];
+let _mfaResolver    = null;
+let _editingId      = null;
+
+/* ══════════════════════════════════════════════════════════════
+   AUTH
+══════════════════════════════════════════════════════════════ */
+
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email    = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const btn      = document.getElementById('loginBtn');
+  const errEl    = document.getElementById('loginError');
+
+  errEl.classList.remove('show');
+  btn.disabled = true;
+  btn.textContent = 'Signing in…';
+
+  try {
+    await auth.signInWithEmailAndPassword(email, password);
+  } catch (err) {
+    if (err.code === 'auth/multi-factor-auth-required') {
+      _mfaResolver = err.resolver;
+      document.getElementById('login2fa').classList.add('show');
+      document.getElementById('totpCode').focus();
+    } else {
+      errEl.textContent = friendlyAuthError(err.code);
+      errEl.classList.add('show');
+    }
+    btn.disabled = false;
+    btn.textContent = 'Sign In';
+  }
+});
+
+document.getElementById('verify2faBtn').addEventListener('click', async () => {
+  const code  = document.getElementById('totpCode').value.trim();
+  const errEl = document.getElementById('loginError');
+  if (!code || code.length < 6) {
+    errEl.textContent = 'Enter the 6-digit code.';
+    errEl.classList.add('show');
+    return;
+  }
+  try {
+    const totp      = firebase.auth.TotpMultiFactorGenerator;
+    const assertion = totp.assertionForSignIn(_mfaResolver.hints[0].uid, code);
+    await _mfaResolver.resolveSignIn(assertion);
+  } catch (err) {
+    errEl.textContent = 'Invalid code. Please try again.';
+    errEl.classList.add('show');
+  }
+});
+
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+  if (!confirm('Sign out of the admin panel?')) return;
+  await auth.signOut();
+});
+
+auth.onAuthStateChanged(user => {
+  if (user) {
+    document.getElementById('loginPage').style.display = 'none';
+    document.getElementById('app').classList.add('visible');
+    document.getElementById('userEmail').textContent = user.email;
+    document.getElementById('userAvatar').textContent = (user.email[0] || 'A').toUpperCase();
+    loadDashboard();
+  } else {
+    document.getElementById('loginPage').style.display = 'flex';
+    document.getElementById('app').classList.remove('visible');
+  }
+});
+
+function friendlyAuthError(code) {
+  const map = {
+    'auth/user-not-found':         'No account found with this email.',
+    'auth/wrong-password':         'Incorrect password. Please try again.',
+    'auth/invalid-email':          'Please enter a valid email address.',
+    'auth/too-many-requests':      'Too many attempts. Please wait and try again.',
+    'auth/network-request-failed': 'Network error. Check your connection.',
+    'auth/invalid-credential':     'Invalid email or password.',
+  };
+  return map[code] || `Sign in failed (${code}).`;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════════════════════════════ */
+
+document.getElementById('sidebarNav').addEventListener('click', (e) => {
+  const link = e.target.closest('a[data-section]');
+  if (!link) return;
+  e.preventDefault();
+  navigate(link.dataset.section);
+  closeSidebar();
+});
+
+function navigate(section) {
+  document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
+  document.getElementById('sec-' + section).classList.add('active');
+  document.querySelector(`.sidebar-nav a[data-section="${section}"]`).classList.add('active');
+
+  const titles = {
+    dashboard: 'Dashboard', blog: 'Blog Posts', gallery: 'Gallery',
+    music: 'Music Releases', academic: 'Academic', messages: 'Messages',
+    subscribers: 'Subscribers', projects: 'Projects'
+  };
+  document.getElementById('pageTitle').textContent = titles[section] || section;
+
+  const loaders = {
+    dashboard: loadDashboard, blog: loadBlog, gallery: loadGallery,
+    music: loadMusic, academic: loadAcademic, messages: loadMessages,
+    subscribers: loadSubscribers, projects: loadProjects,
+  };
+  if (loaders[section]) loaders[section]();
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SIDEBAR TOGGLE (mobile)
+══════════════════════════════════════════════════════════════ */
+
+document.getElementById('sidebarToggle').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('show');
+});
+document.getElementById('sidebarOverlay').addEventListener('click', closeSidebar);
+
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('show');
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TOAST
+══════════════════════════════════════════════════════════════ */
+
+function toast(msg, type = 'success') {
+  const wrap = document.getElementById('toastWrap');
+  const t    = document.createElement('div');
+  t.className = `toast ${type}`;
+  const icons = {
+    success: '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>',
+    error:   '<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>',
+    warning: '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
+  };
+  t.innerHTML = `
+    <div class="toast-icon">
+      <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" fill="none" stroke="currentColor">${icons[type] || icons.success}</svg>
+    </div>
+    <span>${escHtml(msg)}</span>`;
+  wrap.appendChild(t);
+  requestAnimationFrame(() => t.classList.add('show'));
+  setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 400); }, 4000);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MODAL
+══════════════════════════════════════════════════════════════ */
+
+function openModal(title, bodyHTML, onSave, saveLabel = 'Save') {
+  document.getElementById('modalTitle').textContent   = title;
+  document.getElementById('modalBody').innerHTML      = bodyHTML;
+  const saveBtn = document.getElementById('modalSaveBtn');
+  saveBtn.textContent = saveLabel;
+  saveBtn.disabled    = false;
+  saveBtn.style.display = onSave ? '' : 'none';
+  saveBtn.onclick     = onSave || null;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  _editingId = null;
+}
+
+document.getElementById('modalOverlay').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('modalOverlay')) closeModal();
+});
+
+/* ══════════════════════════════════════════════════════════════
+   HELPERS
+══════════════════════════════════════════════════════════════ */
+
+function fmtDate(ts) {
+  if (!ts) return '—';
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  if (isNaN(d.getTime())) return '—';
+  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+}
+
+function spinner(el) {
+  el.innerHTML = '<div class="spinner-wrap"><div class="spinner"></div></div>';
+}
+
+function empty(el, msg = 'No items yet.') {
+  el.innerHTML = `<div class="empty-state">
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+    <p>${msg}</p>
+  </div>`;
+}
+
+function errState(el, msg) {
+  el.innerHTML = `<div class="empty-state" style="border:1px dashed rgba(220,38,38,0.3);">
+    <svg viewBox="0 0 24 24" stroke="var(--danger)"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <p style="color:var(--danger);">${msg}</p>
+  </div>`;
+}
+
+function escHtml(s = '') {
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function previewImg(input, previewId) {
+  const preview = document.getElementById(previewId);
+  if (!preview || !input.files[0]) return;
+  const reader = new FileReader();
+  reader.onload = e => { preview.src = e.target.result; preview.classList.add('show'); };
+  reader.readAsDataURL(input.files[0]);
+}
+
+async function uploadFile(file, path, progressBarId) {
+  return new Promise((resolve, reject) => {
+    const ref  = storage.ref(path);
+    const task = ref.put(file);
+    const bar  = progressBarId ? document.getElementById(progressBarId) : null;
+    const wrap = bar ? bar.parentElement : null;
+    if (wrap) wrap.classList.add('show');
+
+    task.on('state_changed',
+      snap => {
+        if (bar) bar.style.width = `${(snap.bytesTransferred / snap.totalBytes) * 100}%`;
+      },
+      err => {
+        if (wrap) wrap.classList.remove('show');
+        reject(err);
+      },
+      async () => {
+        try {
+          const url = await ref.getDownloadURL();
+          if (wrap) { wrap.classList.remove('show'); if (bar) bar.style.width = '0%'; }
+          resolve(url);
+        } catch (e) { reject(e); }
+      }
+    );
+  });
+}
+
+/* Safe Firestore get — tries with orderBy, falls back to plain get on index errors */
+async function safeGet(collection, orderField = null, orderDir = 'desc') {
+  try {
+    const ref = orderField
+      ? db.collection(collection).orderBy(orderField, orderDir)
+      : db.collection(collection);
+    return await ref.get();
+  } catch (err) {
+    if ((err.code === 'failed-precondition' || err.code === 'unimplemented') && orderField) {
+      // Index not ready — fall back to unordered
+      return await db.collection(collection).get();
+    }
+    throw err;
+  }
+}
+
+function showPermissionBanner() {
+  document.getElementById('permBanner').style.display = 'block';
+}
+
+function isPermissionError(err) {
+  return err && (err.code === 'permission-denied' || err.code === 'PERMISSION_DENIED');
+}
+
+/* ══════════════════════════════════════════════════════════════
+   DASHBOARD
+══════════════════════════════════════════════════════════════ */
+
+async function loadDashboard() {
+  /* Run all 4 stat queries independently — one failing won't kill the others */
+  const [postsR, galleryR, subsR, msgsR] = await Promise.allSettled([
+    db.collection('posts').get(),
+    db.collection('gallery').get(),
+    db.collection('subscribers').get(),
+    db.collection('messages').where('read', '==', false).get(),
+  ]);
+
+  /* Stats */
+  document.getElementById('stat-posts').textContent =
+    postsR.status   === 'fulfilled' ? postsR.value.size   : '—';
+  document.getElementById('stat-gallery').textContent =
+    galleryR.status === 'fulfilled' ? galleryR.value.size  : '—';
+  document.getElementById('stat-subs').textContent =
+    subsR.status    === 'fulfilled' ? subsR.value.size     : '—';
+  document.getElementById('stat-msgs').textContent =
+    msgsR.status    === 'fulfilled' ? msgsR.value.size     : '—';
+
+  /* Unread badge */
+  const unreadCount = msgsR.status === 'fulfilled' ? msgsR.value.size : 0;
+  const badge = document.getElementById('unreadBadge');
+  badge.textContent   = unreadCount;
+  badge.style.display = unreadCount > 0 ? 'inline-block' : 'none';
+
+  /* Permission banner */
+  const anyDenied = [postsR, galleryR, subsR, msgsR].some(r =>
+    r.status === 'rejected' && isPermissionError(r.reason)
+  );
+  if (anyDenied) showPermissionBanner();
+
+  /* Recent messages */
+  const recentMsgEl = document.getElementById('dash-recent-msgs');
+  try {
+    const snap = await safeGet('messages', 'createdAt', 'desc');
+    const docs  = snap.docs.slice(0, 5);
+    if (!docs.length) {
+      recentMsgEl.innerHTML = '<p style="color:var(--muted);font-size:0.82rem;">No messages yet.</p>';
+    } else {
+      recentMsgEl.innerHTML = docs.map(d => {
+        const m = d.data();
+        return `<div style="padding:10px 0;border-bottom:1px solid var(--border);font-size:0.82rem;">
+          <strong>${escHtml(m.name)}</strong>
+          ${!m.read ? '<span style="display:inline-block;width:6px;height:6px;background:var(--gold);border-radius:50%;vertical-align:middle;margin-left:6px;"></span>' : ''}
+          <span style="color:var(--muted);font-size:0.75rem;margin-left:8px;">${fmtDate(m.createdAt)}</span>
+          <p style="color:var(--muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escHtml((m.message||'').slice(0,80))}</p>
+        </div>`;
+      }).join('');
+    }
+  } catch (err) {
+    recentMsgEl.innerHTML = `<p style="color:var(--danger);font-size:0.8rem;">${isPermissionError(err) ? 'Permission denied.' : 'Failed to load.'}</p>`;
+    if (isPermissionError(err)) showPermissionBanner();
+  }
+
+  /* Recent subscribers */
+  const recentSubEl = document.getElementById('dash-recent-subs');
+  try {
+    const snap = await safeGet('subscribers', 'createdAt', 'desc');
+    const docs  = snap.docs.slice(0, 5);
+    if (!docs.length) {
+      recentSubEl.innerHTML = '<p style="color:var(--muted);font-size:0.82rem;">No subscribers yet.</p>';
+    } else {
+      recentSubEl.innerHTML = docs.map(d => {
+        const s = d.data();
+        return `<div style="padding:10px 0;border-bottom:1px solid var(--border);font-size:0.82rem;">
+          <strong>${escHtml(s.name||'—')}</strong>
+          <span style="color:var(--muted);font-size:0.75rem;margin-left:8px;">${fmtDate(s.createdAt)}</span>
+          <p style="color:var(--muted);margin-top:2px;">${escHtml(s.email)}</p>
+        </div>`;
+      }).join('');
+    }
+  } catch (err) {
+    recentSubEl.innerHTML = `<p style="color:var(--danger);font-size:0.8rem;">${isPermissionError(err) ? 'Permission denied.' : 'Failed to load.'}</p>`;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   BLOG
+══════════════════════════════════════════════════════════════ */
+
+async function loadBlog() {
+  const el = document.getElementById('blog-list');
+  spinner(el);
+  try {
+    const snap = await safeGet('posts', 'createdAt', 'desc');
+    if (snap.empty) { empty(el, 'No blog posts yet. Add your first post.'); return; }
+
+    const rows = snap.docs.map(d => {
+      const p = d.data();
+      return `<tr>
+        <td><strong>${escHtml(p.title)}</strong></td>
+        <td><span class="badge badge-navy">${escHtml(p.category || 'General')}</span></td>
+        <td style="white-space:nowrap;">${fmtDate(p.createdAt)}</td>
+        <td><span class="badge ${p.published ? 'badge-green' : 'badge-navy'}">${p.published ? 'Published' : 'Draft'}</span></td>
+        <td class="td-actions">
+          <button class="btn btn-ghost btn-sm" onclick="editBlog('${d.id}')">Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteBlog('${d.id}')">Delete</button>
+        </td>
+      </tr>`;
+    }).join('');
+
+    el.innerHTML = `<div class="table-wrap"><table class="data-table">
+      <thead><tr><th>Title</th><th>Category</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>`;
+  } catch (err) {
+    if (isPermissionError(err)) { errState(el, 'Permission denied — check Firestore rules.'); showPermissionBanner(); }
+    else errState(el, `Failed to load posts: ${err.message}`);
+  }
+}
+
+function blogFormHTML(post = {}) {
+  return `<div class="form-grid">
+    <div class="form-group span-2">
+      <label>Title</label>
+      <input type="text" id="bf-title" value="${escHtml(post.title||'')}" placeholder="Post title…" />
+    </div>
+    <div class="form-group">
+      <label>Category</label>
+      <input type="text" id="bf-category" value="${escHtml(post.category||'')}" placeholder="Diplomacy, Education…" />
+    </div>
+    <div class="form-group">
+      <label>Date Label</label>
+      <input type="text" id="bf-date" value="${escHtml(post.date||'')}" placeholder="March 2026" />
+    </div>
+    <div class="form-group span-2">
+      <label>Excerpt / Summary</label>
+      <textarea id="bf-excerpt" rows="2" placeholder="Short summary shown in blog card…">${escHtml(post.excerpt||'')}</textarea>
+    </div>
+    <div class="form-group span-2">
+      <label>Content (HTML supported)</label>
+      <textarea id="bf-content" rows="8" placeholder="Full article content…">${escHtml(post.content||'')}</textarea>
+    </div>
+    <div class="form-group">
+      <label>Cover Image</label>
+      <label class="form-file-label">
+        <svg viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+        Choose Image
+        <input type="file" id="bf-cover" accept="image/*" onchange="previewImg(this,'bf-cover-preview')" />
+      </label>
+      <img id="bf-cover-preview" class="upload-preview ${post.coverUrl ? 'show' : ''}" src="${escHtml(post.coverUrl||'')}" alt="Preview" />
+    </div>
+    <div class="form-group">
+      <label>Status</label>
+      <select id="bf-published">
+        <option value="false" ${!post.published ? 'selected' : ''}>Draft</option>
+        <option value="true"  ${post.published  ? 'selected' : ''}>Published</option>
+      </select>
+    </div>
+  </div>`;
+}
+
+function openBlogForm(id = null, post = {}) {
+  _editingId = id;
+  openModal(id ? 'Edit Post' : 'Add New Post', blogFormHTML(post), saveBlog);
+}
+
+async function editBlog(id) {
+  try {
+    const doc = await db.collection('posts').doc(id).get();
+    if (!doc.exists) { toast('Post not found.', 'warning'); return; }
+    openBlogForm(id, doc.data());
+  } catch (err) { toast('Could not load post: ' + err.message, 'error'); }
+}
+
+async function saveBlog() {
+  const title     = document.getElementById('bf-title').value.trim();
+  const category  = document.getElementById('bf-category').value.trim();
+  const date      = document.getElementById('bf-date').value.trim();
+  const excerpt   = document.getElementById('bf-excerpt').value.trim();
+  const content   = document.getElementById('bf-content').value.trim();
+  const published = document.getElementById('bf-published').value === 'true';
+  const fileInput = document.getElementById('bf-cover');
+
+  if (!title) { toast('Title is required.', 'warning'); return; }
+
+  const btn = document.getElementById('modalSaveBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+
+  try {
+    let coverUrl = '';
+    if (_editingId) {
+      const existing = await db.collection('posts').doc(_editingId).get();
+      coverUrl = existing.data()?.coverUrl || '';
+    }
+    if (fileInput.files[0]) {
+      coverUrl = await uploadFile(fileInput.files[0], `blog_covers/${Date.now()}_${fileInput.files[0].name}`);
+    }
+
+    const data = {
+      title, category, date, excerpt, content, published, coverUrl,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    };
+
+    if (_editingId) {
+      await db.collection('posts').doc(_editingId).update(data);
+      toast('Post updated successfully.');
+    } else {
+      data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+      await db.collection('posts').add(data);
+      toast('Post added successfully.');
+    }
+    closeModal();
+    loadBlog();
+  } catch (err) {
+    toast('Save failed: ' + err.message, 'error');
+    btn.disabled = false; btn.textContent = 'Save';
+  }
+}
+
+async function deleteBlog(id) {
+  if (!confirm('Permanently delete this post?')) return;
+  try {
+    await db.collection('posts').doc(id).delete();
+    toast('Post deleted.');
+    loadBlog();
+    loadDashboard();
+  } catch (err) { toast('Delete failed: ' + err.message, 'error'); }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   GALLERY
+══════════════════════════════════════════════════════════════ */
+
+async function loadGallery() {
+  const grid = document.getElementById('gallery-grid');
+  spinner(grid);
+  try {
+    const snap = await safeGet('gallery', 'createdAt', 'desc');
+    if (snap.empty) { empty(grid, 'No photos yet. Upload your first photo.'); return; }
+
+    grid.innerHTML = snap.docs.map(d => {
+      const p = d.data();
+      return `<div class="photo-card">
+        <img src="${escHtml(p.url)}" alt="${escHtml(p.caption||'')}" loading="lazy" />
+        <div class="photo-card-overlay">
+          <div class="photo-card-meta">${escHtml(p.place||'')}${p.date ? ' · ' + escHtml(p.date) : ''}</div>
+          <div class="photo-card-actions">
+            <button class="btn btn-danger btn-sm btn-icon" title="Delete" onclick="deleteGalleryPhoto('${d.id}','${escHtml(p.storagePath||'')}')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  } catch (err) {
+    if (isPermissionError(err)) { errState(grid, 'Permission denied — check Firestore rules.'); showPermissionBanner(); }
+    else errState(grid, `Failed to load gallery: ${err.message}`);
+  }
+}
+
+document.getElementById('galleryUploadInput').addEventListener('change', async (e) => {
+  const files = Array.from(e.target.files);
+  if (!files.length) return;
+
+  /* If single file, show metadata form; multi-file: upload with empty metadata */
+  if (files.length === 1) {
+    const file = files[0];
+    openModal('Photo Details', `
+      <div class="form-grid">
+        <div class="form-group span-2">
+          <label>Caption</label>
+          <input type="text" id="gf-caption" placeholder="A memorable moment…" />
+        </div>
+        <div class="form-group">
+          <label>Place</label>
+          <input type="text" id="gf-place" placeholder="Port-au-Prince, Haiti" />
+        </div>
+        <div class="form-group">
+          <label>Date Taken</label>
+          <input type="text" id="gf-date" placeholder="March 2026" />
+        </div>
+        <div class="form-group span-2">
+          <label>Details</label>
+          <textarea id="gf-details" rows="3" placeholder="Brief description…"></textarea>
+        </div>
+      </div>
+    `, async () => {
+      const btn = document.getElementById('modalSaveBtn');
+      btn.disabled = true; btn.textContent = 'Uploading…';
+      try {
+        const path = `gallery/${Date.now()}_${file.name}`;
+        const url  = await uploadFile(file, path, 'galleryProgressBar');
+        await db.collection('gallery').add({
+          url,
+          storagePath: path,
+          caption:  document.getElementById('gf-caption').value.trim(),
+          place:    document.getElementById('gf-place').value.trim(),
+          date:     document.getElementById('gf-date').value.trim(),
+          details:  document.getElementById('gf-details').value.trim(),
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        });
+        toast('Photo uploaded.');
+        closeModal();
+        loadGallery();
+        loadDashboard();
+      } catch (err) {
+        toast('Upload failed: ' + err.message, 'error');
+        btn.disabled = false; btn.textContent = 'Upload';
+      }
+    }, 'Upload');
+  } else {
+    /* Batch upload */
+    let uploaded = 0;
+    toast(`Uploading ${files.length} photos…`, 'warning');
+    for (const file of files) {
+      try {
+        const path = `gallery/${Date.now()}_${file.name}`;
+        const url  = await uploadFile(file, path, 'galleryProgressBar');
+        await db.collection('gallery').add({
+          url, storagePath: path, caption: '', place: '', date: '', details: '',
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        });
+        uploaded++;
+      } catch (err) {
+        toast(`Failed: ${file.name}`, 'error');
+      }
+    }
+    toast(`${uploaded} of ${files.length} photos uploaded.`);
+    loadGallery();
+    loadDashboard();
+  }
+  e.target.value = '';
+});
+
+async function deleteGalleryPhoto(id, storagePath) {
+  if (!confirm('Delete this photo permanently?')) return;
+  try {
+    await db.collection('gallery').doc(id).delete();
+    if (storagePath) await storage.ref(storagePath).delete().catch(() => {});
+    toast('Photo deleted.');
+    loadGallery();
+    loadDashboard();
+  } catch (err) { toast('Delete failed: ' + err.message, 'error'); }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MUSIC
+══════════════════════════════════════════════════════════════ */
+
+async function loadMusic() {
+  const el = document.getElementById('music-list');
+  spinner(el);
+  try {
+    const snap = await safeGet('releases', 'createdAt', 'desc');
+    if (snap.empty) { empty(el, 'No releases yet. Add your first release.'); return; }
+
+    el.className = 'release-list';
+    el.innerHTML = snap.docs.map(d => {
+      const r = d.data();
+      const typeClass = r.type === 'Album' ? 'badge-gold' : 'badge-navy';
+      return `<div class="release-item">
+        <img class="release-thumb" src="${escHtml(r.coverUrl||'')}" alt="${escHtml(r.title||'')}"
+          onerror="this.style.background='var(--bg)';this.src=''" />
+        <div class="release-info">
+          <div class="release-title">${escHtml(r.title)}</div>
+          <div class="release-meta">
+            <span class="badge ${typeClass}">${escHtml(r.type||'Single')}</span>
+            &nbsp;·&nbsp;${escHtml(String(r.year||''))}
+          </div>
+        </div>
+        <div class="release-actions">
+          <button class="btn btn-ghost btn-sm" onclick="editMusic('${d.id}')">Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteMusic('${d.id}')">Delete</button>
+        </div>
+      </div>`;
+    }).join('');
+  } catch (err) {
+    if (isPermissionError(err)) { errState(el, 'Permission denied.'); showPermissionBanner(); }
+    else errState(el, `Failed to load releases: ${err.message}`);
+  }
+}
+
+function musicFormHTML(r = {}) {
+  return `<div class="form-grid">
+    <div class="form-group span-2">
+      <label>Title</label>
+      <input type="text" id="mf-title" value="${escHtml(r.title||'')}" placeholder="Release title…" />
+    </div>
+    <div class="form-group">
+      <label>Type</label>
+      <select id="mf-type">
+        <option value="Single" ${(r.type||'Single')==='Single'?'selected':''}>Single</option>
+        <option value="Album"  ${r.type==='Album' ?'selected':''}>Album</option>
+        <option value="EP"     ${r.type==='EP'    ?'selected':''}>EP</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Year</label>
+      <input type="number" id="mf-year" value="${r.year||new Date().getFullYear()}" min="2000" max="2099" />
+    </div>
+    <div class="form-group">
+      <label>Spotify URL</label>
+      <input type="url" id="mf-spotify" value="${escHtml(r.spotifyUrl||'')}" placeholder="https://open.spotify.com/…" />
+    </div>
+    <div class="form-group">
+      <label>Apple Music URL</label>
+      <input type="url" id="mf-apple" value="${escHtml(r.appleMusicUrl||'')}" placeholder="https://music.apple.com/…" />
+    </div>
+    <div class="form-group span-2">
+      <label>Cover Image</label>
+      <label class="form-file-label">
+        <svg viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+        Choose Cover
+        <input type="file" id="mf-cover" accept="image/*" onchange="previewImg(this,'mf-cover-preview')" />
+      </label>
+      <img id="mf-cover-preview" class="upload-preview ${r.coverUrl?'show':''}" src="${escHtml(r.coverUrl||'')}" alt="Preview" />
+    </div>
+  </div>`;
+}
+
+function openMusicForm(id = null, r = {}) {
+  _editingId = id;
+  openModal(id ? 'Edit Release' : 'Add Release', musicFormHTML(r), saveMusic);
+}
+
+async function editMusic(id) {
+  try {
+    const doc = await db.collection('releases').doc(id).get();
+    if (!doc.exists) { toast('Release not found.', 'warning'); return; }
+    openMusicForm(id, doc.data());
+  } catch (err) { toast('Could not load release: ' + err.message, 'error'); }
+}
+
+async function saveMusic() {
+  const title = document.getElementById('mf-title').value.trim();
+  if (!title) { toast('Title is required.', 'warning'); return; }
+
+  const btn = document.getElementById('modalSaveBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  try {
+    let coverUrl = '';
+    if (_editingId) {
+      const doc = await db.collection('releases').doc(_editingId).get();
+      coverUrl = doc.data()?.coverUrl || '';
+    }
+    const fileInput = document.getElementById('mf-cover');
+    if (fileInput.files[0]) {
+      coverUrl = await uploadFile(fileInput.files[0], `music_covers/${Date.now()}_${fileInput.files[0].name}`);
+    }
+
+    const data = {
+      title,
+      type:          document.getElementById('mf-type').value,
+      year:          parseInt(document.getElementById('mf-year').value) || new Date().getFullYear(),
+      spotifyUrl:    document.getElementById('mf-spotify').value.trim(),
+      appleMusicUrl: document.getElementById('mf-apple').value.trim(),
+      coverUrl,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    };
+
+    if (_editingId) {
+      await db.collection('releases').doc(_editingId).update(data);
+      toast('Release updated.');
+    } else {
+      data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+      await db.collection('releases').add(data);
+      toast('Release added.');
+    }
+    closeModal();
+    loadMusic();
+  } catch (err) {
+    toast('Save failed: ' + err.message, 'error');
+    btn.disabled = false; btn.textContent = 'Save';
+  }
+}
+
+async function deleteMusic(id) {
+  if (!confirm('Delete this release?')) return;
+  try {
+    await db.collection('releases').doc(id).delete();
+    toast('Release deleted.');
+    loadMusic();
+  } catch (err) { toast('Delete failed: ' + err.message, 'error'); }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   ACADEMIC
+══════════════════════════════════════════════════════════════ */
+
+async function loadAcademic() {
+  const el = document.getElementById('academic-list');
+  spinner(el);
+  try {
+    const snap = await safeGet('publications', 'createdAt', 'desc');
+    if (snap.empty) { empty(el, 'No publications yet. Add your first publication.'); return; }
+
+    const rows = snap.docs.map(d => {
+      const p = d.data();
+      return `<tr>
+        <td>
+          <strong>${escHtml(p.title)}</strong>
+          ${p.externalLink ? `<br><a href="${escHtml(p.externalLink)}" target="_blank" rel="noopener" style="font-size:0.75rem;color:var(--navy);">View →</a>` : ''}
+        </td>
+        <td><span class="badge badge-navy">${escHtml(p.type||'')}</span></td>
+        <td>${escHtml(p.institution||'—')}</td>
+        <td>${escHtml(String(p.year||''))}</td>
+        <td class="td-actions">
+          <button class="btn btn-ghost btn-sm" onclick="editAcademic('${d.id}')">Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteAcademic('${d.id}')">Delete</button>
+        </td>
+      </tr>`;
+    }).join('');
+
+    el.innerHTML = `<div class="table-wrap"><table class="data-table">
+      <thead><tr><th>Title</th><th>Type</th><th>Institution</th><th>Year</th><th>Actions</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>`;
+  } catch (err) {
+    if (isPermissionError(err)) { errState(el, 'Permission denied.'); showPermissionBanner(); }
+    else errState(el, `Failed to load: ${err.message}`);
+  }
+}
+
+function academicFormHTML(p = {}) {
+  return `<div class="form-grid">
+    <div class="form-group span-2">
+      <label>Title</label>
+      <input type="text" id="af-title" value="${escHtml(p.title||'')}" placeholder="Publication title…" />
+    </div>
+    <div class="form-group">
+      <label>Type</label>
+      <select id="af-type">
+        <option value="Paper"        ${p.type==='Paper'        ?'selected':''}>Paper</option>
+        <option value="Dissertation" ${p.type==='Dissertation' ?'selected':''}>Dissertation</option>
+        <option value="Thesis"       ${p.type==='Thesis'       ?'selected':''}>Thesis</option>
+        <option value="Book"         ${p.type==='Book'         ?'selected':''}>Book</option>
+        <option value="Article"      ${p.type==='Article'      ?'selected':''}>Article</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Year</label>
+      <input type="number" id="af-year" value="${p.year||new Date().getFullYear()}" />
+    </div>
+    <div class="form-group span-2">
+      <label>Institution</label>
+      <input type="text" id="af-institution" value="${escHtml(p.institution||'')}" placeholder="University or organization…" />
+    </div>
+    <div class="form-group span-2">
+      <label>Abstract</label>
+      <textarea id="af-abstract" rows="4" placeholder="Brief abstract…">${escHtml(p.abstract||'')}</textarea>
+    </div>
+    <div class="form-group">
+      <label>External Link</label>
+      <input type="url" id="af-link" value="${escHtml(p.externalLink||'')}" placeholder="https://…" />
+    </div>
+    <div class="form-group">
+      <label>PDF Upload</label>
+      <label class="form-file-label">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Choose PDF
+        <input type="file" id="af-pdf" accept=".pdf" />
+      </label>
+      ${p.pdfUrl ? `<a href="${escHtml(p.pdfUrl)}" target="_blank" style="font-size:0.78rem;color:var(--navy);margin-top:4px;">View current PDF ↗</a>` : ''}
+    </div>
+  </div>`;
+}
+
+function openAcademicForm(id = null, p = {}) {
+  _editingId = id;
+  openModal(id ? 'Edit Publication' : 'Add Publication', academicFormHTML(p), saveAcademic);
+}
+
+async function editAcademic(id) {
+  try {
+    const doc = await db.collection('publications').doc(id).get();
+    if (!doc.exists) { toast('Publication not found.', 'warning'); return; }
+    openAcademicForm(id, doc.data());
+  } catch (err) { toast('Could not load publication: ' + err.message, 'error'); }
+}
+
+async function saveAcademic() {
+  const title = document.getElementById('af-title').value.trim();
+  if (!title) { toast('Title is required.', 'warning'); return; }
+
+  const btn = document.getElementById('modalSaveBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  try {
+    let pdfUrl = '';
+    if (_editingId) {
+      const doc = await db.collection('publications').doc(_editingId).get();
+      pdfUrl = doc.data()?.pdfUrl || '';
+    }
+    const pdfInput = document.getElementById('af-pdf');
+    if (pdfInput.files[0]) {
+      pdfUrl = await uploadFile(pdfInput.files[0], `academic_pdfs/${Date.now()}_${pdfInput.files[0].name}`);
+    }
+
+    const data = {
+      title,
+      type:         document.getElementById('af-type').value,
+      year:         parseInt(document.getElementById('af-year').value) || new Date().getFullYear(),
+      institution:  document.getElementById('af-institution').value.trim(),
+      abstract:     document.getElementById('af-abstract').value.trim(),
+      externalLink: document.getElementById('af-link').value.trim(),
+      pdfUrl,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    };
+
+    if (_editingId) {
+      await db.collection('publications').doc(_editingId).update(data);
+      toast('Publication updated.');
+    } else {
+      data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+      await db.collection('publications').add(data);
+      toast('Publication added.');
+    }
+    closeModal();
+    loadAcademic();
+  } catch (err) {
+    toast('Save failed: ' + err.message, 'error');
+    btn.disabled = false; btn.textContent = 'Save';
+  }
+}
+
+async function deleteAcademic(id) {
+  if (!confirm('Delete this publication?')) return;
+  try {
+    await db.collection('publications').doc(id).delete();
+    toast('Publication deleted.');
+    loadAcademic();
+  } catch (err) { toast('Delete failed: ' + err.message, 'error'); }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MESSAGES
+══════════════════════════════════════════════════════════════ */
+
+async function loadMessages() {
+  const tbody = document.getElementById('messages-tbody');
+  tbody.innerHTML = '<tr><td colspan="5"><div class="spinner-wrap"><div class="spinner"></div></div></td></tr>';
+  try {
+    const snap = await safeGet('messages', 'createdAt', 'desc');
+    document.getElementById('msg-count-badge').textContent =
+      `${snap.size} message${snap.size !== 1 ? 's' : ''}`;
+
+    if (snap.empty) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:32px;">No messages yet.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = snap.docs.map(d => {
+      const m = d.data();
+      return `<tr class="${!m.read ? 'unread' : ''}">
+        <td>${escHtml(m.name||'—')}</td>
+        <td><a href="mailto:${escHtml(m.email||'')}" style="color:var(--navy);">${escHtml(m.email||'—')}</a></td>
+        <td style="white-space:nowrap;">${fmtDate(m.createdAt)}</td>
+        <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escHtml((m.message||'').slice(0,60))}${(m.message||'').length > 60 ? '…' : ''}</td>
+        <td class="td-actions">
+          <button class="btn btn-ghost btn-sm" onclick="viewMessage('${d.id}')">Read</button>
+          ${!m.read ? `<button class="btn btn-gold btn-sm" onclick="markRead('${d.id}',this)">Mark Read</button>` : ''}
+          <button class="btn btn-danger btn-sm" onclick="deleteMsg('${d.id}')">Delete</button>
+        </td>
+      </tr>`;
+    }).join('');
+  } catch (err) {
+    if (isPermissionError(err)) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--danger);padding:24px;">Permission denied — check Firestore rules.</td></tr>';
+      showPermissionBanner();
+    } else {
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--danger);padding:24px;">${escHtml(err.message)}</td></tr>`;
+    }
+  }
+}
+
+async function viewMessage(id) {
+  try {
+    const doc = await db.collection('messages').doc(id).get();
+    if (!doc.exists) { toast('Message not found.', 'warning'); return; }
+    const m = doc.data();
+    openModal(
+      `Message from ${escHtml(m.name||'—')}`,
+      `<div style="border-bottom:1px solid var(--border);padding-bottom:12px;margin-bottom:16px;">
+         <p style="font-size:0.85rem;"><strong>From:</strong> ${escHtml(m.name||'—')} &lt;${escHtml(m.email||'')} &gt;</p>
+         <p style="font-size:0.78rem;color:var(--muted);margin-top:4px;">${fmtDate(m.createdAt)}</p>
+       </div>
+       <p style="font-size:0.88rem;line-height:1.7;white-space:pre-wrap;">${escHtml(m.message||'')}</p>`,
+      null
+    );
+    if (!m.read) {
+      await db.collection('messages').doc(id).update({ read: true });
+      loadMessages();
+      loadDashboard();
+    }
+  } catch (err) { toast('Could not load message: ' + err.message, 'error'); }
+}
+
+async function markRead(id, btn) {
+  try {
+    await db.collection('messages').doc(id).update({ read: true });
+    const row = btn.closest('tr');
+    row.classList.remove('unread');
+    btn.remove();
+    toast('Marked as read.');
+    loadDashboard();
+  } catch (err) { toast('Failed to mark as read: ' + err.message, 'error'); }
+}
+
+async function deleteMsg(id) {
+  if (!confirm('Delete this message permanently?')) return;
+  try {
+    await db.collection('messages').doc(id).delete();
+    toast('Message deleted.');
+    loadMessages();
+    loadDashboard();
+  } catch (err) { toast('Delete failed: ' + err.message, 'error'); }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SUBSCRIBERS
+══════════════════════════════════════════════════════════════ */
+
+async function loadSubscribers() {
+  const tbody = document.getElementById('subs-tbody');
+  tbody.innerHTML = '<tr><td colspan="5"><div class="spinner-wrap"><div class="spinner"></div></div></td></tr>';
+  try {
+    const snap = await safeGet('subscribers', 'createdAt', 'desc');
+    _allSubscribers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderSubscribers(_allSubscribers);
+  } catch (err) {
+    if (isPermissionError(err)) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--danger);padding:24px;">Permission denied — check Firestore rules.</td></tr>';
+      showPermissionBanner();
+    } else {
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--danger);padding:24px;">${escHtml(err.message)}</td></tr>`;
+    }
+  }
+}
+
+function renderSubscribers(subs) {
+  const tbody = document.getElementById('subs-tbody');
+  document.getElementById('sub-total').textContent = subs.length;
+
+  if (!subs.length) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:32px;">No subscribers yet.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = subs.map(s => `<tr>
+    <td>${escHtml(s.name||'—')}</td>
+    <td><a href="mailto:${escHtml(s.email||'')}" style="color:var(--navy);">${escHtml(s.email||'—')}</a></td>
+    <td>${escHtml(s.phone||'—')}</td>
+    <td style="white-space:nowrap;">${fmtDate(s.createdAt)}</td>
+    <td class="td-actions">
+      <button class="btn btn-danger btn-sm" onclick="deleteSub('${s.id}')">Remove</button>
+    </td>
+  </tr>`).join('');
+}
+
+function filterSubscribers(query) {
+  const q = query.toLowerCase();
+  const filtered = _allSubscribers.filter(s =>
+    (s.name  ||'').toLowerCase().includes(q) ||
+    (s.email ||'').toLowerCase().includes(q) ||
+    (s.phone ||'').toLowerCase().includes(q)
+  );
+  renderSubscribers(filtered);
+}
+
+async function deleteSub(id) {
+  if (!confirm('Remove this subscriber?')) return;
+  try {
+    await db.collection('subscribers').doc(id).delete();
+    toast('Subscriber removed.');
+    loadSubscribers();
+    loadDashboard();
+  } catch (err) { toast('Delete failed: ' + err.message, 'error'); }
+}
+
+function exportCSV() {
+  if (!_allSubscribers.length) { toast('No subscribers to export.', 'warning'); return; }
+  const headers = ['Name', 'Email', 'Phone', 'Date Subscribed'];
+  const rows = _allSubscribers.map(s => [
+    `"${(s.name||'').replace(/"/g,'""')}"`,
+    `"${(s.email||'').replace(/"/g,'""')}"`,
+    `"${(s.phone||'').replace(/"/g,'""')}"`,
+    `"${fmtDate(s.createdAt)}"`,
+  ].join(','));
+  const csv  = [headers.join(','), ...rows].join('\n');
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = Object.assign(document.createElement('a'), { href: url, download: 'subscribers.csv' });
+  a.click();
+  URL.revokeObjectURL(url);
+  toast(`${_allSubscribers.length} subscriber${_allSubscribers.length !== 1 ? 's' : ''} exported.`);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   PROJECTS
+══════════════════════════════════════════════════════════════ */
+
+async function loadProjects() {
+  const el = document.getElementById('projects-list');
+  spinner(el);
+  try {
+    /* Try ordered by 'order' field; fall back to createdAt then unordered */
+    let snap;
+    try {
+      snap = await db.collection('projects').orderBy('order', 'asc').get();
+    } catch (e) {
+      try { snap = await safeGet('projects', 'createdAt', 'desc'); }
+      catch (e2) { snap = await db.collection('projects').get(); }
+    }
+
+    if (snap.empty) { empty(el, 'No projects yet. Add your first project.'); return; }
+
+    el.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;">` +
+      snap.docs.map(d => {
+        const p = d.data();
+        return `<div class="card" style="transition:box-shadow 0.2s;">
+          <div style="padding:16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);">
+            <div style="width:44px;height:44px;border-radius:8px;background:var(--bg);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;">
+              ${p.logoUrl
+                ? `<img src="${escHtml(p.logoUrl)}" alt="${escHtml(p.title)}" style="width:100%;height:100%;object-fit:contain;" onerror="this.parentElement.innerHTML='<svg viewBox=&quot;0 0 24 24&quot; style=&quot;width:20px;height:20px;fill:none;stroke:var(--border);stroke-width:1.5;&quot;><rect x=&quot;3&quot; y=&quot;3&quot; width=&quot;18&quot; height=&quot;18&quot; rx=&quot;2&quot;/></svg>'" />`
+                : '<svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:none;stroke:var(--border);stroke-width:1.5;"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>'}
+            </div>
+            <strong style="font-size:0.88rem;color:var(--navy);line-height:1.3;">${escHtml(p.title)}</strong>
+          </div>
+          <div class="card-body">
+            <p style="font-size:0.82rem;color:var(--muted);line-height:1.6;margin-bottom:12px;">${escHtml((p.description||'').slice(0,110))}${(p.description||'').length > 110 ? '…' : ''}</p>
+            ${p.link ? `<a href="${escHtml(p.link)}" target="_blank" rel="noopener" style="font-size:0.75rem;color:var(--navy);display:block;margin-bottom:10px;">Visit project ↗</a>` : ''}
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-ghost btn-sm" onclick="editProject('${d.id}')">Edit</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteProject('${d.id}')">Delete</button>
+            </div>
+          </div>
+        </div>`;
+      }).join('') + '</div>';
+  } catch (err) {
+    if (isPermissionError(err)) { errState(el, 'Permission denied.'); showPermissionBanner(); }
+    else errState(el, `Failed to load projects: ${err.message}`);
+  }
+}
+
+function projectFormHTML(p = {}) {
+  return `<div class="form-grid">
+    <div class="form-group span-2">
+      <label>Title</label>
+      <input type="text" id="pf-title" value="${escHtml(p.title||'')}" placeholder="Project name…" />
+    </div>
+    <div class="form-group span-2">
+      <label>Description</label>
+      <textarea id="pf-desc" rows="3" placeholder="Brief description…">${escHtml(p.description||'')}</textarea>
+    </div>
+    <div class="form-group">
+      <label>External Link</label>
+      <input type="url" id="pf-link" value="${escHtml(p.link||'')}" placeholder="https://…" />
+    </div>
+    <div class="form-group">
+      <label>Display Order</label>
+      <input type="number" id="pf-order" value="${p.order !== undefined ? p.order : 0}" min="0" />
+    </div>
+    <div class="form-group span-2">
+      <label>Logo Image</label>
+      <label class="form-file-label">
+        <svg viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+        Choose Logo
+        <input type="file" id="pf-logo" accept="image/*" onchange="previewImg(this,'pf-logo-preview')" />
+      </label>
+      <img id="pf-logo-preview" class="upload-preview ${p.logoUrl?'show':''}" src="${escHtml(p.logoUrl||'')}" alt="Preview" />
+    </div>
+  </div>`;
+}
+
+function openProjectForm(id = null, p = {}) {
+  _editingId = id;
+  openModal(id ? 'Edit Project' : 'Add Project', projectFormHTML(p), saveProject);
+}
+
+async function editProject(id) {
+  try {
+    const doc = await db.collection('projects').doc(id).get();
+    if (!doc.exists) { toast('Project not found.', 'warning'); return; }
+    openProjectForm(id, doc.data());
+  } catch (err) { toast('Could not load project: ' + err.message, 'error'); }
+}
+
+async function saveProject() {
+  const title = document.getElementById('pf-title').value.trim();
+  if (!title) { toast('Title is required.', 'warning'); return; }
+
+  const btn = document.getElementById('modalSaveBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  try {
+    let logoUrl = '';
+    if (_editingId) {
+      const doc = await db.collection('projects').doc(_editingId).get();
+      logoUrl = doc.data()?.logoUrl || '';
+    }
+    const logoInput = document.getElementById('pf-logo');
+    if (logoInput.files[0]) {
+      logoUrl = await uploadFile(logoInput.files[0], `project_logos/${Date.now()}_${logoInput.files[0].name}`);
+    }
+
+    const data = {
+      title,
+      description: document.getElementById('pf-desc').value.trim(),
+      link:        document.getElementById('pf-link').value.trim(),
+      order:       parseInt(document.getElementById('pf-order').value) || 0,
+      logoUrl,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    };
+
+    if (_editingId) {
+      await db.collection('projects').doc(_editingId).update(data);
+      toast('Project updated.');
+    } else {
+      data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+      await db.collection('projects').add(data);
+      toast('Project added.');
+    }
+    closeModal();
+    loadProjects();
+  } catch (err) {
+    toast('Save failed: ' + err.message, 'error');
+    btn.disabled = false; btn.textContent = 'Save';
+  }
+}
+
+async function deleteProject(id) {
+  if (!confirm('Delete this project?')) return;
+  try {
+    await db.collection('projects').doc(id).delete();
+    toast('Project deleted.');
+    loadProjects();
+  } catch (err) { toast('Delete failed: ' + err.message, 'error'); }
+}
+</script>
+
+</body>
+</html>

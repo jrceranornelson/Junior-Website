@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gallery — Junior Ceranor Nelson</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon-180.png" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="gallery-page.css" />
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="preloader-logo-wrap">
+      <svg class="preloader-ring" viewBox="0 0 126 126" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="63" cy="63" r="59" />
+      </svg>
+      <img src="logo.png" alt="Junior Ceranor Nelson" class="preloader-logo" />
+    </div>
+    <p class="preloader-name">Junior Ceranor Nelson</p>
+    <div class="preloader-bar-wrap">
+      <div class="preloader-bar"></div>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="logo.png" alt="Junior Ceranor Nelson" class="nav-logo-img" />
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html#home"     class="nav-link">Home</a></li>
+        <li><a href="index.html#about"    class="nav-link">About Me</a></li>
+        <li><a href="index.html#projects" class="nav-link">Projects</a></li>
+        <li><a href="gallery.html"        class="nav-link active">Gallery</a></li>
+        <li><a href="music.html"          class="nav-link">Music</a></li>
+        <li><a href="academic.html"       class="nav-link">Academic</a></li>
+        <li><a href="index.html#blog"     class="nav-link">Blog &amp; Library</a></li>
+        <li><a href="index.html#contact"  class="nav-link">Contact</a></li>
+      </ul>
+      <a href="index.html#contact" class="nav-cta">Contact Us</a>
+    </div>
+  </nav>
+
+  <!-- PAGE HERO -->
+  <header class="gp-hero">
+    <p class="gp-hero-label">Visual Journal</p>
+    <h1 class="gp-hero-title">Gallery</h1>
+    <div class="gp-hero-line"></div>
+  </header>
+
+
+  <!-- ═══════════════════════════════════════════
+       ALBUMS
+  ═══════════════════════════════════════════ -->
+  <section class="gp-section gp-albums-section">
+    <div class="container">
+
+      <div class="gp-section-header reveal">
+        <p class="gp-section-label">Collections</p>
+        <h2 class="gp-section-title">Albums</h2>
+      </div>
+
+      <!-- Albums grid -->
+      <div class="albums-grid">
+
+        <!-- ── BALI ALBUM ── -->
+        <article class="album-card reveal" data-album-id="bali">
+          <div class="album-stack-wrap">
+            <img src="gallery/photo6.jpg"  class="stack-img stack-3" alt="" aria-hidden="true" />
+            <img src="gallery/photo4.jpg"  class="stack-img stack-2" alt="" aria-hidden="true" />
+            <img src="gallery/photo3.jpg"  class="stack-img stack-1" alt="" aria-hidden="true" />
+            <span class="album-count-badge">5 photos</span>
+          </div>
+          <div class="album-info">
+            <h3 class="album-name">Bali, Indonesia</h3>
+            <div class="album-meta">
+              <span class="album-meta-item">
+                <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                Bali, Indonesia
+              </span>
+              <span class="album-meta-item">
+                <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                May 2024
+              </span>
+            </div>
+            <button class="album-open-btn" data-album-id="bali" aria-expanded="false">
+              View Album
+              <svg class="album-btn-arrow" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+          </div>
+        </article>
+
+        <!-- ── NEW FAMILY ALBUM ── -->
+        <article class="album-card reveal" data-album-id="new-family">
+          <div class="album-stack-wrap">
+            <div class="album-placeholder-img placeholder-3"></div>
+            <img src="gallery/family-photo-1.jpg"  class="stack-img stack-2" alt="" aria-hidden="true" />
+            <img src="gallery/family-photo-2.jpg"  class="stack-img stack-1" alt="" aria-hidden="true" />
+            <span class="album-count-badge">2 photos</span>
+          </div>
+          <div class="album-info">
+            <h3 class="album-name">New Family</h3>
+            <div class="album-meta">
+              <span class="album-meta-item">
+                <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Family
+              </span>
+              <span class="album-meta-item">
+                <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Coming soon
+              </span>
+            </div>
+            <button class="album-open-btn" data-album-id="new-family" aria-expanded="false">
+              View Album
+              <svg class="album-btn-arrow" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+          </div>
+        </article>
+
+        <!-- ── WORK — DIPLOMACY ALBUM ── -->
+        <article class="album-card reveal" data-album-id="work-diplomacy">
+          <div class="album-stack-wrap">
+            <img src="gallery/work-diplomacy-9286.jpg" class="stack-img stack-3" alt="" aria-hidden="true" />
+            <img src="gallery/work-diplomacy-9281.jpg" class="stack-img stack-2" alt="" aria-hidden="true" />
+            <img src="gallery/work-diplomacy-9283.jpg" class="stack-img stack-1" alt="" aria-hidden="true" />
+            <span class="album-count-badge">8 photos</span>
+          </div>
+          <div class="album-info">
+            <h3 class="album-name">Work — Diplomacy</h3>
+            <div class="album-meta">
+              <span class="album-meta-item">
+                <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                Professional
+              </span>
+              <span class="album-meta-item">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                International
+              </span>
+            </div>
+            <button class="album-open-btn" data-album-id="work-diplomacy" aria-expanded="false">
+              View Album
+              <svg class="album-btn-arrow" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+          </div>
+        </article>
+
+        <!-- ── VACATION ALBUM ── -->
+        <article class="album-card reveal" data-album-id="vacation">
+          <div class="album-stack-wrap">
+            <div class="album-placeholder-img placeholder-3"></div>
+            <div class="album-placeholder-img placeholder-2"></div>
+            <img src="gallery/vacation-bali-pandawa.jpg" alt="Pandawa Cliff Estate, Bali" class="stack-img stack-1" />
+            <span class="album-count-badge">1 photo</span>
+          </div>
+          <div class="album-info">
+            <h3 class="album-name">Vacation</h3>
+            <div class="album-meta">
+              <span class="album-meta-item">
+                <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                Bali, Indonesia
+              </span>
+              <span class="album-meta-item">
+                <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Dec 2018
+              </span>
+            </div>
+            <button class="album-open-btn" data-album-id="vacation" aria-expanded="false">
+              View Album
+              <svg class="album-btn-arrow" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+          </div>
+        </article>
+
+        <!-- ── AYITI CHERI ALBUM ── -->
+        <article class="album-card reveal" data-album-id="ayiti-cheri">
+          <div class="album-stack-wrap">
+            <div class="album-placeholder-img placeholder-3"></div>
+            <div class="album-placeholder-img placeholder-2"></div>
+            <img src="gallery/ayiti-cheri-team.jpg" alt="Ayiti Cheri — football team, Haiti" class="stack-img stack-1" />
+            <span class="album-count-badge">1 photo</span>
+          </div>
+          <div class="album-info">
+            <h3 class="album-name">Ayiti Cheri</h3>
+            <div class="album-meta">
+              <span class="album-meta-item">
+                <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                Haiti
+              </span>
+              <span class="album-meta-item">
+                <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Haiti
+              </span>
+            </div>
+            <button class="album-open-btn" data-album-id="ayiti-cheri" aria-expanded="false">
+              View Album
+              <svg class="album-btn-arrow" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+          </div>
+        </article>
+
+      </div><!-- /albums-grid -->
+
+      <!-- Expanded: Vacation -->
+      <div class="album-expanded" id="album-panel-vacation" aria-hidden="true">
+        <div class="album-expanded-header">
+          <div>
+            <p class="album-expanded-label">Album</p>
+            <h3 class="album-expanded-title">Vacation</h3>
+          </div>
+          <button class="album-close-btn" data-album-id="vacation" aria-label="Close album">
+            <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="gp-grid">
+
+          <div class="gallery-item reveal"
+               data-caption="Pandawa Cliff Estate — Infinity Pool"
+               data-place="Pandawa Cliff Estate, Bali, Indonesia"
+               data-date="December 2, 2018"
+               data-details="An afternoon at the iconic Pandawa Cliff Estate in Bali — infinity pool overlooking the Indian Ocean, combining business and vacation in one of the world's most breathtaking settings.">
+            <img src="gallery/vacation-bali-pandawa.jpg" alt="Infinity pool at Pandawa Cliff Estate, Bali" loading="lazy" />
+            <button class="gallery-info-btn" aria-label="Photo info">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </button>
+          </div>
+
+        </div>
+      </div><!-- /album-panel-vacation -->
+
+      <!-- Expanded: Ayiti Cheri -->
+      <div class="album-expanded" id="album-panel-ayiti-cheri" aria-hidden="true">
+        <div class="album-expanded-header">
+          <div>
+            <p class="album-expanded-label">Album</p>
+            <h3 class="album-expanded-title">Ayiti Cheri</h3>
+          </div>
+          <button class="album-close-btn" data-album-id="ayiti-cheri" aria-label="Close album">
+            <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="gp-grid">
+
+          <div class="gallery-item reveal"
+               data-caption="Ayiti Cheri — Football Team"
+               data-place="Haiti"
+               data-date="—"
+               data-details="A proud group photo with a football team in Haiti — gathered outside after the game, jerseys on, smiles wide. Ayiti cheri.">
+            <img src="gallery/ayiti-cheri-team.jpg" alt="Football team group photo in Haiti" loading="lazy" />
+            <button class="gallery-info-btn" aria-label="Photo info">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </button>
+          </div>
+
+        </div>
+      </div><!-- /album-panel-ayiti-cheri -->
+
+      <!-- Expanded: Work — Diplomacy -->
+      <div class="album-expanded" id="album-panel-work-diplomacy" aria-hidden="true">
+        <div class="album-expanded-header">
+          <div>
+            <p class="album-expanded-label">Album</p>
+            <h3 class="album-expanded-title">Work &mdash; Diplomacy</h3>
+          </div>
+          <button class="album-close-btn" data-album-id="work-diplomacy" aria-label="Close album">
+            <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <!-- ✏️ ADD DIPLOMACY WORK PHOTOS HERE -->
+        <div class="gp-grid">
+
+          <div class="gallery-item"
+            data-caption="GRULAC Round Table"
+            data-place="Victoria, Australia"
+            data-date="February 4, 2020"
+            data-details="Engaged at the GRULAC (Group of Latin American and Caribbean Countries) round table in Victoria, Australia — pen in hand, papers in front, fully focused in a formal diplomatic working session.">
+            <img src="gallery/work-diplomacy-9280.jpg" alt="Junior Ceranor Nelson at the GRULAC round table, Victoria, Australia" />
+            <button class="gallery-info-btn" aria-label="Photo details">i</button>
+          </div>
+
+          <div class="gallery-item"
+            data-caption="72nd Anniversary of Sri Lanka's Independence"
+            data-place="Melbourne, Victoria, Australia"
+            data-date="February 4, 2020"
+            data-details="At the official celebration of the 72nd anniversary of the independence of Sri Lanka, held in Melbourne, Australia — standing between the Sri Lankan flags in a blue suit and red tie, representing Haiti with dignity at a moment of international commemoration.">
+            <img src="gallery/work-diplomacy-9281.jpg" alt="Junior Ceranor Nelson at the 72nd anniversary of Sri Lanka independence, Melbourne" />
+            <button class="gallery-info-btn" aria-label="Photo details">i</button>
+          </div>
+
+          <div class="gallery-item"
+            data-caption="In the Library Chair"
+            data-place="—"
+            data-date="—"
+            data-details="Seated in a grand leather chair inside a formal library — grey three-piece suit, composed and at ease in a space of power and knowledge.">
+            <img src="gallery/work-diplomacy-9283.jpg" alt="Junior Ceranor Nelson seated in a formal library" />
+            <button class="gallery-info-btn" aria-label="Photo details">i</button>
+          </div>
+
+          <div class="gallery-item"
+            data-caption="Signing of the LOU — GRULAC Victoria"
+            data-place="DFAT Office, Melbourne, Victoria, Australia"
+            data-date="October 4, 2019"
+            data-details="At the signing of the Letter of Understanding (LOU) for GRULAC Victoria at the DFAT (Department of Foreign Affairs and Trade) office in Melbourne — overlooking the city skyline, a milestone moment for Latin American and Caribbean diplomatic cooperation in Victoria.">
+            <img src="gallery/work-diplomacy-9284.jpg" alt="Junior Ceranor Nelson at the signing of the LOU for GRULAC Victoria, DFAT Melbourne" />
+            <button class="gallery-info-btn" aria-label="Photo details">i</button>
+          </div>
+
+          <div class="gallery-item"
+            data-caption="Barista Training at Aoili"
+            data-place="Restaurant Aoili, Pétion-Ville, Haiti"
+            data-date="April 2018"
+            data-details="Teaching coffee making to international barista standards at Restaurant Aoili in Pétion-Ville, Haiti — a hands-on session bringing professional hospitality training to a local setting, with a colorful mural and a bottle of Barbancourt in the background.">
+            <img src="gallery/work-diplomacy-9286.jpg" alt="Junior Ceranor Nelson teaching barista training at Restaurant Aoili, Pétion-Ville" />
+            <button class="gallery-info-btn" aria-label="Photo details">i</button>
+          </div>
+
+          <div class="gallery-item"
+            data-caption="With Steve Wozniak — Mega Success"
+            data-place="Los Angeles, California, USA"
+            data-date="2018"
+            data-details="A memorable encounter with Steve Wozniak, co-founder of Apple, at the JT Foxx Mega Success event in Los Angeles — a moment at the intersection of entrepreneurship and global ambition.">
+            <img src="gallery/work-diplomacy-9287.jpg" alt="Junior Ceranor Nelson with Steve Wozniak at JT Foxx Mega Success, Los Angeles" />
+            <button class="gallery-info-btn" aria-label="Photo details">i</button>
+          </div>
+
+          <div class="gallery-item"
+            data-caption="With Mel Gibson — Mega Success"
+            data-place="Los Angeles, California, USA"
+            data-date="2018"
+            data-details="With Mel Gibson at the JT Foxx Mega Success event in Los Angeles — a candid moment with the iconic actor and filmmaker, captured at one of the world's most high-profile entrepreneurial gatherings.">
+            <img src="gallery/work-diplomacy-9288.jpg" alt="Junior Ceranor Nelson with Mel Gibson at JT Foxx Mega Success, Los Angeles" />
+            <button class="gallery-info-btn" aria-label="Photo details">i</button>
+          </div>
+
+          <div class="gallery-item"
+            data-caption="With MPs Joanne Ryan &amp; Shayne Neumann"
+            data-place="Melbourne, Victoria, Australia"
+            data-date="February 9, 2019"
+            data-details="During the 2019 Australian federal election campaign — a conversation on immigration policy alongside MP Joanne Ryan (Member for Lalor) and MP Shayne Neumann, bringing a Caribbean and Haitian perspective to Australia's legislative debate on migration.">
+            <img src="gallery/work-diplomacy-9289.jpg" alt="Junior Ceranor Nelson with Joanne Ryan MP and Shayne Neumann MP, Melbourne 2019" />
+            <button class="gallery-info-btn" aria-label="Photo details">i</button>
+          </div>
+
+        </div>
+      </div><!-- /album-panel-work-diplomacy -->
+
+      <!-- Expanded: New Family -->
+      <div class="album-expanded" id="album-panel-new-family" aria-hidden="true">
+        <div class="album-expanded-header">
+          <div>
+            <p class="album-expanded-label">Album</p>
+            <h3 class="album-expanded-title">New Family</h3>
+          </div>
+          <button class="album-close-btn" data-album-id="new-family" aria-label="Close album">
+            <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <!-- ✏️ ADD FAMILY PHOTOS HERE — copy a .gallery-item block for each photo -->
+        <div class="gp-grid">
+
+          <div class="gallery-item"
+            data-caption="Black Suit"
+            data-place="—"
+            data-date="—"
+            data-details="A sharp portrait in a black suit and sunglasses — composed, confident, and ready.">
+            <img src="gallery/family-photo-1.jpg" alt="Junior Ceranor Nelson in a black suit" />
+            <button class="gallery-info-btn" aria-label="Photo details">i</button>
+          </div>
+
+          <div class="gallery-item"
+            data-caption="Family Event"
+            data-place="—"
+            data-date="—"
+            data-details="A meaningful moment at a family gathering — a document being shared, a memory being made.">
+            <img src="gallery/family-photo-2.jpg" alt="Family event moment" />
+            <button class="gallery-info-btn" aria-label="Photo details">i</button>
+          </div>
+
+        </div>
+      </div><!-- /album-panel-new-family -->
+
+      <!-- Expanded album panel: Bali -->
+      <div class="album-expanded" id="album-panel-bali" aria-hidden="true">
+        <div class="album-expanded-header">
+          <div>
+            <p class="album-expanded-label">Album</p>
+            <h3 class="album-expanded-title">Bali, Indonesia &mdash; May 2024</h3>
+          </div>
+          <button class="album-close-btn" data-album-id="bali" aria-label="Close album">
+            <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="gp-grid">
+
+          <div class="gallery-item"
+            data-caption="Haiti Stole My Heart — Serve"
+            data-place="Bali, Indonesia"
+            data-date="May 2024"
+            data-details="Serving during a tennis match in Bali — wearing the Haiti Stole My Heart Foundation jersey, representing Haiti on the other side of the world.">
+            <img src="gallery/photo3.jpg" alt="Junior Ceranor Nelson serving in Bali" />
+            <button class="gallery-info-btn" aria-label="Photo details">i</button>
+          </div>
+
+          <div class="gallery-item"
+            data-caption="Ready Stance"
+            data-place="Bali, Indonesia"
+            data-date="May 2024"
+            data-details="On the court in Bali — ready for the next play, Haiti jersey on, focus locked in.">
+            <img src="gallery/photo4.jpg" alt="Junior Ceranor Nelson ready on the court in Bali" />
+            <button class="gallery-info-btn" aria-label="Photo details">i</button>
+          </div>
+
+          <div class="gallery-item"
+            data-caption="The Serve"
+            data-place="Bali, Indonesia"
+            data-date="May 2024"
+            data-details="A dynamic serve in action under the Bali sun — full commitment, full extension, full focus.">
+            <img src="gallery/photo6.jpg" alt="Junior Ceranor Nelson serving in Bali" />
+            <button class="gallery-info-btn" aria-label="Photo details">i</button>
+          </div>
+
+          <div class="gallery-item"
+            data-caption="Between Plays"
+            data-place="Bali, Indonesia"
+            data-date="May 2024"
+            data-details="A relaxed moment between rallies in Bali — tennis as a daily practice of mental and physical balance.">
+            <img src="gallery/photo5.jpg" alt="Junior Ceranor Nelson walking on the court in Bali" />
+            <button class="gallery-info-btn" aria-label="Photo details">i</button>
+          </div>
+
+          <div class="gallery-item"
+            data-caption="On the Court"
+            data-place="Bali, Indonesia"
+            data-date="May 2024"
+            data-details="A moment of leisure and discipline in Bali — playing tennis, a sport that reflects focus, strategy, and resilience.">
+            <img src="gallery/photo2.png" alt="Junior Ceranor Nelson playing tennis in Bali" />
+            <button class="gallery-info-btn" aria-label="Photo details">i</button>
+          </div>
+
+        </div>
+      </div><!-- /album-panel-bali -->
+
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════
+       SINGLE PHOTOS — Chronological
+  ═══════════════════════════════════════════ -->
+  <section class="gp-section gp-singles-section">
+    <div class="container">
+
+      <div class="gp-section-header reveal">
+        <p class="gp-section-label">Individual</p>
+        <h2 class="gp-section-title">Single Photos</h2>
+      </div>
+
+      <div class="gp-grid">
+
+        <div class="gallery-item reveal"
+          data-caption="Behind the Mic"
+          data-place="Recording Studio"
+          data-date="—"
+          data-details="A session behind the microphone — capturing a moment of creative expression and voice work.">
+          <img src="gallery/photo1.jpg" alt="Junior Ceranor Nelson in a recording studio" />
+          <button class="gallery-info-btn" aria-label="Photo details">i</button>
+        </div>
+
+        <div class="gallery-item reveal"
+          data-caption="Navy Three-Piece"
+          data-place="Port-au-Prince, Haiti"
+          data-date="—"
+          data-details="A formal portrait in a navy three-piece suit — dressed with intention and quiet authority.">
+          <img src="gallery/photo7.jpg" alt="Junior Ceranor Nelson in a navy three-piece suit" />
+          <button class="gallery-info-btn" aria-label="Photo details">i</button>
+        </div>
+
+        <div class="gallery-item reveal"
+          data-caption="Mall Blue, Santo Domingo"
+          data-place="Mall Blue, Santo Domingo, Dominican Republic"
+          data-date="November 16, 2023"
+          data-details="A candid portrait at Mall Blue in Santo Domingo, Dominican Republic — white shirt, hands in pockets, at ease in the Dominican capital.">
+          <img src="gallery/photo-hotel-lobby-white.jpg" alt="Junior Ceranor Nelson at Mall Blue, Santo Domingo" />
+          <button class="gallery-info-btn" aria-label="Photo details">i</button>
+        </div>
+
+        <div class="gallery-item reveal"
+          data-caption="Proclamation of King Charles III"
+          data-place="Government House, Melbourne, Victoria, Australia"
+          data-date="September 2022"
+          data-details="At Government House Victoria, Melbourne — attending the official proclamation ceremony of His Majesty King Charles III as the new sovereign of Australia. A historic and solemn occasion of state.">
+          <img src="gallery/photo-grey-suit-ornate.jpg" alt="Junior Ceranor Nelson at the proclamation of King Charles III, Government House Victoria" />
+          <button class="gallery-info-btn" aria-label="Photo details">i</button>
+        </div>
+
+        <div class="gallery-item reveal"
+          data-caption="With Kerly Theus"
+          data-place="Brisbane, Australia"
+          data-date="July 22, 2023"
+          data-details="FIFA Women's World Cup 2023 — Brisbane, Australia. A proud moment alongside Kerly Theus, Haitian women's national soccer player, representing Haiti on the world stage.">
+          <img src="gallery/photo-haiti-stole-my-heart.jpg" alt="Junior Ceranor Nelson with Kerly Theus at the 2023 Women's World Cup in Brisbane" />
+          <button class="gallery-info-btn" aria-label="Photo details">i</button>
+        </div>
+
+        <div class="gallery-item reveal"
+          data-caption="Framed in the Doorway"
+          data-place="Sydney, Australia"
+          data-date="—"
+          data-details="Full-length portrait framed in a doorway — white shirt and grey tie, dressed with purpose before stepping out.">
+          <img src="gallery/photo-white-tie-doorway.jpg" alt="Junior Ceranor Nelson standing in a doorway" />
+          <button class="gallery-info-btn" aria-label="Photo details">i</button>
+        </div>
+
+        <div class="gallery-item reveal"
+          data-caption="At Ease"
+          data-place="Sydney, Australia"
+          data-date="—"
+          data-details="A relaxed moment at home — white shirt and grey tie, leaning with ease against the wall.">
+          <img src="gallery/photo-white-tie-leaning.jpg" alt="Junior Ceranor Nelson leaning in a hallway" />
+          <button class="gallery-info-btn" aria-label="Photo details">i</button>
+        </div>
+
+        <div class="gallery-item reveal"
+          data-caption="Through the Lens"
+          data-place="Darling Harbour, Sydney, Australia"
+          data-date="—"
+          data-details="A candid moment at Darling Harbour — behind a Canon camera, exploring Sydney's waterfront skyline.">
+          <img src="gallery/photo-bw-camera-sydney.jpg" alt="Junior Ceranor Nelson with a camera in Sydney" />
+          <button class="gallery-info-btn" aria-label="Photo details">i</button>
+        </div>
+
+        <div class="gallery-item reveal"
+          data-caption="Diplomacy by Kissinger"
+          data-place="Malden Public Library, Massachusetts, USA"
+          data-date="Late July 2024"
+          data-details="Between the stacks at the Malden Public Library in Massachusetts — reading Henry Kissinger's Diplomacy, a work that sits at the heart of his doctoral research and lifelong engagement with international affairs.">
+          <img src="gallery/photo-reading-kissinger.jpg" alt="Junior Ceranor Nelson reading Kissinger's Diplomacy at Malden Public Library" />
+          <button class="gallery-info-btn" aria-label="Photo details">i</button>
+        </div>
+
+        <div class="gallery-item reveal"
+          data-caption="Studio Portrait"
+          data-place="Photo Studio"
+          data-date="—"
+          data-details="A black-and-white studio portrait — contemplative, composed, and stripped of distraction.">
+          <img src="gallery/photo-bw-portrait-hat.jpg" alt="Junior Ceranor Nelson black and white portrait" />
+          <button class="gallery-info-btn" aria-label="Photo details">i</button>
+        </div>
+
+        <div class="gallery-item reveal"
+          data-caption="InterContinental Sorrento"
+          data-place="Sorrento, Victoria, Australia"
+          data-date="March 28, 2024"
+          data-details="A relaxed afternoon at the iconic InterContinental Sorrento — seated in the hotel's signature red velvet chair, taking in the elegance of one of Victoria's most celebrated coastal retreats.">
+          <img src="gallery/photo-red-chair-leather.jpg" alt="Junior Ceranor Nelson at the InterContinental Sorrento" />
+          <button class="gallery-info-btn" aria-label="Photo details">i</button>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════
+       INTERACTIVE WORLD MAP
+  ═══════════════════════════════════════════ -->
+  <section class="gp-map-section">
+    <div class="container">
+      <div class="gp-map-header reveal">
+        <p class="gp-map-label">Around the World</p>
+        <h2 class="gp-map-title">Places I've Been</h2>
+        <p class="gp-map-sub">
+          From the Caribbean to Southeast Asia, from North America to the South Pacific —
+          hover over a gold dot to preview a photo from that place.
+        </p>
+      </div>
+    </div>
+    <div id="worldMap" aria-label="Interactive world map showing locations"></div>
+  </section>
+
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <span class="footer-name">Junior Ceranor Nelson</span>
+          <span class="footer-location">Haiti &nbsp;/&nbsp; USA &nbsp;/&nbsp; Australia</span>
+        </div>
+        <div class="footer-socials">
+          <a href="https://www.linkedin.com/in/jrceranornelson/" target="_blank" rel="noopener" aria-label="LinkedIn" class="social-link">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          </a>
+          <a href="https://www.instagram.com/jrceranornelson" target="_blank" rel="noopener" aria-label="Instagram" class="social-link">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+          </a>
+          <a href="https://www.facebook.com/jrceranornelson" target="_blank" rel="noopener" aria-label="Facebook" class="social-link">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          </a>
+          <a href="https://www.youtube.com/@jrceranornelson" target="_blank" rel="noopener" aria-label="YouTube" class="social-link">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          </a>
+          <a href="https://www.tiktok.com/@jrceranornelson" target="_blank" rel="noopener" aria-label="TikTok" class="social-link">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.79a4.85 4.85 0 0 1-1.01-.1z"/></svg>
+          </a>
+        </div>
+        <div class="footer-legal">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms</a>
+        </div>
+      </div>
+      <div class="footer-copy">
+        Junior Ceranor Nelson &copy; 2026. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- GALLERY PHOTO MODAL -->
+  <div id="galleryModal" class="gallery-modal" role="dialog" aria-modal="true">
+    <div class="gallery-modal-backdrop"></div>
+    <div class="gallery-modal-card">
+      <div class="gallery-modal-header">
+        <p class="gallery-modal-title" id="gm-caption">Photo Details</p>
+        <button class="gallery-modal-close" aria-label="Close">&times;</button>
+      </div>
+      <div class="gallery-modal-body">
+        <div class="gallery-modal-row">
+          <div class="gallery-modal-icon-wrap">
+            <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <div>
+            <span class="gallery-modal-label">Place</span>
+            <span class="gallery-modal-value" id="gm-place"></span>
+          </div>
+        </div>
+        <div class="gallery-modal-row">
+          <div class="gallery-modal-icon-wrap">
+            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <div>
+            <span class="gallery-modal-label">Date &amp; Time</span>
+            <span class="gallery-modal-value" id="gm-date"></span>
+          </div>
+        </div>
+        <div class="gallery-modal-row">
+          <div class="gallery-modal-icon-wrap">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+          <div>
+            <span class="gallery-modal-label">Details</span>
+            <span class="gallery-modal-value" id="gm-details"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="preloader.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="gallery-page.js"></script>
+  <script src="live-chat.js"></script>
+</body>
+</html>

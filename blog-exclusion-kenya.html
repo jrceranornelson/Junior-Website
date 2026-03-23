@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>L'exclusion d'Haïti de la politique de visa exempté du Kenya — Junior Ceranor Nelson</title>
+  <meta name="description" content="Le 14 juillet 2025, le Kenya a annoncé une exemption de visa pour les citoyens africains et caribéens, mais Haïti en a été expressément exclue. Une analyse diplomatique." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="about.css" />
+  <link rel="stylesheet" href="blog-article.css" />
+  <link rel="stylesheet" href="blog-engagement.css" />
+  <style>
+    .article-hero {
+      position: relative;
+      height: 520px;
+      overflow: hidden;
+      margin-top: 80px;
+    }
+
+    .article-hero img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+    }
+
+    .article-hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(11,29,58,0.35) 0%, rgba(11,29,58,0.75) 100%);
+    }
+
+    .article-hero-content {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 48px 5% 52px;
+      max-width: 900px;
+    }
+
+    .article-category {
+      display: inline-block;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #c9a84c;
+      background: rgba(201,168,76,0.15);
+      border: 1px solid rgba(201,168,76,0.4);
+      padding: 6px 14px;
+      border-radius: 2px;
+      margin-bottom: 18px;
+    }
+
+    .article-hero-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      color: #ffffff;
+      margin-bottom: 16px;
+    }
+
+    .article-meta {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .article-date {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.65);
+    }
+
+    .article-author {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: rgba(255,255,255,0.65);
+    }
+
+    .article-author span { color: #c9a84c; }
+
+    .article-body {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 80px 5% 0;
+    }
+
+    .article-excerpt {
+      font-size: 1.18rem;
+      line-height: 1.75;
+      color: #1a1a1a;
+      font-weight: 500;
+      border-left: 4px solid #c9a84c;
+      padding: 8px 0 8px 24px;
+      margin-bottom: 48px;
+    }
+
+    .article-text p {
+      font-size: 1.05rem;
+      line-height: 1.9;
+      color: #2a2a2a;
+      margin-bottom: 28px;
+    }
+
+    .article-text p:last-child { margin-bottom: 0; }
+
+    .article-section-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #0b1d3a;
+      letter-spacing: -0.01em;
+      margin: 48px 0 16px;
+      padding-left: 16px;
+      border-left: 3px solid #c9a84c;
+    }
+
+    .article-list {
+      margin: 0 0 28px 0;
+      padding-left: 24px;
+    }
+
+    .article-list li {
+      font-size: 1.05rem;
+      line-height: 1.9;
+      color: #2a2a2a;
+      margin-bottom: 10px;
+    }
+
+    .article-list li::marker { color: #c9a84c; }
+
+    .article-conclusion {
+      background: #f7f5f0;
+      border-radius: 12px;
+      padding: 32px 36px;
+      margin-top: 48px;
+      border-left: 4px solid #0b1d3a;
+    }
+
+    .article-conclusion-label {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #c9a84c;
+      margin-bottom: 14px;
+    }
+
+    .article-conclusion p {
+      font-size: 1.05rem;
+      line-height: 1.9;
+      color: #2a2a2a;
+      margin-bottom: 16px;
+    }
+
+    .article-conclusion p:last-child { margin-bottom: 0; }
+
+    .article-author-bio {
+      max-width: 760px;
+      margin: 48px auto 0;
+      padding: 0 5%;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding-top: 32px;
+      border-top: 1px solid #e2ddd0;
+    }
+
+    .author-bio-avatar {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: #0b1d3a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1rem;
+      font-weight: 800;
+      color: #c9a84c;
+      flex-shrink: 0;
+    }
+
+    .author-bio-info strong {
+      display: block;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #0b1d3a;
+      margin-bottom: 4px;
+    }
+
+    .author-bio-info span {
+      font-size: 0.82rem;
+      color: #5a5a5a;
+      line-height: 1.5;
+    }
+
+    .article-divider {
+      width: 60px;
+      height: 3px;
+      background: #c9a84c;
+      border-radius: 2px;
+      margin: 48px 0;
+    }
+
+    .article-source {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #0b1d3a;
+      margin-top: 32px;
+      padding: 12px 20px;
+      border: 1px solid #e2ddd0;
+      border-radius: 4px;
+      transition: background 0.22s ease, border-color 0.22s ease;
+    }
+
+    .article-source:hover {
+      background: #f7f5f0;
+      border-color: #c9a84c;
+    }
+
+    .article-source svg { width: 16px; height: 16px; }
+
+    .article-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #0b1d3a;
+      border-bottom: 2px solid #c9a84c;
+      padding-bottom: 2px;
+      transition: color 0.22s ease, gap 0.22s ease;
+    }
+
+    .article-back:hover { color: #c9a84c; gap: 12px; }
+    .article-back svg { width: 16px; height: 16px; }
+
+    .article-nav {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 40px 5% 80px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid #e2ddd0;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="logo.png" alt="Junior Ceranor Nelson" class="nav-logo-img" />
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html#home"     class="nav-link">Home</a></li>
+        <li><a href="index.html#about"    class="nav-link">About Me</a></li>
+        <li><a href="index.html#projects" class="nav-link">Projects</a></li>
+        <li><a href="index.html#gallery"  class="nav-link">Gallery</a></li>
+        <li><a href="academic.html"       class="nav-link">Academic</a></li>
+        <li><a href="index.html#blog"     class="nav-link active">Blog &amp; Library</a></li>
+        <li><a href="index.html#contact"  class="nav-link">Contact</a></li>
+      </ul>
+      <a href="index.html#contact" class="nav-cta">Contact Us</a>
+    </div>
+  </nav>
+
+  <!-- WATERMARK BACKGROUND -->
+  <div class="watermarks" aria-hidden="true">
+    <img src="logos/unhdip.png"            class="wm wm-1" alt="" />
+    <img src="logos/omnedu.png"            class="wm wm-2" alt="" />
+    <img src="logos/bokatedral.png"        class="wm wm-3" alt="" />
+    <img src="logos/haitistolemyheart.png" class="wm wm-4" alt="" />
+    <img src="logos/sprintagility.png"     class="wm wm-5" alt="" />
+    <img src="logos/unhdip.png"            class="wm wm-6" alt="" />
+    <img src="logos/omnedu.png"            class="wm wm-7" alt="" />
+    <img src="logos/bokatedral.png"        class="wm wm-8" alt="" />
+    <img src="logos/haitistolemyheart.png" class="wm wm-9" alt="" />
+    <img src="logos/sprintagility.png"     class="wm wm-10" alt="" />
+  </div>
+
+  <!-- ARTICLE HERO -->
+  <header class="article-hero">
+    <img src="gallery/haiti-kenya.png" alt="L'exclusion d'Haïti de la politique de visa exempté du Kenya" />
+    <div class="article-hero-overlay"></div>
+    <div class="article-hero-content">
+      <span class="article-category">Diplomatie &amp; Relations Internationales</span>
+      <h1 class="article-hero-title">L'exclusion d'Haïti de la politique<br />de visa exempté du Kenya</h1>
+      <div class="article-meta">
+        <span class="article-date">19 Juillet 2025</span>
+        <span class="article-author">Par <span>Junior Céranor Nelson</span></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ARTICLE BODY -->
+  <main>
+    <article class="article-body">
+
+      <p class="article-excerpt">
+        Le 14 juillet 2025, le gouvernement kényan a annoncé une exemption de visa pour les citoyens africains et caribéens — mais Haïti en a été expressément exclue, malgré sa centralité historique dans la lutte des peuples noirs pour la liberté.
+      </p>
+
+      <div class="article-divider"></div>
+
+      <div class="article-text">
+        <p>
+          Le 14 juillet 2025, le gouvernement kényan a annoncé une mesure ambitieuse et largement saluée : l'exemption de visa pour tous les citoyens africains, ainsi que ceux de plusieurs pays caribéens, dans une optique d'intégration panafricaine, de dynamisation des échanges Sud-Sud, et d'ouverture vers la diaspora africaine globale. Cependant, un fait singulier et troublant a marqué cette politique : la République d'Haïti a été expressément exclue de cette mesure, malgré sa centralité historique dans la lutte des peuples noirs pour la liberté et sa proximité culturelle avec les pays d'Afrique.
+        </p>
+        <p>
+          Alors que le Kenya a déployé des troupes dans le cadre de la Mission Multinationale de Soutien à la Sécurité (MMSS) en Haïti, sous mandat du Conseil de sécurité des Nations Unies, cette décision soulève des incohérences diplomatiques graves, qui méritent une réponse stratégique, intelligente et digne de la part du gouvernement haïtien.
+        </p>
+
+        <h2 class="article-section-title">1 — Une offense symbolique et géopolitique</h2>
+
+        <p>
+          L'exclusion d'Haïti de cette politique d'exemption ne saurait être interprétée comme un simple oubli administratif. Haïti, seule nation noire à avoir conquis son indépendance à travers une révolution d'esclaves, constitue un pilier historique de la lutte pour la liberté des peuples africains et afrodescendants. Ironiquement, elle est aujourd'hui le principal bénéficiaire d'une mission de soutien sécuritaire dirigée par le Kenya — un partenaire qui se présente comme solidaire et bienveillant.
+        </p>
+        <p>
+          Dès lors, toute tentative de justifier cette exclusion par des considérations sécuritaires ou migratoires apparaît à la fois infondée et incohérente. Si de véritables préoccupations existent quant à la gestion de flux migratoires ou à la détection de menaces, le gouvernement kényan dispose d'outils diplomatiques et administratifs suffisants pour mettre en place des mécanismes de filtrage rigoureux, sans recourir à une exclusion catégorique et discriminatoire d'un État frère.
+        </p>
+        <p>
+          En refusant ce dialogue et en optant pour une exclusion unilatérale, la décision kényane fragilise sa propre posture morale dans la mission de soutien à Haïti. Elle crée une perception regrettable d'une relation asymétrique, où Haïti est perçue non comme un partenaire souverain, mais comme un territoire d'expérimentation sécuritaire, sans droits diplomatiques équivalents. Ce déséquilibre nuit à l'esprit de solidarité Sud-Sud et à la légitimité même de l'engagement kényan.
+        </p>
+
+        <h2 class="article-section-title">2 — L'urgence d'une réponse diplomatique mesurée, mais ferme</h2>
+
+        <p>
+          En espérant que le gouvernement haïtien émettra une déclaration officielle pour demander des éclaircissements vis-à-vis de cette exclusion. Ce silence, s'il persiste, pourrait être interprété comme une validation tacite ou, pire encore, comme une résignation institutionnelle face à une discrimination diplomatique.
+        </p>
+        <p><strong>Voici ce que la République d'Haïti devrait faire immédiatement :</strong></p>
+        <ol class="article-list" type="a">
+          <li>Faire appel aux instances africaines (UA, CARICOM, etc.) pour demander une explication diplomatique officielle sur les critères d'exclusion appliqués.</li>
+          <li>Émettre une déclaration publique valorisant la coopération avec le Kenya tout en déplorant une incohérence regrettable.</li>
+          <li>Consulter les partenaires de la MMSS (États-Unis, ONU, CARICOM) pour s'assurer que cette décision n'affecte pas l'intégrité ou la perception de la mission internationale.</li>
+          <li>Mobiliser les intellectuels, chercheurs et diplomates pour rappeler, dans les forums internationaux, la place historique et actuelle d'Haïti dans le combat pour la dignité des peuples africains.</li>
+        </ol>
+
+        <h2 class="article-section-title">3 — Le paradoxe kényan : allié sécuritaire, acteur d'exclusion ?</h2>
+
+        <p>
+          Il est impératif de replacer cette question dans une analyse stratégique. Le Kenya, en dirigeant la MMSS, assume une position de leadership inédit dans les relations Afrique-Caraïbes. Toutefois, ce rôle exige cohérence, respect mutuel et réciprocité diplomatique. On ne peut pas, d'un côté, prêcher la solidarité et l'assistance entre peuples noirs, et de l'autre, entretenir des politiques d'exclusion sans justification objective.
+        </p>
+        <p>
+          Par ailleurs, Haïti ne saurait accepter que la relation bilatérale avec le Kenya soit réduite à un rapport unidirectionnel de dépendance sécuritaire. L'avenir des relations Afrique-Caraïbe passe par une coopération équilibrée, où chaque nation, quelle que soit sa conjoncture, est reconnue dans sa dignité souveraine.
+        </p>
+
+        <h2 class="article-section-title">4 — Conseils pratiques à l'attention du gouvernement haïtien</h2>
+
+        <p><strong>Le ministère des Affaires étrangères haïtien peut considérer les pistes suivantes :</strong></p>
+        <ul class="article-list">
+          <li>Renforcer la diplomatie publique, en diffusant des tribunes, communiqués et documents diplomatiques valorisant le rôle historique d'Haïti et dénonçant avec tact l'exclusion dont elle est victime ;</li>
+          <li>Initier un dialogue bilatéral avec le Kenya pour rectifier la mesure, voire négocier un statut spécial de libre circulation temporaire ou conditionnelle pour les détenteurs de passeports diplomatiques et officiels haïtiens ;</li>
+          <li>Utiliser les mécanismes de solidarité caribéenne, notamment la CARICOM, pour faire valoir une position unifiée dans les relations avec les États africains.</li>
+        </ul>
+      </div>
+
+      <div class="article-conclusion">
+        <p class="article-conclusion-label">Conclusion</p>
+        <p>
+          L'exclusion d'Haïti de la politique kényane d'exemption de visa est symboliquement lourde et diplomatiquement problématique, surtout dans un contexte où le Kenya prend une posture de partenaire sécuritaire privilégié. Le gouvernement haïtien se doit d'agir non dans un esprit conflictuel, mais avec la fermeté souveraine que commande la dignité d'un État-nation.
+        </p>
+        <p>
+          Loin d'être un détail protocolaire, cette affaire interroge le respect réel de l'égalité des peuples dans la coopération internationale. Le silence ne saurait être une option. Il est temps qu'Haïti parle, non pour se plaindre, mais pour revendiquer sa juste place dans la grande famille des nations africaines et afrodescendantes.
+        </p>
+      </div>
+
+      <a href="https://www.lenational.org/post_article.php?tri=2538" target="_blank" rel="noopener" class="article-source">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        Lire l'article original sur Le National
+      </a>
+
+    </article>
+
+    <!-- AUTHOR BIO -->
+    <div class="article-author-bio">
+      <div class="author-bio-avatar">JN</div>
+      <div class="author-bio-info">
+        <strong>Junior Céranor Nelson</strong>
+        <span>Doctorant en Relations Internationales · Consultant en protocole diplomatique</span>
+      </div>
+    </div>
+
+    <!-- LIKE & COMMENTS -->
+    <section class="engagement-section" aria-label="Likes and comments">
+
+      <div class="like-block">
+        <button class="like-btn" id="likeBtn" aria-pressed="false" aria-label="J'aime cet article">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          <span id="likeCount">0</span>
+        </button>
+        <span class="like-label">personnes ont trouvé cet article utile</span>
+      </div>
+
+      <div class="comments-block">
+        <h2 class="comments-heading">
+          Commentaires
+          <span class="comment-count" id="commentCount">0</span>
+        </h2>
+
+        <form class="comment-form" id="commentForm" novalidate>
+          <div class="comment-form-row">
+            <div class="comment-form-group">
+              <label for="commentName">Votre nom *</label>
+              <input type="text" id="commentName" placeholder="ex. Marie Dupont" maxlength="60" required />
+            </div>
+          </div>
+          <div class="comment-form-group" style="margin-bottom:0;">
+            <label for="commentText">Votre commentaire *</label>
+            <textarea id="commentText" placeholder="Partagez vos réflexions sur cet article…" maxlength="1000" required></textarea>
+          </div>
+          <div class="comment-form-footer">
+            <span class="comment-form-note">Votre commentaire apparaîtra immédiatement.</span>
+            <button type="submit" class="comment-submit-btn" id="commentSubmit">
+              Publier
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+            </button>
+          </div>
+          <div class="comment-success" id="commentSuccess" aria-live="polite">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            Commentaire publié !
+          </div>
+        </form>
+
+        <div class="comment-list" id="commentList" aria-live="polite"></div>
+      </div>
+
+    </section>
+
+    <!-- BOTTOM NAV -->
+    <div class="article-nav">
+      <a href="index.html#blog" class="article-back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 12H5M5 12l7 7M5 12l7-7"/></svg>
+        Retour au Blog
+      </a>
+      <a href="index.html#contact" class="btn btn-dark">Me Contacter</a>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="about-footer">
+    <div class="about-container">
+      <span class="footer-name">Junior Ceranor Nelson</span>
+      <span class="footer-copy">&copy; 2026. All rights reserved.</span>
+    </div>
+  </footer>
+
+  <script src="about.js"></script>
+  <script src="blog-engagement.js"></script>
+  <script>document.addEventListener('DOMContentLoaded', () => initEngagement('exclusion-kenya'));</script>
+  <!-- LIVE CHAT -->
+  <script src="live-chat.js"></script>
+</body>
+</html>

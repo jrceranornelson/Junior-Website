@@ -1,0 +1,597 @@
+/* ═══════════════════════════════════════════════════════════
+   GALLERY PAGE — gallery-page.css
+   Junior Ceranor Nelson
+═══════════════════════════════════════════════════════════ */
+
+/* ─── PAGE HERO ────────────────────────────────────────────── */
+.gp-hero {
+  background: var(--navy);
+  padding: 140px 0 72px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.gp-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 30% 60%, rgba(201,168,76,0.08) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 30%, rgba(201,168,76,0.05) 0%, transparent 45%);
+  pointer-events: none;
+}
+
+.gp-hero-label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 14px;
+  opacity: 0;
+  animation: gp-fade-up 0.7s ease 0.3s forwards;
+}
+
+.gp-hero-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(2.6rem, 7vw, 5.5rem);
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  margin-bottom: 22px;
+  opacity: 0;
+  animation: gp-fade-up 0.75s ease 0.5s forwards;
+}
+
+.gp-hero-line {
+  width: 48px;
+  height: 2px;
+  background: var(--gold);
+  margin: 0 auto;
+  opacity: 0;
+  animation: gp-fade-up 0.65s ease 0.75s forwards;
+}
+
+@keyframes gp-fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── GALLERY SECTION ──────────────────────────────────────── */
+.gp-section {
+  background: var(--light);
+  padding: 72px 0 80px;
+}
+
+.gp-section-label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+
+.gp-section-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+  font-weight: 800;
+  color: var(--navy);
+  margin-bottom: 40px;
+}
+
+.gp-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+/* ─── MAP SECTION ──────────────────────────────────────────── */
+.gp-map-section {
+  background: var(--navy);
+  padding: 72px 0 0;
+}
+
+.gp-map-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.gp-map-label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 10px;
+}
+
+.gp-map-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(1.6rem, 4vw, 2.6rem);
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 14px;
+}
+
+.gp-map-sub {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.92rem;
+  color: rgba(255,255,255,0.55);
+  max-width: 480px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+#worldMap {
+  width: 100%;
+  height: 520px !important;
+  display: block;
+  position: relative;
+  z-index: 1;
+}
+
+/* ─── LEAFLET OVERRIDES ─────────────────────────────────────── */
+.leaflet-container {
+  background: #0d1f3c;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.leaflet-control-zoom a {
+  background: #0b1d3a;
+  color: rgba(255,255,255,0.7);
+  border-color: rgba(255,255,255,0.15);
+}
+
+.leaflet-control-zoom a:hover {
+  background: #132843;
+  color: #fff;
+}
+
+.leaflet-control-attribution {
+  background: rgba(11,29,58,0.75);
+  color: rgba(255,255,255,0.35);
+  font-size: 0.65rem;
+}
+
+.leaflet-control-attribution a { color: rgba(255,255,255,0.45); }
+
+/* ─── GOLD DOT MARKER ───────────────────────────────────────── */
+.gold-dot-icon {
+  background: transparent !important;
+  border: none !important;
+}
+
+.gold-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #c9a84c;
+  border: 2px solid rgba(255,255,255,0.55);
+  box-shadow: 0 0 0 4px rgba(201,168,76,0.2), 0 0 14px rgba(201,168,76,0.5);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.gold-dot:hover {
+  transform: scale(1.5);
+  box-shadow: 0 0 0 6px rgba(201,168,76,0.25), 0 0 20px rgba(201,168,76,0.7);
+}
+
+/* ─── MAP PHOTO TOOLTIP ─────────────────────────────────────── */
+.leaflet-tooltip.map-photo-tooltip {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+}
+
+.leaflet-tooltip.map-photo-tooltip::before {
+  border-top-color: rgba(11,29,58,0.92);
+}
+
+.map-tooltip-inner {
+  background: #0b1d3a;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 10px 32px rgba(0,0,0,0.5);
+  border: 1px solid rgba(201,168,76,0.35);
+  min-width: 220px;
+}
+
+.map-tooltip-img {
+  display: block;
+  width: 220px;
+  height: 145px;
+  object-fit: cover;
+}
+
+.map-tooltip-name {
+  display: block;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+  padding: 9px 12px;
+}
+
+/* ─── FADE-IN REVEAL ────────────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.75s cubic-bezier(0.25,0.46,0.45,0.94),
+              transform 0.75s cubic-bezier(0.25,0.46,0.45,0.94);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─── SECTION HEADER ────────────────────────────────────────── */
+.gp-section-header {
+  margin-bottom: 40px;
+}
+
+.gp-albums-section { background: #f0ede6; }
+.gp-singles-section { background: var(--light); }
+
+/* ─── ALBUM GRID ─────────────────────────────────────────────── */
+.albums-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 28px;
+}
+
+/* ─── ALBUM CARD ─────────────────────────────────────────────── */
+.album-card {
+  background: #fff;
+  border-radius: 6px;
+  overflow: visible;
+  box-shadow: 0 4px 24px rgba(11,29,58,0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.album-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(11,29,58,0.14);
+}
+
+/* Stacked photo preview */
+.album-stack-wrap {
+  position: relative;
+  height: 220px;
+  margin: 20px 20px 0;
+}
+
+.stack-img {
+  position: absolute;
+  width: 88%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 4px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+  transform-origin: bottom center;
+  transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+.stack-3 {
+  left: 0;
+  transform: rotate(-6deg) translateY(8px);
+  filter: brightness(0.55);
+  z-index: 1;
+}
+
+.stack-2 {
+  left: 6%;
+  transform: rotate(-3deg) translateY(4px);
+  filter: brightness(0.75);
+  z-index: 2;
+}
+
+.stack-1 {
+  right: 0;
+  transform: rotate(3deg);
+  filter: brightness(1);
+  z-index: 3;
+}
+
+.album-card:hover .stack-3 { transform: rotate(-9deg) translateY(14px) translateX(-6px); }
+.album-card:hover .stack-2 { transform: rotate(-5deg) translateY(8px); }
+.album-card:hover .stack-1 { transform: rotate(4deg); }
+
+.album-count-badge {
+  position: absolute;
+  bottom: -10px;
+  right: 0;
+  background: var(--navy);
+  color: var(--gold);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 5px 10px;
+  border-radius: 20px;
+  z-index: 5;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+/* Album card info */
+.album-info {
+  padding: 24px 20px 20px;
+}
+
+.album-name {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 8px;
+}
+
+.album-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 16px;
+}
+
+.album-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  color: rgba(11,29,58,0.55);
+}
+
+.album-meta-item svg {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.album-open-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--navy);
+  color: #fff;
+  border: none;
+  border-radius: 2px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 10px 18px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.album-open-btn:hover { background: #162d52; }
+
+.album-btn-arrow {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.3s ease;
+}
+
+.album-open-btn[aria-expanded="true"] .album-btn-arrow {
+  transform: rotate(180deg);
+}
+
+/* ─── ALBUM EXPANDED PANEL ───────────────────────────────────── */
+.album-expanded {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.55s cubic-bezier(0.4,0,0.2,1),
+              opacity 0.35s ease,
+              margin-top 0.35s ease;
+  margin-top: 0;
+}
+
+.album-expanded.open {
+  max-height: 1400px;
+  opacity: 1;
+  margin-top: 36px;
+}
+
+.album-expanded-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 20px 24px;
+  background: var(--navy);
+  border-radius: 4px 4px 0 0;
+  margin-bottom: 16px;
+}
+
+.album-expanded-label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+
+.album-expanded-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.album-close-btn {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.2s ease;
+}
+
+.album-close-btn:hover { background: rgba(255,255,255,0.16); }
+
+.album-close-btn svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: rgba(255,255,255,0.7);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+/* Photos inside the expanded panel */
+.album-expanded .gallery-item {
+  height: 260px;
+}
+
+/* ─── ALBUM PLACEHOLDER (empty album) ───────────────────────── */
+.album-placeholder-stack {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.album-placeholder-img {
+  position: absolute;
+  width: 88%;
+  height: 200px;
+  border-radius: 4px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  transform-origin: bottom center;
+}
+
+.placeholder-3 {
+  left: 0;
+  background: #c8c2b8;
+  transform: rotate(-6deg) translateY(8px);
+  z-index: 1;
+}
+
+.placeholder-2 {
+  left: 6%;
+  background: #d8d2c6;
+  transform: rotate(-3deg) translateY(4px);
+  z-index: 2;
+}
+
+.placeholder-1 {
+  right: 0;
+  background: var(--navy);
+  transform: rotate(3deg);
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.placeholder-1 svg {
+  width: 40px;
+  height: 40px;
+  fill: none;
+  stroke: rgba(201,168,76,0.6);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.album-card:hover .placeholder-3 { transform: rotate(-9deg) translateY(14px) translateX(-6px); }
+.album-card:hover .placeholder-2 { transform: rotate(-5deg) translateY(8px); }
+.album-card:hover .placeholder-1 { transform: rotate(4deg); }
+
+/* ─── ALBUM EMPTY STATE ──────────────────────────────────────── */
+.album-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 52px 24px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 0 0 4px 4px;
+  text-align: center;
+}
+
+.album-empty-state svg {
+  width: 42px;
+  height: 42px;
+  fill: none;
+  stroke: rgba(255,255,255,0.2);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.album-empty-state p {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.38);
+  letter-spacing: 0.03em;
+}
+
+/* ─── RESPONSIVE ─────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .gp-hero { padding: 130px 0 64px; }
+  .gp-grid { grid-template-columns: repeat(2, 1fr); }
+  .albums-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  .album-expanded.open { max-height: 3000px; }
+  #worldMap { height: 420px; }
+}
+
+@media (max-width: 600px) {
+  .gp-hero { padding: 110px 0 52px; }
+  .gp-section { padding: 48px 0 56px; }
+  .gp-section-header { margin-bottom: 28px; }
+  .gp-section-title { margin-bottom: 24px; }
+  .gp-grid { grid-template-columns: 1fr; gap: 8px; }
+
+  /* Albums */
+  .albums-grid { grid-template-columns: 1fr; gap: 16px; }
+  .album-expanded.open { max-height: 5000px; } /* 1-col: many tall photos */
+  .album-expanded .gallery-item { height: 220px; }
+  .album-expanded-header { padding: 16px; }
+
+  /* Map */
+  #worldMap { height: 300px; }
+  .gp-map-header { margin-bottom: 32px; }
+  .map-tooltip-inner { min-width: 160px; }
+  .map-tooltip-img { width: 160px; height: 105px; }
+}
+
+/* Touch devices: always show info button (no hover available) */
+@media (hover: none) {
+  .gallery-info-btn {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

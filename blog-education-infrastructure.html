@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Education as National Infrastructure in Haiti — Junior Ceranor Nelson</title>
+  <meta name="description" content="Why placing education at the center of national development is one of the most urgent and sustainable choices Haiti can make." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="about.css" />
+  <link rel="stylesheet" href="blog-article.css" />
+  <link rel="stylesheet" href="blog-engagement.css" />
+  <style>
+    .article-hero {
+      position: relative;
+      height: 520px;
+      overflow: hidden;
+      margin-top: 80px;
+    }
+
+    .article-hero img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+    }
+
+    .article-hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(11,29,58,0.35) 0%, rgba(11,29,58,0.75) 100%);
+    }
+
+    .article-hero-content {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 48px 5% 52px;
+      max-width: 900px;
+    }
+
+    .article-category {
+      display: inline-block;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #c9a84c;
+      background: rgba(201,168,76,0.15);
+      border: 1px solid rgba(201,168,76,0.4);
+      padding: 6px 14px;
+      border-radius: 2px;
+      margin-bottom: 18px;
+    }
+
+    .article-hero-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      color: #ffffff;
+      margin-bottom: 16px;
+    }
+
+    .article-meta {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .article-date {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.65);
+    }
+
+    .article-author {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: rgba(255,255,255,0.65);
+    }
+
+    .article-author span { color: #c9a84c; }
+
+    .article-body {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 80px 5% 0;
+    }
+
+    .article-excerpt {
+      font-size: 1.18rem;
+      line-height: 1.75;
+      color: #1a1a1a;
+      font-weight: 500;
+      border-left: 4px solid #c9a84c;
+      padding: 8px 0 8px 24px;
+      margin-bottom: 48px;
+    }
+
+    .article-divider {
+      width: 60px;
+      height: 3px;
+      background: #c9a84c;
+      border-radius: 2px;
+      margin: 48px 0;
+    }
+
+    .article-text p {
+      font-size: 1.05rem;
+      line-height: 1.9;
+      color: #2a2a2a;
+      margin-bottom: 28px;
+    }
+
+    .article-text p:last-child { margin-bottom: 0; }
+
+    .article-callout {
+      background: #0b1d3a;
+      border-radius: 12px;
+      padding: 32px 36px;
+      margin: 40px 0;
+    }
+
+    .article-callout p {
+      font-size: 1.08rem;
+      line-height: 1.8;
+      color: rgba(255,255,255,0.88);
+      margin-bottom: 0;
+      font-style: italic;
+    }
+
+    .article-callout p strong {
+      color: #c9a84c;
+      font-style: normal;
+    }
+
+    .article-conclusion {
+      background: #f7f5f0;
+      border-radius: 12px;
+      padding: 32px 36px;
+      margin-top: 48px;
+      border-left: 4px solid #c9a84c;
+    }
+
+    .article-conclusion-label {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #c9a84c;
+      margin-bottom: 14px;
+    }
+
+    .article-conclusion p {
+      font-size: 1.05rem;
+      line-height: 1.9;
+      color: #2a2a2a;
+      margin-bottom: 0;
+    }
+
+    .article-author-bio {
+      max-width: 760px;
+      margin: 48px auto 0;
+      padding: 32px 5% 0;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      border-top: 1px solid #e2ddd0;
+    }
+
+    .author-bio-avatar {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: #0b1d3a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1rem;
+      font-weight: 800;
+      color: #c9a84c;
+      flex-shrink: 0;
+    }
+
+    .author-bio-info strong {
+      display: block;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #0b1d3a;
+      margin-bottom: 4px;
+    }
+
+    .author-bio-info span {
+      font-size: 0.82rem;
+      color: #5a5a5a;
+      line-height: 1.5;
+    }
+
+    .article-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #0b1d3a;
+      border-bottom: 2px solid #c9a84c;
+      padding-bottom: 2px;
+      transition: color 0.22s ease, gap 0.22s ease;
+    }
+
+    .article-back:hover { color: #c9a84c; gap: 12px; }
+    .article-back svg { width: 16px; height: 16px; }
+
+    .article-nav {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 40px 5% 80px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid #e2ddd0;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="logo.png" alt="Junior Ceranor Nelson" class="nav-logo-img" />
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html#home"     class="nav-link">Home</a></li>
+        <li><a href="index.html#about"    class="nav-link">About Me</a></li>
+        <li><a href="index.html#projects" class="nav-link">Projects</a></li>
+        <li><a href="index.html#gallery"  class="nav-link">Gallery</a></li>
+        <li><a href="academic.html"       class="nav-link">Academic</a></li>
+        <li><a href="index.html#blog"     class="nav-link active">Blog &amp; Library</a></li>
+        <li><a href="index.html#contact"  class="nav-link">Contact</a></li>
+      </ul>
+      <a href="index.html#contact" class="nav-cta">Contact Us</a>
+    </div>
+  </nav>
+
+  <!-- WATERMARK BACKGROUND -->
+  <div class="watermarks" aria-hidden="true">
+    <img src="logos/unhdip.png"            class="wm wm-1" alt="" />
+    <img src="logos/omnedu.png"            class="wm wm-2" alt="" />
+    <img src="logos/bokatedral.png"        class="wm wm-3" alt="" />
+    <img src="logos/haitistolemyheart.png" class="wm wm-4" alt="" />
+    <img src="logos/sprintagility.png"     class="wm wm-5" alt="" />
+    <img src="logos/unhdip.png"            class="wm wm-6" alt="" />
+    <img src="logos/omnedu.png"            class="wm wm-7" alt="" />
+    <img src="logos/bokatedral.png"        class="wm wm-8" alt="" />
+    <img src="logos/haitistolemyheart.png" class="wm wm-9" alt="" />
+    <img src="logos/sprintagility.png"     class="wm wm-10" alt="" />
+  </div>
+
+  <!-- ARTICLE HERO -->
+  <header class="article-hero">
+    <img src="gallery/education-infrastructure.png" alt="Education as National Infrastructure in Haiti" />
+    <div class="article-hero-overlay"></div>
+    <div class="article-hero-content">
+      <span class="article-category">Education &amp; Development</span>
+      <h1 class="article-hero-title">Education as National Infrastructure in Haiti</h1>
+      <div class="article-meta">
+        <span class="article-date">July 2022</span>
+        <span class="article-author">By <span>Junior Ceranor Nelson</span></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ARTICLE BODY -->
+  <main>
+    <article class="article-body">
+
+      <p class="article-excerpt">
+        Why is placing education at the center of national development one of the most urgent and sustainable choices Haiti can make?
+      </p>
+
+      <div class="article-divider"></div>
+
+      <div class="article-text">
+        <p>
+          In Haiti, national development is often discussed through the lens of security, roads, hospitals, electricity, and political stability. These priorities matter. However, beneath all of them lies a deeper foundation that has too often been neglected: education.
+        </p>
+        <p>
+          If Haiti is serious about rebuilding itself and creating a stronger future, education must no longer be treated as a secondary issue. It must be treated as national infrastructure. Just as roads connect communities and electricity powers economic activity, education builds the human capacity that allows a nation to rise, govern itself effectively, and develop with dignity.
+        </p>
+        <p>
+          For Haiti, this is not an abstract idea. It is a national necessity. A country cannot transform itself if too many of its young people are left without quality schools, practical skills, civic formation, and real opportunities to grow. Education is what prepares future teachers, doctors, entrepreneurs, engineers, public servants, and ethical leaders. It is what gives a nation the ability to solve its own problems rather than depend endlessly on outside solutions.
+        </p>
+
+        <div class="article-callout">
+          <p>Haiti has immense human potential. Its youth are intelligent, creative, resilient, and capable of extraordinary things. But <strong>potential alone is not enough.</strong> Without a strong educational system, that potential remains underdeveloped, and the country continues to lose talent, energy, and hope.</p>
+        </div>
+
+        <p>
+          When education is weak, every sector suffers. Institutions become fragile, inequality deepens, and development remains unstable. Treating education as infrastructure means seeing schools, universities, vocational centers, teacher training, and digital learning platforms as part of the nation's core architecture. It means investing in them with the same seriousness given to physical construction. It means understanding that the future of Haiti will not be built by concrete alone, but by knowledge, discipline, innovation, and civic responsibility.
+        </p>
+        <p>
+          For Haiti, education is more than a social good. It is a strategic tool for national recovery and long-term sovereignty. Foreign aid may come and go. Governments may change. Crises may continue to shake the country. But an educated population remains one of the few assets that can strengthen Haiti from within and sustain progress across generations.
+        </p>
+      </div>
+
+      <div class="article-conclusion">
+        <p class="article-conclusion-label">In Closing</p>
+        <p>
+          If Haiti wants a different future, it must build it through its people. And that begins by recognizing education not as an afterthought, but as one of the most important forms of national infrastructure the country can invest in.
+        </p>
+      </div>
+
+    </article>
+
+    <!-- AUTHOR BIO -->
+    <div class="article-author-bio">
+      <div class="author-bio-avatar">JN</div>
+      <div class="author-bio-info">
+        <strong>Junior Ceranor Nelson</strong>
+        <span>Diplomat · Educator · Institution Builder</span>
+      </div>
+    </div>
+
+    <!-- LIKE & COMMENTS -->
+    <section class="engagement-section" aria-label="Likes and comments">
+
+      <div class="like-block">
+        <button class="like-btn" id="likeBtn" aria-pressed="false" aria-label="Like this article">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          <span id="likeCount">0</span>
+        </button>
+        <span class="like-label">people found this helpful</span>
+      </div>
+
+      <div class="comments-block">
+        <h2 class="comments-heading">
+          Comments
+          <span class="comment-count" id="commentCount">0</span>
+        </h2>
+
+        <form class="comment-form" id="commentForm" novalidate>
+          <div class="comment-form-row">
+            <div class="comment-form-group">
+              <label for="commentName">Your Name *</label>
+              <input type="text" id="commentName" placeholder="e.g. Marie Dupont" maxlength="60" required />
+            </div>
+          </div>
+          <div class="comment-form-group" style="margin-bottom:0;">
+            <label for="commentText">Your Comment *</label>
+            <textarea id="commentText" placeholder="Share your thoughts on this article…" maxlength="1000" required></textarea>
+          </div>
+          <div class="comment-form-footer">
+            <span class="comment-form-note">Your comment will appear immediately.</span>
+            <button type="submit" class="comment-submit-btn" id="commentSubmit">
+              Post Comment
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+            </button>
+          </div>
+          <div class="comment-success" id="commentSuccess" aria-live="polite">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            Comment posted!
+          </div>
+        </form>
+
+        <div class="comment-list" id="commentList" aria-live="polite"></div>
+      </div>
+
+    </section>
+
+    <!-- BOTTOM NAV -->
+    <div class="article-nav">
+      <a href="index.html#blog" class="article-back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 12H5M5 12l7 7M5 12l7-7"/></svg>
+        Back to Blog
+      </a>
+      <a href="index.html#contact" class="btn btn-dark">Get in Touch</a>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="about-footer">
+    <div class="about-container">
+      <span class="footer-name">Junior Ceranor Nelson</span>
+      <span class="footer-copy">&copy; 2026. All rights reserved.</span>
+    </div>
+  </footer>
+
+  <script src="about.js"></script>
+  <script src="blog-engagement.js"></script>
+  <script>document.addEventListener('DOMContentLoaded', () => initEngagement('education-infrastructure'));</script>
+  <!-- LIVE CHAT -->
+  <script src="live-chat.js"></script>
+</body>
+</html>

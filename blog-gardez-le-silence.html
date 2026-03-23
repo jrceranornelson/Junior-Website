@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>À ceux qui ont trahi l'espérance du peuple haïtien ; gardez le silence ! — Junior Ceranor Nelson</title>
+  <meta name="description" content="Une réflexion critique et une alerte à la jeunesse haïtienne face aux figures politiques qui, après avoir trahi la patrie, reprennent publiquement la parole." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="about.css" />
+  <link rel="stylesheet" href="blog-article.css" />
+  <link rel="stylesheet" href="blog-engagement.css" />
+  <style>
+    .article-hero {
+      position: relative;
+      height: 520px;
+      overflow: hidden;
+      margin-top: 80px;
+    }
+
+    .article-hero img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+    }
+
+    .article-hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(11,29,58,0.4) 0%, rgba(11,29,58,0.80) 100%);
+    }
+
+    .article-hero-content {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 48px 5% 52px;
+      max-width: 900px;
+    }
+
+    .article-category {
+      display: inline-block;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #c9a84c;
+      background: rgba(201,168,76,0.15);
+      border: 1px solid rgba(201,168,76,0.4);
+      padding: 6px 14px;
+      border-radius: 2px;
+      margin-bottom: 18px;
+    }
+
+    .article-hero-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      color: #ffffff;
+      margin-bottom: 16px;
+    }
+
+    .article-meta {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .article-date {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.65);
+    }
+
+    .article-author {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: rgba(255,255,255,0.65);
+    }
+
+    .article-author span { color: #c9a84c; }
+
+    .article-body {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 80px 5% 0;
+    }
+
+    .article-excerpt {
+      font-size: 1.18rem;
+      line-height: 1.75;
+      color: #1a1a1a;
+      font-weight: 500;
+      border-left: 4px solid #c9a84c;
+      padding: 8px 0 8px 24px;
+      margin-bottom: 48px;
+    }
+
+    .article-text p {
+      font-size: 1.05rem;
+      line-height: 1.9;
+      color: #2a2a2a;
+      margin-bottom: 28px;
+    }
+
+    .article-text p:last-child { margin-bottom: 0; }
+
+    .article-divider {
+      width: 60px;
+      height: 3px;
+      background: #c9a84c;
+      border-radius: 2px;
+      margin: 48px 0;
+    }
+
+    .article-callout {
+      background: #0b1d3a;
+      border-radius: 12px;
+      padding: 32px 36px;
+      margin: 40px 0;
+    }
+
+    .article-callout p {
+      font-size: 1.08rem;
+      line-height: 1.8;
+      color: rgba(255,255,255,0.88);
+      margin-bottom: 0;
+      font-style: italic;
+    }
+
+    .article-callout p strong {
+      color: #c9a84c;
+      font-style: normal;
+    }
+
+    .article-conclusion {
+      background: #f7f5f0;
+      border-radius: 12px;
+      padding: 32px 36px;
+      margin-top: 48px;
+      border-left: 4px solid #c9a84c;
+    }
+
+    .article-conclusion-label {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #c9a84c;
+      margin-bottom: 14px;
+    }
+
+    .article-conclusion p {
+      font-size: 1.05rem;
+      line-height: 1.9;
+      color: #2a2a2a;
+      margin-bottom: 0;
+      font-style: italic;
+    }
+
+    .article-author-bio {
+      max-width: 760px;
+      margin: 48px auto 0;
+      padding: 32px 5% 0;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      border-top: 1px solid #e2ddd0;
+    }
+
+    .author-bio-avatar {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: #0b1d3a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1rem;
+      font-weight: 800;
+      color: #c9a84c;
+      flex-shrink: 0;
+    }
+
+    .author-bio-info strong {
+      display: block;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #0b1d3a;
+      margin-bottom: 4px;
+    }
+
+    .author-bio-info span {
+      font-size: 0.82rem;
+      color: #5a5a5a;
+      line-height: 1.5;
+    }
+
+    .article-source {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #0b1d3a;
+      margin-top: 32px;
+      padding: 12px 20px;
+      border: 1px solid #e2ddd0;
+      border-radius: 4px;
+      transition: background 0.22s ease, border-color 0.22s ease;
+    }
+
+    .article-source:hover {
+      background: #f7f5f0;
+      border-color: #c9a84c;
+    }
+
+    .article-source svg { width: 16px; height: 16px; }
+
+    .article-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #0b1d3a;
+      border-bottom: 2px solid #c9a84c;
+      padding-bottom: 2px;
+      transition: color 0.22s ease, gap 0.22s ease;
+    }
+
+    .article-back:hover { color: #c9a84c; gap: 12px; }
+    .article-back svg { width: 16px; height: 16px; }
+
+    .article-nav {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 40px 5% 80px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid #e2ddd0;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="logo.png" alt="Junior Ceranor Nelson" class="nav-logo-img" />
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html#home"     class="nav-link">Home</a></li>
+        <li><a href="index.html#about"    class="nav-link">About Me</a></li>
+        <li><a href="index.html#projects" class="nav-link">Projects</a></li>
+        <li><a href="index.html#gallery"  class="nav-link">Gallery</a></li>
+        <li><a href="academic.html"       class="nav-link">Academic</a></li>
+        <li><a href="index.html#blog"     class="nav-link active">Blog &amp; Library</a></li>
+        <li><a href="index.html#contact"  class="nav-link">Contact</a></li>
+      </ul>
+      <a href="index.html#contact" class="nav-cta">Contact Us</a>
+    </div>
+  </nav>
+
+  <!-- WATERMARK BACKGROUND -->
+  <div class="watermarks" aria-hidden="true">
+    <img src="logos/unhdip.png"            class="wm wm-1" alt="" />
+    <img src="logos/omnedu.png"            class="wm wm-2" alt="" />
+    <img src="logos/bokatedral.png"        class="wm wm-3" alt="" />
+    <img src="logos/haitistolemyheart.png" class="wm wm-4" alt="" />
+    <img src="logos/haitistolemyheart.png" class="wm wm-4" alt="" />
+    <img src="logos/sprintagility.png"     class="wm wm-5" alt="" />
+    <img src="logos/unhdip.png"            class="wm wm-6" alt="" />
+    <img src="logos/omnedu.png"            class="wm wm-7" alt="" />
+    <img src="logos/bokatedral.png"        class="wm wm-8" alt="" />
+    <img src="logos/haitistolemyheart.png" class="wm wm-9" alt="" />
+    <img src="logos/sprintagility.png"     class="wm wm-10" alt="" />
+  </div>
+
+  <!-- ARTICLE HERO -->
+  <header class="article-hero">
+    <img src="gallery/gardez-le-silence.png" alt="À ceux qui ont trahi l'espérance du peuple haïtien ; gardez le silence !" />
+    <div class="article-hero-overlay"></div>
+    <div class="article-hero-content">
+      <span class="article-category">Politique &amp; Société civile</span>
+      <h1 class="article-hero-title">À ceux qui ont trahi l'espérance<br />du peuple haïtien ; gardez le silence !</h1>
+      <div class="article-meta">
+        <span class="article-date">17 Juillet 2025</span>
+        <span class="article-author">Par <span>Junior Céranor Nelson</span></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ARTICLE BODY -->
+  <main>
+    <article class="article-body">
+
+      <p class="article-excerpt">
+        Une réflexion critique et une alerte à la jeunesse haïtienne face aux figures politiques qui, après avoir trahi la patrie, reprennent publiquement la parole pour appeler à l'unité — sans jamais reconnaître leurs fautes.
+      </p>
+
+      <div class="article-divider"></div>
+
+      <div class="article-text">
+        <p>
+          Le silence est parfois l'expression la plus digne qu'il reste à ceux qui ont trahi la patrie. Pourtant, en Haïti, certains anciens dirigeants ou figures politiques, notoirement associées à l'échec, au favoritisme ou à la corruption, reprennent publiquement la parole. Pas si étonnant dans un pays où <em>«Tout voum se do»</em> — qu'au lieu de se retirer avec humilité, ils osent encore appeler au rassemblement national. Ils parlent d'unité, de relance, de cohésion sociale, des mots qu'ils ont eux-mêmes vidés de leur sens par leurs actes passés.
+        </p>
+        <p>
+          D'après Habermas, tout leadership qui manque de vérité entraîne la détérioration de la confiance publique. Ces appels à l'unité, sans reconnaissance des fautes commises, relèvent moins de l'appel civique que d'une stratégie de réhabilitation personnelle. Ils veulent rester aussi longtemps que possible à la mamelle. <em>'Jan nou konn di a, yo vle rejenere tèt yo a tou pri'</em>. Cher(e)s compatriotes, nous avons une élite politique incapable de silence, même face à sa propre faillite. Ne soyez pas le pion qu'ils vont utiliser pour leur réhabilitation, ne les aidez pas à sauver la face qu'eux-mêmes ont perdue.
+        </p>
+        <p>
+          Cet article est une réflexion critique, une alerte à la jeunesse, aux citoyens éveillés, à ceux qui n'ont pas encore été souillés. Elle vise à neutraliser toute complaisance directe ou indirecte contre ces imposteurs qui se remuent sur la scène politique sans pour autant purger leur dette morale à l'égard de la nation.
+        </p>
+
+        <div class="article-callout">
+          <p>Je suis profondément préoccupé par le nombre croissant de jeunes qui se laissent utiliser comme des serviettes jetables sur les réseaux sociaux pour défendre ou endosser des figures politiques que tout le monde reconnaît comme des fauteurs de trouble. À ces jeunes, je dis avec fermeté : <strong>repensez vos choix.</strong> Ne sacrifiez pas votre intégrité pour des intérêts qui ne sont pas les vôtres.</p>
+        </div>
+
+        <p>
+          Je ne décourage aucun jeune de faire de la politique. Cependant, elle doit être une bonne politique, une politique sincère, comme l'a si bien dit le professeur Leslie François Manigat.
+        </p>
+        <p>
+          Le minimum qu'un ancien politicien ayant échoué puisse faire, c'est de garder le silence, ne pas parasiter l'espace public avec des discours recyclés. Si ces figures avaient une once de respect pour la douleur nationale, ils choisiraient de se taire, au lieu de nous rappeler leur échec en boucle.
+        </p>
+        <p>
+          Nombreux sont des jeunes qui viennent tout juste d'entrer sur la scène politique qui accordent leur soutien innocemment à ces individus. Je leur dis : ne vous laissez pas séduire par les discours. Une faute répétée devient une doctrine. Jeunes d'Haïti, vous êtes l'avenir. Ne gaspillez pas votre énergie à légitimer ceux qui ont trahi notre patrie chérie — ils la trahiront encore demain.
+        </p>
+        <p>
+          N'endossez pas la faillite morale. N'utilisez pas votre jeunesse comme une caution pour blanchir ceux qui ont échoué. <em>M voye dlo m pa mouye pèsonn.</em> Une fois cette confiance rompue, le contrat social est brisé. Comment croire de nouveau ceux qui n'ont produit que désillusion, division, et chaos ?
+        </p>
+        <p>
+          Que chacun prenne garde à qui il offre son écoute et sa voix. Que chaque citoyen comprenne qu'un discours, aussi bien formulé soit-il, ne vaut rien sans actes réparateurs. Franchement, ils feraient mieux de choisir le silence et d'attendre le sort qu'ils méritent. Je m'adresse aussi aux partis politiques émergents : ne vous laissez pas infiltrer. Une institution qui intègre des traîtres dans ses fondations ne peut pas porter les espoirs de demain. Seul un engagement sincère pour la vérité, la justice et la mémoire pourra redonner confiance à notre peuple.
+        </p>
+        <p>
+          Enfin, je souhaite que le peuple haïtien, en particulier les jeunes, laisse ces messieurs parler seuls. Ne répétez pas leurs mensonges. Ne chantez pas leurs refrains. Même une poignée de main ne devrait pas leur être accordée. Ne prêtez pas votre image pour cautionner ou réparer les échecs de ces individus.
+        </p>
+      </div>
+
+      <div class="article-conclusion">
+        <p class="article-conclusion-label">En guise de clôture</p>
+        <p>
+          Je refuse de me taire face aux dérives. J'appelle à une génération nouvelle qui ne se contentera pas de slogans, mais qui exigera vérité, justice et responsabilité.
+        </p>
+      </div>
+
+      <a href="https://www.lenational.org/post_article.php?tri=2532" target="_blank" rel="noopener" class="article-source">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        Lire l'article original sur Le National
+      </a>
+
+    </article>
+
+    <!-- AUTHOR BIO -->
+    <div class="article-author-bio">
+      <div class="author-bio-avatar">JN</div>
+      <div class="author-bio-info">
+        <strong>Junior Céranor Nelson</strong>
+        <span>Doctorant en Relations Internationales · Consultant en protocole diplomatique</span>
+      </div>
+    </div>
+
+    <!-- LIKE & COMMENTS -->
+    <section class="engagement-section" aria-label="Likes and comments">
+
+      <div class="like-block">
+        <button class="like-btn" id="likeBtn" aria-pressed="false" aria-label="J'aime cet article">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          <span id="likeCount">0</span>
+        </button>
+        <span class="like-label">personnes ont trouvé cet article utile</span>
+      </div>
+
+      <div class="comments-block">
+        <h2 class="comments-heading">
+          Commentaires
+          <span class="comment-count" id="commentCount">0</span>
+        </h2>
+
+        <form class="comment-form" id="commentForm" novalidate>
+          <div class="comment-form-row">
+            <div class="comment-form-group">
+              <label for="commentName">Votre nom *</label>
+              <input type="text" id="commentName" placeholder="ex. Marie Dupont" maxlength="60" required />
+            </div>
+          </div>
+          <div class="comment-form-group" style="margin-bottom:0;">
+            <label for="commentText">Votre commentaire *</label>
+            <textarea id="commentText" placeholder="Partagez vos réflexions sur cet article…" maxlength="1000" required></textarea>
+          </div>
+          <div class="comment-form-footer">
+            <span class="comment-form-note">Votre commentaire apparaîtra immédiatement.</span>
+            <button type="submit" class="comment-submit-btn" id="commentSubmit">
+              Publier
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+            </button>
+          </div>
+          <div class="comment-success" id="commentSuccess" aria-live="polite">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            Commentaire publié !
+          </div>
+        </form>
+
+        <div class="comment-list" id="commentList" aria-live="polite"></div>
+      </div>
+
+    </section>
+
+    <!-- BOTTOM NAV -->
+    <div class="article-nav">
+      <a href="index.html#blog" class="article-back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 12H5M5 12l7 7M5 12l7-7"/></svg>
+        Retour au Blog
+      </a>
+      <a href="index.html#contact" class="btn btn-dark">Me Contacter</a>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="about-footer">
+    <div class="about-container">
+      <span class="footer-name">Junior Ceranor Nelson</span>
+      <span class="footer-copy">&copy; 2026. All rights reserved.</span>
+    </div>
+  </footer>
+
+  <script src="about.js"></script>
+  <script src="blog-engagement.js"></script>
+  <script>document.addEventListener('DOMContentLoaded', () => initEngagement('gardez-le-silence'));</script>
+  <!-- LIVE CHAT -->
+  <script src="live-chat.js"></script>
+</body>
+</html>

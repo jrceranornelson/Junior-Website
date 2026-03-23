@@ -7,9 +7,26 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon-180.png" />
   <link rel="stylesheet" href="about.css" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="preloader-logo-wrap">
+      <svg class="preloader-ring" viewBox="0 0 126 126" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="63" cy="63" r="59" />
+      </svg>
+      <img src="logo.png" alt="Junior Ceranor Nelson" class="preloader-logo" />
+    </div>
+    <p class="preloader-name">Junior Ceranor Nelson</p>
+    <div class="preloader-bar-wrap">
+      <div class="preloader-bar"></div>
+    </div>
+  </div>
 
   <!-- NAV -->
   <nav id="navbar">
@@ -24,7 +41,8 @@
         <li><a href="index.html#home" class="nav-link">Home</a></li>
         <li><a href="index.html#about" class="nav-link">About Me</a></li>
         <li><a href="index.html#projects" class="nav-link">Projects</a></li>
-        <li><a href="index.html#gallery" class="nav-link">Gallery</a></li>
+        <li><a href="gallery.html" class="nav-link">Gallery</a></li>
+        <li><a href="music.html" class="nav-link">Music</a></li>
         <li><a href="index.html#blog" class="nav-link">Blog &amp; Library</a></li>
         <li><a href="index.html#contact" class="nav-link">Contact</a></li>
       </ul>
@@ -62,7 +80,7 @@
       <div class="block-reveal">
         <div class="block-overlay"></div>
         <p class="about-lead">
-          Junior Ceranor Nelson is a Haitian-born entrepreneur, diplomat, international development professional, and humanitarian leader whose work stands at the intersection of diplomacy, education, ethical leadership, and institution-building. Born and raised in Haiti and active internationally between Haiti and Australia, he has built a multidisciplinary career defined by service, vision, and a strong commitment to national transformation through global cooperation.
+          Junior Ceranor Nelson is a Haitian entrepreneur, diplomat, international development professional, and humanitarian leader whose work stands at the intersection of diplomacy, education, ethical leadership, and institution-building. Born and raised in Haiti and active internationally between Haiti and Australia, he has built a multidisciplinary career defined by service, vision, and a strong commitment to national transformation through global cooperation.
         </p>
       </div>
 
@@ -167,6 +185,7 @@
     </div>
   </footer>
 
+  <script src="preloader.js"></script>
   <script src="about.js"></script>
 </body>
 </html>
