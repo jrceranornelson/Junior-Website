@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(open:*)",
+      "Bash(SRCDIR=\"/Users/jrceranornelson/Downloads/1eC_CCorp/MAC_MINI_2026/JUNIOR WEBSITE_2026/MY_PHOTOS/New Folder With Items/my photos\")",
+      "Bash(cp \"$SRCDIR/IMG_3377.JPG\" \"/Users/jrceranornelson/junior-website/gallery/photo1.jpg\")",
+      "Bash(cp \"$SRCDIR/IMG_7734.PNG\" \"/Users/jrceranornelson/junior-website/gallery/photo2.png\")",
+      "Bash(cp \"$SRCDIR/IMG_7735.jpg\" \"/Users/jrceranornelson/junior-website/gallery/photo3.jpg\")",
+      "Bash(cp \"$SRCDIR/IMG_7736.jpg\" \"/Users/jrceranornelson/junior-website/gallery/photo4.jpg\")"
+    ]
+  }
+}
