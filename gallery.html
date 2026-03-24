@@ -72,12 +72,7 @@
         <p class="gp-section-label">Latest Uploads</p>
         <h2 class="gp-section-title">Recent Photos</h2>
       </div>
-      <!-- spinner shown while loading -->
-      <div id="galleryFirestoreGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;min-height:80px;">
-        <div style="grid-column:1/-1;display:flex;align-items:center;justify-content:center;padding:60px 0;">
-          <div style="width:36px;height:36px;border:3px solid rgba(201,168,76,0.25);border-top-color:#c9a84c;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
-        </div>
-      </div>
+      <div id="recent-photos-grid"></div>
     </div>
   </section>
 
@@ -723,91 +718,29 @@
   })();
   </script>
 
-  <!-- Dynamic gallery photos from Firestore -->
+  <!-- Recent Photos from Firestore -->
   <script>
-  (function () {
-    var grid = document.getElementById('galleryFirestoreGrid');
-    if (!grid) return;
-
-    // Modal elements
-    var modal    = document.getElementById('galleryModal');
-    var gmImg    = document.getElementById('gm-image');
-    var gmCap    = document.getElementById('gm-caption');
-    var gmPlace  = document.getElementById('gm-place');
-    var gmDate   = document.getElementById('gm-date');
-    var gmDetails= document.getElementById('gm-details');
-
-    function openPhotoModal(item) {
-      if (!modal) return;
-      var imgSrc = item.getAttribute('data-img') || '';
-      if (gmImg) {
-        if (imgSrc) {
-          gmImg.src = imgSrc;
-          gmImg.alt = item.getAttribute('data-caption') || '';
-          gmImg.style.display = 'block';
-        } else {
-          gmImg.style.display = 'none';
-        }
-      }
-      if (gmCap)     gmCap.textContent     = item.getAttribute('data-caption') || 'Photo';
-      if (gmPlace)   gmPlace.textContent   = item.getAttribute('data-place')   || '—';
-      if (gmDate)    gmDate.textContent     = item.getAttribute('data-date')    || '—';
-      if (gmDetails) gmDetails.textContent  = item.getAttribute('data-details') || '—';
-      modal.classList.add('active');
-      document.body.style.overflow = 'hidden';
-    }
-
-    // Event delegation — works for all dynamically added items
-    grid.addEventListener('click', function (e) {
-      var item = e.target.closest('.gallery-item');
-      if (item) openPhotoModal(item);
-    });
-
-    function esc(s) {
-      return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    }
-
-    db.collection('gallery').onSnapshot(function (snap) {
-      grid.innerHTML = '';
-      if (snap.empty) {
-        grid.innerHTML = '<p style="color:var(--slate,#8a9ab5);text-align:center;padding:40px 0;font-family:Inter,sans-serif;">No photos yet — check back soon.</p>';
+  db.collection("gallery")
+    .orderBy("createdAt", "desc")
+    .onSnapshot(snapshot => {
+      const grid = document.getElementById("recent-photos-grid");
+      if (snapshot.empty) {
+        grid.innerHTML = "<p>No photos yet.</p>";
         return;
       }
-      snap.forEach(function (doc) {
-        var d = doc.data();
-        if (!d.imageUrl) return; // skip docs without an image
-        var item = document.createElement('div');
-        item.className = 'gallery-item reveal';
-        item.style.cursor = 'pointer';
-        item.style.position = 'relative';
-        item.style.overflow = 'hidden';
-        item.setAttribute('data-img',     d.imageUrl);
-        item.setAttribute('data-caption', d.place || '');   // use place as caption title
-        item.setAttribute('data-place',   d.place || '—');
-        item.setAttribute('data-date',    d.date  || '—');
-        item.setAttribute('data-details', d.details || '—');
-        item.innerHTML =
-          '<img src="' + esc(d.imageUrl) + '" alt="' + esc(d.place || 'Gallery photo') + '" loading="lazy" />' +
-          '<div class="gallery-item-overlay" style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 55%);display:flex;flex-direction:column;justify-content:flex-end;padding:14px;opacity:0;transition:opacity 0.25s;">' +
-            '<span style="font-family:Montserrat,sans-serif;font-size:0.72rem;font-weight:700;color:#c9a84c;letter-spacing:0.1em;text-transform:uppercase;">' + esc(d.place || '') + '</span>' +
-            '<span style="font-family:Inter,sans-serif;font-size:0.7rem;color:rgba(255,255,255,0.75);margin-top:2px;">' + esc(d.date || '') + '</span>' +
-          '</div>';
-        // Show overlay on hover
-        item.addEventListener('mouseenter', function () {
-          var ov = item.querySelector('.gallery-item-overlay');
-          if (ov) ov.style.opacity = '1';
-        });
-        item.addEventListener('mouseleave', function () {
-          var ov = item.querySelector('.gallery-item-overlay');
-          if (ov) ov.style.opacity = '0';
-        });
-        grid.appendChild(item);
+      grid.innerHTML = "";
+      snapshot.forEach(doc => {
+        const d = doc.data();
+        grid.innerHTML += `
+          <div class="gallery-card">
+            <img src="${d.imageUrl}" alt="${d.place}" />
+            <div class="gallery-info">
+              <span>${d.place}</span>
+              <span>${d.date}</span>
+            </div>
+          </div>`;
       });
-    }, function (err) {
-      console.warn('Gallery Firestore error:', err);
-      grid.innerHTML = '<p style="color:#c9a84c;text-align:center;padding:40px 0;font-family:Inter,sans-serif;">Could not load photos. Please try again later.</p>';
     });
-  })();
   </script>
 </body>
 </html>
