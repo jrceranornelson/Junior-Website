@@ -654,6 +654,7 @@
         <div id="videoUploadPreview" style="margin-top:8px;font-size:0.82rem;color:var(--muted);"></div>
       </div>
       <div class="form-group form-full"><label for="vVideoUrl">Or paste URL <span style="font-weight:400;color:var(--muted)">YouTube, Vimeo, or direct link</span></label><input type="url" id="vVideoUrl" placeholder="https://www.youtube.com/watch?v=…" /></div>
+      <div class="form-group"><label for="vType">Type</label><select id="vType"><option value="youtube">YouTube</option><option value="tiktok">TikTok</option><option value="vimeo">Vimeo</option><option value="direct">Direct Upload</option><option value="other">Other</option></select></div>
       <div class="form-group"><label for="vPlace">Place / Location</label><input type="text" id="vPlace" placeholder="Port-au-Prince, Haiti" /></div>
       <div class="form-group"><label for="vDate">Date</label><input type="text" id="vDate" placeholder="January 2026" /></div>
       <div class="form-group form-full"><label for="vDescription">Description</label><textarea id="vDescription" rows="3" placeholder="Describe this video…"></textarea></div>
@@ -1294,6 +1295,7 @@ window.editVideo = id => {
     const d = doc.data();
     document.getElementById('videoModalTitle').textContent = 'Edit Video';
     document.getElementById('vTitle').value        = d.title        || '';
+    document.getElementById('vType').value         = d.type         || 'youtube';
     document.getElementById('vVideoUrl').value     = d.videoUrl     || '';
     document.getElementById('vPlace').value        = d.place        || '';
     document.getElementById('vDate').value         = d.date         || '';
@@ -1319,6 +1321,7 @@ document.getElementById('saveVideoBtn').addEventListener('click', async () => {
   if (!videoUrl) { toast('Please enter a video URL.','error'); return; }
   const data = {
     title:        title,
+    type:         document.getElementById('vType').value,
     videoUrl:     videoUrl,
     place:        document.getElementById('vPlace').value.trim(),
     date:         document.getElementById('vDate').value.trim(),

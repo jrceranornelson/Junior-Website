@@ -225,6 +225,35 @@
           </div>
         </article>
 
+        <!-- ── VIDEOS CARD ── -->
+        <article class="album-card reveal" onclick="window.location='/videos'" style="cursor:pointer;">
+          <div class="album-stack-wrap">
+            <div class="album-placeholder-img placeholder-3"></div>
+            <div class="album-placeholder-img placeholder-2"></div>
+            <div class="album-placeholder-img placeholder-1" style="background:linear-gradient(135deg,#1a1a2e,#2d2d4e);display:flex;align-items:center;justify-content:center;">
+              <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,0.7)" stroke-width="1.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            </div>
+            <span class="album-count-badge">Watch</span>
+          </div>
+          <div class="album-info">
+            <h3 class="album-name">Videos</h3>
+            <div class="album-meta">
+              <span class="album-meta-item">
+                <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                YouTube &amp; More
+              </span>
+              <span class="album-meta-item">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                Watch · Learn · Experience
+              </span>
+            </div>
+            <a href="/videos" class="album-open-btn" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;">
+              View Videos
+              <svg class="album-btn-arrow" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+            </a>
+          </div>
+        </article>
+
       </div><!-- /albums-grid -->
 
       <!-- Expanded: Vacation -->
@@ -619,39 +648,6 @@
 
 
   <!-- ═══════════════════════════════════════════
-       VIDEOS (dynamic from Firestore)
-  ═══════════════════════════════════════════ -->
-  <section class="gp-section gp-videos-section">
-    <div class="container">
-      <div class="gp-section-header reveal">
-        <p class="gp-section-label">Watch</p>
-        <h2 class="gp-section-title">Videos</h2>
-      </div>
-      <div id="videos-grid">
-        <div class="videos-empty" style="display:none">No videos yet.</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- VIDEO PLAYER MODAL -->
-  <div id="videoPlayerModal" class="video-modal" role="dialog" aria-modal="true">
-    <div class="video-modal-backdrop"></div>
-    <div class="video-modal-card">
-      <div class="video-modal-header">
-        <div>
-          <p class="video-modal-title" id="vpm-title"></p>
-          <p class="video-modal-meta" id="vpm-meta"></p>
-        </div>
-        <button class="video-modal-close" id="vpmClose" aria-label="Close">&times;</button>
-      </div>
-      <div class="video-modal-player" id="vpm-player">
-        <!-- filled dynamically: iframe for YouTube/Vimeo, video tag for direct files -->
-      </div>
-      <p class="video-modal-desc" id="vpm-desc"></p>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════════════
        INTERACTIVE WORLD MAP
   ═══════════════════════════════════════════ -->
   <section class="gp-map-section">
@@ -782,134 +778,9 @@
   })();
   </script>
 
-  <!-- Videos from Firestore -->
-  <script>
-  (function () {
-    function ytId(url) { const m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/); return m ? m[1] : null; }
-    function vmId(url) { const m = url.match(/vimeo\.com\/(\d+)/); return m ? m[1] : null; }
-
-    function isDirectFile(url) { return /\.(mp4|mov|webm|ogg|avi|mkv)(\?|$)/i.test(url); }
-
-    function embedUrl(url) {
-      const y = ytId(url); if (y) return 'https://www.youtube.com/embed/' + y + '?autoplay=1&rel=0';
-      const v = vmId(url); if (v) return 'https://player.vimeo.com/video/' + v + '?autoplay=1';
-      return url;
-    }
-
-    function thumb(url, custom) {
-      if (custom) return custom;
-      const y = ytId(url); if (y) return 'https://img.youtube.com/vi/' + y + '/maxresdefault.jpg';
-      const v = vmId(url); if (v) return 'https://vumbnail.com/' + v + '.jpg';
-      return '';
-    }
-
-    function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-
-    /* Modal */
-    const modal    = document.getElementById('videoPlayerModal');
-    const player   = document.getElementById('vpm-player');
-    const vpmTitle = document.getElementById('vpm-title');
-    const vpmMeta  = document.getElementById('vpm-meta');
-    const vpmDesc  = document.getElementById('vpm-desc');
-
-    function openVideo(d) {
-      const url = d.videoUrl || '';
-      player.innerHTML = isDirectFile(url)
-        ? `<video src="${esc(url)}" controls autoplay playsinline style="width:100%;height:100%;background:#000;"></video>`
-        : `<iframe src="${esc(embedUrl(url))}" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;"></iframe>`;
-      vpmTitle.textContent = d.title || '';
-      vpmMeta.textContent  = [d.place, d.date].filter(Boolean).join(' · ');
-      vpmDesc.textContent  = d.description || '';
-      modal.classList.add('active');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeVideo() {
-      modal.classList.remove('active');
-      player.innerHTML = '';
-      document.body.style.overflow = '';
-    }
-
-    document.getElementById('vpmClose').addEventListener('click', closeVideo);
-    modal.querySelector('.video-modal-backdrop').addEventListener('click', closeVideo);
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeVideo(); });
-
-    /* Grid */
-    const grid = document.getElementById('videos-grid');
-
-    function renderVideos(docs) {
-      grid.innerHTML = '';
-      if (!docs.length) {
-        grid.innerHTML = `
-          <div class="videos-empty-state">
-            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <polygon points="5 3 19 12 5 21 5 3"/>
-            </svg>
-            No videos yet.
-          </div>`;
-        return;
-      }
-      docs.forEach((doc, i) => {
-        const d = doc.data ? doc.data() : doc;
-        const t = thumb(d.videoUrl || '', d.thumbnailUrl || '');
-        const thumbHtml = t
-          ? `<img src="${esc(t)}" alt="${esc(d.title)}" loading="lazy" />`
-          : '<div class="video-card-no-thumb"></div>';
-        const meta = [d.place, d.date].filter(Boolean).map(esc).join(' · ');
-
-        if (i === 0) {
-          /* Featured card */
-          const card = document.createElement('div');
-          card.className = 'video-card video-card--featured';
-          card.innerHTML = `
-            <div class="video-card-thumb">
-              ${thumbHtml}
-              <div class="video-play-btn"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
-            </div>
-            <div class="video-card-info">
-              <p class="video-card-label">Latest Video</p>
-              <p class="video-card-title">${esc(d.title)}</p>
-              <p class="video-card-meta">${meta}</p>
-              ${d.description ? `<p class="video-card-desc">${esc(d.description)}</p>` : ''}
-              <button class="video-watch-btn">
-                <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                Watch Now
-              </button>
-            </div>`;
-          card.addEventListener('click', () => openVideo(d));
-          grid.appendChild(card);
-        } else {
-          /* Regular card */
-          const card = document.createElement('div');
-          card.className = 'video-card';
-          card.innerHTML = `
-            <div class="video-card-thumb">
-              ${thumbHtml}
-              <div class="video-play-btn"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
-            </div>
-            <div class="video-card-info">
-              <p class="video-card-title">${esc(d.title)}</p>
-              <p class="video-card-meta">${meta}</p>
-            </div>`;
-          card.addEventListener('click', () => openVideo(d));
-          grid.appendChild(card);
-        }
-      });
-    }
-
-    db.collection('gallery_videos').orderBy('createdAt', 'desc').onSnapshot(
-      snapshot => renderVideos(snapshot.docs),
-      () => db.collection('gallery_videos').onSnapshot(
-        snapshot => renderVideos(snapshot.docs),
-        () => { grid.innerHTML = '<div class="videos-empty-state">Could not load videos.</div>'; }
-      )
-    );
-  })();
-  </script>
-
   <!-- Recent Photos from Firestore -->
   <script>
-  db.collection("gallery_videos")
+  db.collection("gallery")
     .orderBy("createdAt", "desc")
     .onSnapshot(snapshot => {
       const grid = document.getElementById("recent-photos-grid");
