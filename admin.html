@@ -642,11 +642,31 @@
     </div>
     <div class="form-grid">
       <div class="form-group form-full"><label for="vTitle">Title *</label><input type="text" id="vTitle" placeholder="Video title" /></div>
-      <div class="form-group form-full"><label for="vVideoUrl">Video URL * <span style="font-weight:400;color:var(--muted)">YouTube, Vimeo, or direct link</span></label><input type="url" id="vVideoUrl" placeholder="https://www.youtube.com/watch?v=…" /></div>
+      <div class="form-group form-full">
+        <label>Upload Video File <span style="font-weight:400;color:var(--muted)">(MP4, MOV, WebM — max 500MB)</span></label>
+        <div class="upload-zone" id="videoUploadZone">
+          <div class="upload-zone-icon"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+          <div class="upload-zone-label">Click or drag to upload video</div>
+          <div class="upload-zone-text">MP4, MOV, WebM, AVI — max 500MB</div>
+          <input type="file" id="videoFileInput" accept="video/*" style="display:none" />
+        </div>
+        <div class="upload-progress" id="videoUploadProgress" style="display:none"><div class="upload-progress-bar" id="videoUploadProgressBar" style="width:0%"></div></div>
+        <div id="videoUploadPreview" style="margin-top:8px;font-size:0.82rem;color:var(--muted);"></div>
+      </div>
+      <div class="form-group form-full"><label for="vVideoUrl">Or paste URL <span style="font-weight:400;color:var(--muted)">YouTube, Vimeo, or direct link</span></label><input type="url" id="vVideoUrl" placeholder="https://www.youtube.com/watch?v=…" /></div>
       <div class="form-group"><label for="vPlace">Place / Location</label><input type="text" id="vPlace" placeholder="Port-au-Prince, Haiti" /></div>
       <div class="form-group"><label for="vDate">Date</label><input type="text" id="vDate" placeholder="January 2026" /></div>
       <div class="form-group form-full"><label for="vDescription">Description</label><textarea id="vDescription" rows="3" placeholder="Describe this video…"></textarea></div>
-      <div class="form-group form-full"><label for="vThumbnailUrl">Custom Thumbnail URL <span style="font-weight:400;color:var(--muted)">(optional — auto-generated for YouTube)</span></label><input type="url" id="vThumbnailUrl" placeholder="https://… (leave blank for auto)" /></div>
+      <div class="form-group form-full">
+        <label>Thumbnail <span style="font-weight:400;color:var(--muted)">(optional — auto for YouTube)</span></label>
+        <div class="upload-zone" id="vThumbUploadZone" style="padding:14px 20px;">
+          <div class="upload-zone-label" style="font-size:0.82rem;">Click to upload thumbnail image</div>
+          <input type="file" id="vThumbFileInput" accept="image/*" style="display:none" />
+        </div>
+        <div id="vThumbPreview" style="margin-top:8px;"></div>
+        <label for="vThumbnailUrl" style="margin-top:10px;display:block;">Or paste thumbnail URL</label>
+        <input type="url" id="vThumbnailUrl" placeholder="https://… (leave blank for auto)" />
+      </div>
     </div>
     <div class="form-actions" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
       <button class="btn btn-primary" id="saveVideoBtn">Save Video</button>

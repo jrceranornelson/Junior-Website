@@ -837,44 +837,73 @@
     /* Grid */
     const grid = document.getElementById('videos-grid');
 
-    db.collection('gallery_videos').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
+    function renderVideos(docs) {
       grid.innerHTML = '';
-      if (snapshot.empty) {
-        grid.innerHTML = '<p style="color:rgba(255,255,255,0.4);text-align:center;padding:48px 0;grid-column:1/-1;">No videos yet.</p>';
+      if (!docs.length) {
+        grid.innerHTML = `
+          <div class="videos-empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="5 3 19 12 5 21 5 3"/>
+            </svg>
+            No videos yet.
+          </div>`;
         return;
       }
-      snapshot.forEach(doc => {
-        const d  = doc.data();
-        const t  = thumb(d.videoUrl || '', d.thumbnailUrl || '');
-        const card = document.createElement('div');
-        card.className = 'video-card';
-        card.innerHTML = `
-          <div class="video-card-thumb">
-            ${t ? `<img src="${esc(t)}" alt="${esc(d.title)}" loading="lazy" />` : '<div class="video-card-no-thumb"></div>'}
-            <div class="video-play-btn"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
-          </div>
-          <div class="video-card-info">
-            <p class="video-card-title">${esc(d.title)}</p>
-            <p class="video-card-meta">${[d.place, d.date].filter(Boolean).map(esc).join(' · ')}</p>
-          </div>`;
-        card.addEventListener('click', () => openVideo(d));
-        grid.appendChild(card);
-      });
-    }, () => {
-      db.collection('gallery_videos').onSnapshot(snapshot => {
-        grid.innerHTML = '';
-        if (snapshot.empty) { grid.innerHTML = '<p style="color:rgba(255,255,255,0.4);text-align:center;padding:48px 0;">No videos yet.</p>'; return; }
-        snapshot.forEach(doc => {
-          const d = doc.data();
-          const t = thumb(d.videoUrl || '', d.thumbnailUrl || '');
+      docs.forEach((doc, i) => {
+        const d = doc.data ? doc.data() : doc;
+        const t = thumb(d.videoUrl || '', d.thumbnailUrl || '');
+        const thumbHtml = t
+          ? `<img src="${esc(t)}" alt="${esc(d.title)}" loading="lazy" />`
+          : '<div class="video-card-no-thumb"></div>';
+        const meta = [d.place, d.date].filter(Boolean).map(esc).join(' · ');
+
+        if (i === 0) {
+          /* Featured card */
           const card = document.createElement('div');
-          card.className = 'video-card';
-          card.innerHTML = `<div class="video-card-thumb">${t ? `<img src="${esc(t)}" alt="${esc(d.title)}" loading="lazy" />` : '<div class="video-card-no-thumb"></div>'}<div class="video-play-btn"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div><div class="video-card-info"><p class="video-card-title">${esc(d.title)}</p><p class="video-card-meta">${[d.place,d.date].filter(Boolean).map(esc).join(' · ')}</p></div>`;
+          card.className = 'video-card video-card--featured';
+          card.innerHTML = `
+            <div class="video-card-thumb">
+              ${thumbHtml}
+              <div class="video-play-btn"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+            </div>
+            <div class="video-card-info">
+              <p class="video-card-label">Latest Video</p>
+              <p class="video-card-title">${esc(d.title)}</p>
+              <p class="video-card-meta">${meta}</p>
+              ${d.description ? `<p class="video-card-desc">${esc(d.description)}</p>` : ''}
+              <button class="video-watch-btn">
+                <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                Watch Now
+              </button>
+            </div>`;
           card.addEventListener('click', () => openVideo(d));
           grid.appendChild(card);
-        });
+        } else {
+          /* Regular card */
+          const card = document.createElement('div');
+          card.className = 'video-card';
+          card.innerHTML = `
+            <div class="video-card-thumb">
+              ${thumbHtml}
+              <div class="video-play-btn"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+            </div>
+            <div class="video-card-info">
+              <p class="video-card-title">${esc(d.title)}</p>
+              <p class="video-card-meta">${meta}</p>
+            </div>`;
+          card.addEventListener('click', () => openVideo(d));
+          grid.appendChild(card);
+        }
       });
-    });
+    }
+
+    db.collection('gallery').orderBy('createdAt', 'desc').onSnapshot(
+      snapshot => renderVideos(snapshot.docs),
+      () => db.collection('gallery').onSnapshot(
+        snapshot => renderVideos(snapshot.docs),
+        () => { grid.innerHTML = '<div class="videos-empty-state">Could not load videos.</div>'; }
+      )
+    );
   })();
   </script>
 
