@@ -328,25 +328,56 @@
       return card;
     }
 
+    // Parse English and French date strings into a sort timestamp
+    function parseDateStr(str) {
+      if (!str) return 0;
+      var months = {
+        january:1,february:2,march:3,april:4,may:5,june:6,
+        july:7,august:8,september:9,october:10,november:11,december:12,
+        janvier:1,février:2,fevrier:2,mars:3,avril:4,mai:5,juin:6,
+        juillet:7,août:8,aout:8,septembre:9,octobre:10,novembre:11,décembre:12,decembre:12
+      };
+      var s = str.toLowerCase().replace(/[,]/g, '');
+      var parts = s.split(/\s+/);
+      var day = 1, month = 0, year = 0;
+      parts.forEach(function(p) {
+        var n = parseInt(p, 10);
+        if (!isNaN(n)) {
+          if (n > 31) year = n; else if (n >= 1 && n <= 31 && day === 1 && month === 0) day = n;
+        } else if (months[p]) {
+          month = months[p];
+        }
+      });
+      if (!year) return 0;
+      return new Date(year, (month || 1) - 1, day).getTime();
+    }
+
     function render(docs) {
       grid.innerHTML = '';
-      // Hide only explicit drafts; show posts with status 'published' or no status set
-      var posts = docs.filter(function(d) { return d.data().status !== 'draft'; });
+      // Hide only explicit drafts
+      var fsDocs = docs.filter(function(d) { return d.data().status !== 'draft'; });
+      var fsIds = fsDocs.map(function(d) { return d.id; });
 
-      // Collect Firestore doc IDs so we don't duplicate static articles
-      var firestoreIds = posts.map(function(d) { return d.id; });
+      // Build unified list: { sortTs, element }
+      var items = [];
 
-      // Static articles not already in Firestore
-      var staticToShow = STATIC_ARTICLES.filter(function(a) {
-        return firestoreIds.indexOf(a.id) === -1;
+      fsDocs.forEach(function(doc) {
+        var d = doc.data();
+        var ts = d.createdAt ? (d.createdAt.toMillis ? d.createdAt.toMillis() : (d.createdAt.seconds || 0) * 1000) : parseDateStr(d.date);
+        items.push({ ts: ts, el: buildCard(doc.id, d) });
       });
 
-      var total = posts.length + staticToShow.length;
-      countEl.textContent = total + ' post' + (total !== 1 ? 's' : '');
-      countEl.style.display = 'block';
+      STATIC_ARTICLES.filter(function(a) { return fsIds.indexOf(a.id) === -1; })
+        .forEach(function(a) {
+          items.push({ ts: parseDateStr(a.date), el: buildStaticCard(a) });
+        });
 
-      posts.forEach(function(doc) { grid.appendChild(buildCard(doc.id, doc.data())); });
-      staticToShow.forEach(function(a) { grid.appendChild(buildStaticCard(a)); });
+      // Sort newest first
+      items.sort(function(a, b) { return b.ts - a.ts; });
+
+      countEl.textContent = items.length + ' post' + (items.length !== 1 ? 's' : '');
+      countEl.style.display = 'block';
+      items.forEach(function(item) { grid.appendChild(item.el); });
     }
 
     function showError(msg) {
