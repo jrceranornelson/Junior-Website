@@ -565,11 +565,58 @@
       return card;
     }
 
+    // Static fallback cards shown when Firestore has fewer than 3 published posts
+    var staticFallbacks = [
+      {
+        img: 'gallery/haitian-diplomacy.png',
+        category: 'Diplomacy',
+        date: 'March 2026',
+        title: 'Reimagining Haitian Diplomacy in the 21st Century',
+        excerpt: 'To help reintegrate Haiti into the world map of diplomacy, we must first understand that diplomacy in the 21st century is no longer built only through formal meetings.',
+        href: 'blog-haitian-diplomacy.html'
+      },
+      {
+        img: 'gallery/haiti-kenya.png',
+        category: 'Analyse',
+        date: '19 Juillet 2025',
+        title: "L'exclusion d'Haïti de la politique de visa exempté du Kenya",
+        excerpt: "Une analyse diplomatique de l'exclusion d'Haïti de la mesure d'exemption de visa annoncée par le Kenya.",
+        href: 'blog-exclusion-kenya.html'
+      },
+      {
+        img: 'gallery/gardez-le-silence.png',
+        category: 'Politique',
+        date: '17 Juillet 2025',
+        title: "À ceux qui ont trahi l'espérance du peuple haïtien ; gardez le silence !",
+        excerpt: "Une alerte à la jeunesse haïtienne face aux figures politiques qui, après avoir trahi la patrie, reprennent la parole pour appeler à l'unité.",
+        href: 'blog-gardez-le-silence.html'
+      }
+    ];
+
+    function buildStaticCard(s) {
+      var card = document.createElement('article');
+      card.className = 'blog-card';
+      card.innerHTML =
+        '<div class="blog-card-img"><img src="' + s.img + '" alt="' + esc(s.title) + '" loading="lazy" /></div>' +
+        '<div class="blog-card-body">' +
+          '<span style="display:inline-block;font-family:Montserrat,sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:0.13em;text-transform:uppercase;color:#c9a84c;background:rgba(201,168,76,0.10);border:1px solid rgba(201,168,76,0.3);padding:4px 10px;border-radius:2px;margin-bottom:10px;">' + esc(s.category) + '</span>' +
+          '<span class="blog-date">' + esc(s.date) + '</span>' +
+          '<h3 class="blog-title">' + esc(s.title) + '</h3>' +
+          '<p class="blog-excerpt">' + esc(s.excerpt) + '</p>' +
+          '<a href="' + s.href + '" class="blog-link">Read more <span class="arrow">→</span></a>' +
+        '</div>';
+      return card;
+    }
+
     function render(docs) {
       var published = docs.filter(function(d) { return d.data().published === true; }).slice(0, 3);
       grid.innerHTML = '';
-      if (!published.length) return;
       published.forEach(function(doc) { grid.appendChild(buildCard(doc.id, doc.data())); });
+      // Pad with static fallbacks until we have 3 cards
+      var needed = 3 - published.length;
+      for (var i = 0; i < needed && i < staticFallbacks.length; i++) {
+        grid.appendChild(buildStaticCard(staticFallbacks[i]));
+      }
     }
 
     function sortDesc(docs) {
