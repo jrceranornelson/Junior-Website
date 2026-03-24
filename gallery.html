@@ -756,7 +756,7 @@
       return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 
-    db.collection('gallery').orderBy('createdAt', 'desc').onSnapshot(function (snap) {
+    db.collection('gallery').onSnapshot(function (snap) {
       grid.innerHTML = '';
       if (snap.empty) {
         grid.innerHTML = '<p style="color:var(--slate,#8a9ab5);text-align:center;padding:40px 0;font-family:Inter,sans-serif;">No photos yet — check back soon.</p>';
@@ -764,21 +764,37 @@
       }
       snap.forEach(function (doc) {
         var d = doc.data();
+        if (!d.url) return; // skip docs without an image
         var item = document.createElement('div');
         item.className = 'gallery-item reveal';
         item.style.cursor = 'pointer';
-        item.setAttribute('data-img',     d.url || '');
-        item.setAttribute('data-caption', d.caption || '');
-        item.setAttribute('data-place',   d.place || '');
-        item.setAttribute('data-date',    d.date || '');
-        item.setAttribute('data-details', d.details || '');
+        item.style.position = 'relative';
+        item.style.overflow = 'hidden';
+        item.setAttribute('data-img',     d.url);
+        item.setAttribute('data-caption', d.place || '');   // use place as caption title
+        item.setAttribute('data-place',   d.place || '—');
+        item.setAttribute('data-date',    d.date  || '—');
+        item.setAttribute('data-details', d.details || '—');
         item.innerHTML =
-          '<img src="' + esc(d.url) + '" alt="' + esc(d.caption || 'Gallery photo') + '" loading="lazy" />' +
-          '<button class="gallery-info-btn" aria-label="View photo" style="pointer-events:none;" tabindex="-1">&#128247;</button>';
+          '<img src="' + esc(d.url) + '" alt="' + esc(d.place || 'Gallery photo') + '" loading="lazy" />' +
+          '<div class="gallery-item-overlay" style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 55%);display:flex;flex-direction:column;justify-content:flex-end;padding:14px;opacity:0;transition:opacity 0.25s;">' +
+            '<span style="font-family:Montserrat,sans-serif;font-size:0.72rem;font-weight:700;color:#c9a84c;letter-spacing:0.1em;text-transform:uppercase;">' + esc(d.place || '') + '</span>' +
+            '<span style="font-family:Inter,sans-serif;font-size:0.7rem;color:rgba(255,255,255,0.75);margin-top:2px;">' + esc(d.date || '') + '</span>' +
+          '</div>';
+        // Show overlay on hover
+        item.addEventListener('mouseenter', function () {
+          var ov = item.querySelector('.gallery-item-overlay');
+          if (ov) ov.style.opacity = '1';
+        });
+        item.addEventListener('mouseleave', function () {
+          var ov = item.querySelector('.gallery-item-overlay');
+          if (ov) ov.style.opacity = '0';
+        });
         grid.appendChild(item);
       });
     }, function (err) {
       console.warn('Gallery Firestore error:', err);
+      grid.innerHTML = '<p style="color:#c9a84c;text-align:center;padding:40px 0;font-family:Inter,sans-serif;">Could not load photos. Please try again later.</p>';
     });
   })();
   </script>
