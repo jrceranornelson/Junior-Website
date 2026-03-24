@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel — Junior Ceranor Nelson</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    :root {
+      --navy:   #0b1d3a;
+      --gold:   #c9a84c;
+      --gold-lt:#e8c97a;
+      --white:  #ffffff;
+      --light:  #f8f6f1;
+      --border: #e2ddd0;
+      --muted:  #6b6657;
+      --black:  #111111;
+      --red:    #dc2626;
+      --green:  #16a34a;
+      --shadow: 0 2px 16px rgba(11,29,58,0.12);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #f4f2ee; color: var(--black); }
+    a { text-decoration: none; color: inherit; }
+
+    /* ═══════════════════════════════ LOGIN ═══════════════════════════════ */
+    #loginScreen {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg,#060c18 0%,var(--navy) 60%,#0e254a 100%);
+    }
+    .login-card {
+      background: var(--white); border-radius: 4px; padding: 48px 40px;
+      width: 100%; max-width: 420px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); text-align: center;
+    }
+    .login-logo { width: 80px; height: 80px; object-fit: contain; margin-bottom: 20px; }
+    .login-card h1 { font-family:'Montserrat',sans-serif; font-size:1.5rem; font-weight:800; color:var(--navy); margin-bottom:4px; }
+    .login-card > p { font-size:0.85rem; color:var(--muted); margin-bottom:28px; }
+    .login-form { text-align:left; }
+    .login-form label { display:block; font-family:'Montserrat',sans-serif; font-size:0.65rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--navy); margin-bottom:6px; }
+    .login-form input { display:block; width:100%; padding:12px 14px; border:1px solid var(--border); border-radius:2px; font-family:'Inter',sans-serif; font-size:0.95rem; color:var(--black); outline:none; transition:border-color .2s; margin-bottom:16px; }
+    .login-form input:focus { border-color:var(--navy); }
+    .login-btn { width:100%; padding:13px; background:var(--navy); color:var(--white); border:none; border-radius:2px; font-family:'Montserrat',sans-serif; font-size:0.78rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer; transition:background .2s; margin-top:4px; }
+    .login-btn:hover { background:#16325c; }
+    .login-btn:disabled { opacity:0.6; cursor:not-allowed; }
+    .login-error { color:var(--red); font-size:0.84rem; text-align:center; margin-top:12px; min-height:20px; }
+
+    /* ═══════════════════════════════ LAYOUT ═══════════════════════════════ */
+    #dashboard { display:flex; min-height:100vh; }
+
+    /* ── Sidebar ── */
+    .sidebar { width:240px; min-height:100vh; background:var(--navy); flex-shrink:0; display:flex; flex-direction:column; position:fixed; left:0; top:0; bottom:0; overflow-y:auto; z-index:100; }
+    .sidebar-header { padding:22px 18px 18px; border-bottom:1px solid rgba(255,255,255,0.07); display:flex; align-items:center; gap:12px; }
+    .sidebar-logo-img { width:36px; height:36px; object-fit:contain; border-radius:50%; }
+    .sidebar-title { font-family:'Montserrat',sans-serif; font-size:0.7rem; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:var(--gold); }
+    .sidebar-subtitle { font-size:0.62rem; color:rgba(255,255,255,0.35); margin-top:2px; }
+    .sidebar-nav { padding:12px 0; flex:1; }
+    .nav-group-label { font-family:'Montserrat',sans-serif; font-size:0.56rem; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:rgba(255,255,255,0.22); padding:10px 18px 4px; }
+    .sidebar-link { display:flex; align-items:center; gap:10px; padding:9px 18px; color:rgba(255,255,255,0.62); font-family:'Inter',sans-serif; font-size:0.86rem; font-weight:500; cursor:pointer; border:none; background:none; width:100%; text-align:left; transition:color .15s,background .15s; position:relative; }
+    .sidebar-link:hover { color:var(--white); background:rgba(255,255,255,0.05); }
+    .sidebar-link.active { color:var(--gold); background:rgba(201,168,76,0.1); }
+    .sidebar-link svg { width:15px; height:15px; flex-shrink:0; }
+    .sidebar-link--danger { color:rgba(220,38,38,0.75); }
+    .sidebar-link--danger:hover { color:#f87171; background:rgba(220,38,38,0.08); }
+    .badge-count { margin-left:auto; background:var(--red); color:#fff; border-radius:10px; font-size:0.62rem; font-weight:700; padding:2px 6px; min-width:18px; text-align:center; }
+
+    /* ── Main ── */
+    .main-content { margin-left:240px; flex:1; }
+    .admin-section { padding:36px 40px; }
+    .admin-section.hidden { display:none !important; }
+
+    /* Section Header */
+    .section-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:28px; flex-wrap:wrap; gap:14px; }
+    .section-title { font-family:'Montserrat',sans-serif; font-size:1.55rem; font-weight:800; color:var(--navy); letter-spacing:-0.02em; }
+    .section-sub { font-size:0.86rem; color:var(--muted); margin-top:4px; }
+
+    /* ═══════════════════════════════ BUTTONS ═══════════════════════════════ */
+    .btn { display:inline-flex; align-items:center; gap:7px; padding:9px 18px; border:none; border-radius:2px; font-family:'Montserrat',sans-serif; font-size:0.7rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; transition:background .18s,opacity .15s; }
+    .btn:disabled { opacity:0.5; cursor:not-allowed; }
+    .btn-primary { background:var(--navy); color:var(--white); }
+    .btn-primary:hover { background:#16325c; }
+    .btn-gold { background:var(--gold); color:var(--navy); }
+    .btn-gold:hover { background:var(--gold-lt); }
+    .btn-danger { background:var(--red); color:var(--white); }
+    .btn-danger:hover { background:#b91c1c; }
+    .btn-ghost { background:none; border:1px solid var(--border); color:var(--navy); }
+    .btn-ghost:hover { border-color:var(--navy); background:var(--light); }
+    .btn-sm { padding:5px 12px; font-size:0.62rem; }
+
+    /* ═══════════════════════════════ STAT CARDS ═══════════════════════════════ */
+    .stats-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); gap:18px; margin-bottom:32px; }
+    .stat-card { background:var(--white); border:1px solid var(--border); border-top:3px solid var(--gold); padding:22px; border-radius:2px; }
+    .stat-card--alert { border-top-color:var(--red); }
+    .stat-card--green { border-top-color:var(--green); }
+    .stat-label { font-family:'Montserrat',sans-serif; font-size:0.6rem; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); margin-bottom:10px; }
+    .stat-value { font-family:'Montserrat',sans-serif; font-size:2.1rem; font-weight:900; color:var(--navy); line-height:1; }
+    .stat-sub { font-size:0.76rem; color:var(--muted); margin-top:6px; }
+
+    /* ═══════════════════════════════ TABLES ═══════════════════════════════ */
+    .table-wrap { background:var(--white); border:1px solid var(--border); border-radius:2px; overflow-x:auto; }
+    table { width:100%; border-collapse:collapse; font-size:0.86rem; }
+    thead th { background:var(--light); font-family:'Montserrat',sans-serif; font-size:0.6rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); padding:11px 14px; text-align:left; border-bottom:1px solid var(--border); }
+    tbody tr { border-bottom:1px solid var(--border); transition:background .12s; }
+    tbody tr:last-child { border-bottom:none; }
+    tbody tr:hover { background:#faf9f7; }
+    tbody td { padding:11px 14px; color:var(--black); vertical-align:middle; }
+    td.unread { font-weight:700; }
+    td.actions { white-space:nowrap; }
+    td.actions .btn+.btn { margin-left:6px; }
+
+    /* ═══════════════════════════════ ITEM CARDS ═══════════════════════════════ */
+    .items-list { display:flex; flex-direction:column; gap:10px; }
+    .item-card { background:var(--white); border:1px solid var(--border); border-radius:2px; padding:16px 20px; display:flex; align-items:center; gap:14px; }
+    .item-card-img { width:78px; height:58px; object-fit:cover; border-radius:2px; flex-shrink:0; background:var(--light); }
+    .item-card-img-ph { width:78px; height:58px; background:var(--light); border-radius:2px; flex-shrink:0; display:flex; align-items:center; justify-content:center; color:var(--border); }
+    .item-card-body { flex:1; min-width:0; }
+    .item-card-title { font-family:'Montserrat',sans-serif; font-size:0.9rem; font-weight:700; color:var(--black); margin-bottom:4px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .item-card-meta { font-size:0.8rem; color:var(--muted); }
+    .item-card-actions { display:flex; gap:6px; flex-shrink:0; }
+    .item-badge { display:inline-block; font-family:'Montserrat',sans-serif; font-size:0.58rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:3px 7px; border-radius:2px; margin-left:6px; }
+    .badge-published { background:rgba(22,163,74,0.1); color:var(--green); }
+    .badge-draft { background:rgba(107,102,87,0.1); color:var(--muted); }
+
+    /* ═══════════════════════════════ GALLERY GRID ═══════════════════════════════ */
+    .gallery-admin-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:14px; }
+    .gallery-admin-item { background:var(--white); border:1px solid var(--border); border-radius:2px; overflow:hidden; }
+    .gallery-admin-item img { width:100%; height:130px; object-fit:cover; display:block; }
+    .gallery-admin-item-body { padding:9px; }
+    .gallery-admin-item-place { font-family:'Montserrat',sans-serif; font-size:0.68rem; font-weight:700; color:var(--navy); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .gallery-admin-item-date { font-size:0.72rem; color:var(--muted); }
+    .gallery-admin-item-actions { padding:0 9px 9px; display:flex; gap:5px; }
+
+    /* ═══════════════════════════════ MAP ═══════════════════════════════ */
+    .map-wrap { background:var(--white); border:1px solid var(--border); border-radius:2px; overflow:hidden; margin-top:28px; }
+    .map-wrap-title { font-family:'Montserrat',sans-serif; font-size:0.72rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--navy); padding:14px 16px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:8px; }
+    #adminMap { height:400px; width:100%; }
+
+    /* ═══════════════════════════════ FORMS ═══════════════════════════════ */
+    .form-panel { background:var(--white); border:1px solid var(--border); border-radius:2px; padding:28px; margin-bottom:28px; }
+    .form-panel-title { font-family:'Montserrat',sans-serif; font-size:0.9rem; font-weight:700; color:var(--navy); margin-bottom:20px; padding-bottom:14px; border-bottom:1px solid var(--border); }
+    .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .form-grid--3 { grid-template-columns:1fr 1fr 1fr; }
+    .form-full { grid-column:1/-1; }
+    .form-group { display:flex; flex-direction:column; gap:5px; }
+    .form-group label { font-family:'Montserrat',sans-serif; font-size:0.62rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--navy); }
+    .form-group input,.form-group select,.form-group textarea { padding:9px 11px; border:1px solid var(--border); border-radius:2px; font-family:'Inter',sans-serif; font-size:0.88rem; color:var(--black); background:var(--white); outline:none; transition:border-color .2s; }
+    .form-group input:focus,.form-group select:focus,.form-group textarea:focus { border-color:var(--navy); }
+    .form-group textarea { resize:vertical; min-height:90px; }
+    .form-actions { display:flex; gap:8px; margin-top:20px; padding-top:16px; border-bottom:1px solid var(--border); border-top:1px solid var(--border); padding-bottom:0; }
+    .form-actions { border-bottom:none; }
+
+    /* Search */
+    .search-bar { display:flex; align-items:center; gap:10px; margin-bottom:16px; }
+    .search-input { flex:1; padding:9px 13px; border:1px solid var(--border); border-radius:2px; font-family:'Inter',sans-serif; font-size:0.88rem; outline:none; }
+    .search-input:focus { border-color:var(--navy); }
+
+    /* Upload zone */
+    .upload-zone { border:2px dashed var(--border); border-radius:2px; padding:28px; text-align:center; cursor:pointer; transition:border-color .2s,background .2s; }
+    .upload-zone:hover { border-color:var(--navy); background:#faf9f7; }
+    .upload-zone-icon { color:var(--border); margin-bottom:10px; }
+    .upload-zone-label { font-family:'Montserrat',sans-serif; font-size:0.7rem; font-weight:700; color:var(--navy); }
+    .upload-zone-text { font-size:0.82rem; color:var(--muted); margin-top:3px; }
+    .upload-progress { height:4px; background:var(--border); border-radius:2px; margin-top:10px; overflow:hidden; display:none; }
+    .upload-progress-bar { height:100%; background:var(--gold); transition:width .3s; }
+
+    /* Toast */
+    .toast { position:fixed; top:22px; right:22px; background:var(--navy); color:var(--white); padding:13px 18px; border-radius:2px; font-size:0.86rem; z-index:9999; box-shadow:var(--shadow); display:flex; align-items:center; gap:9px; opacity:0; transform:translateY(-6px); transition:opacity .2s,transform .2s; pointer-events:none; max-width:340px; }
+    .toast.show { opacity:1; transform:translateY(0); }
+    .toast--success { background:var(--green); }
+    .toast--error { background:var(--red); }
+
+    /* Modal */
+    .modal-backdrop { position:fixed; inset:0; background:rgba(0,0,0,0.52); z-index:999; display:none; align-items:center; justify-content:center; padding:20px; }
+    .modal-backdrop.open { display:flex; }
+    .modal { background:var(--white); border-radius:2px; padding:28px; width:100%; max-width:620px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.3); }
+    .modal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; padding-bottom:14px; border-bottom:1px solid var(--border); }
+    .modal-title { font-family:'Montserrat',sans-serif; font-size:1.05rem; font-weight:800; color:var(--navy); }
+    .modal-close { background:none; border:none; font-size:1.4rem; cursor:pointer; color:var(--muted); line-height:1; padding:4px; }
+    .modal-close:hover { color:var(--black); }
+
+    /* Spinner */
+    .admin-spinner { display:flex; justify-content:center; padding:60px 0; }
+    .spinner { width:34px; height:34px; border:3px solid var(--border); border-top-color:var(--gold); border-radius:50%; animation:spin .75s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .empty-state { text-align:center; padding:70px 20px; color:var(--muted); font-family:'Montserrat',sans-serif; font-size:0.88rem; letter-spacing:0.04em; }
+
+    /* Analytics notice */
+    .analytics-note { background:rgba(201,168,76,0.07); border:1px solid rgba(201,168,76,0.28); border-radius:2px; padding:14px 18px; font-size:0.83rem; color:var(--muted); margin-bottom:20px; }
+
+    /* Responsive */
+    @media(max-width:1024px) { .stats-grid { grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); } }
+    @media(max-width:860px)  { .sidebar { width:200px; } .main-content { margin-left:200px; } .admin-section { padding:24px; } .form-grid { grid-template-columns:1fr; } .form-grid--3 { grid-template-columns:1fr; } }
+    @media(max-width:680px)  { .sidebar { position:fixed; transform:translateX(-100%); transition:transform .3s; } .sidebar.open { transform:translateX(0); } .main-content { margin-left:0; } }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════
+     LOGIN SCREEN
+═══════════════════════════════════════════════ -->
+<div id="loginScreen">
+  <div class="login-card">
+    <img src="logo.png" alt="Junior Ceranor Nelson" class="login-logo" />
+    <h1>Admin Panel</h1>
+    <p>Junior Ceranor Nelson — Website Management</p>
+    <form class="login-form" id="loginForm" novalidate>
+      <div style="margin-bottom:14px;">
+        <label for="loginEmail">Email Address</label>
+        <input type="email" id="loginEmail" placeholder="admin@email.com" required autocomplete="username" />
+      </div>
+      <div>
+        <label for="loginPassword">Password</label>
+        <input type="password" id="loginPassword" placeholder="••••••••" required autocomplete="current-password" />
+      </div>
+      <button type="submit" class="login-btn" id="loginBtn">Sign In</button>
+      <p class="login-error" id="loginError"></p>
+    </form>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     DASHBOARD
+═══════════════════════════════════════════════ -->
+<div id="dashboard" style="display:none">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <img src="logo.png" alt="JCN" class="sidebar-logo-img" />
+      <div>
+        <div class="sidebar-title">Admin Panel</div>
+        <div class="sidebar-subtitle">JCN Website</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-group-label">Overview</div>
+      <button class="sidebar-link active" data-section="home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </button>
+      <div class="nav-group-label">Content</div>
+      <button class="sidebar-link" data-section="blog">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Blog
+      </button>
+      <button class="sidebar-link" data-section="gallery">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        Gallery
+      </button>
+      <button class="sidebar-link" data-section="music">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="18" r="3"/><circle cx="19" cy="14" r="3"/><polyline points="12 18 12 2 22 6"/></svg>
+        Music
+      </button>
+      <button class="sidebar-link" data-section="academic">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        Academic
+      </button>
+      <button class="sidebar-link" data-section="projects">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Projects
+      </button>
+      <button class="sidebar-link" data-section="about">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        About Me
+      </button>
+      <div class="nav-group-label">Community</div>
+      <button class="sidebar-link" data-section="messages" id="nav-messages">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Messages
+        <span class="badge-count" id="msgBadge" style="display:none">0</span>
+      </button>
+      <button class="sidebar-link" data-section="subscribers">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Subscribers
+      </button>
+      <div class="nav-group-label">Account</div>
+      <button class="sidebar-link sidebar-link--danger" id="signOutBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </button>
+    </nav>
+  </aside>
+
+  <!-- ── MAIN CONTENT ── -->
+  <main class="main-content">
+
+    <!-- ════════════ DASHBOARD HOME ════════════ -->
+    <section class="admin-section" id="section-home">
+      <div class="section-header">
+        <div>
+          <h1 class="section-title">Dashboard</h1>
+          <p class="section-sub">Welcome back — here's your website at a glance.</p>
+        </div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Blog Posts</div>
+          <div class="stat-value" id="stat-blog">—</div>
+          <div class="stat-sub">Total posts</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Gallery Photos</div>
+          <div class="stat-value" id="stat-gallery">—</div>
+          <div class="stat-sub">Uploaded photos</div>
+        </div>
+        <div class="stat-card stat-card--green">
+          <div class="stat-label">Subscribers</div>
+          <div class="stat-value" id="stat-subscribers">—</div>
+          <div class="stat-sub">Email subscribers</div>
+        </div>
+        <div class="stat-card stat-card--alert">
+          <div class="stat-label">Unread Messages</div>
+          <div class="stat-value" id="stat-messages">—</div>
+          <div class="stat-sub">Awaiting your reply</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Projects</div>
+          <div class="stat-value" id="stat-projects">—</div>
+          <div class="stat-sub">Active projects</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Music Releases</div>
+          <div class="stat-value" id="stat-music">—</div>
+          <div class="stat-sub">Discography entries</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Academic Papers</div>
+          <div class="stat-value" id="stat-academic">—</div>
+          <div class="stat-sub">Publications</div>
+        </div>
+        <div class="stat-card stat-card--green">
+          <div class="stat-label">Page Views</div>
+          <div class="stat-value" id="stat-pageviews">—</div>
+          <div class="stat-sub">Tracked via Firestore</div>
+        </div>
+      </div>
+      <div class="analytics-note">
+        <strong>Advanced Analytics:</strong> For live visitor count, visitor location, session time, and most-visited pages, connect <strong>Google Analytics 4</strong> (free) to your Netlify site. Basic page-view counts above are tracked via Firestore on every page load.
+      </div>
+    </section>
+
+    <!-- ════════════ BLOG MANAGER ════════════ -->
+    <section class="admin-section hidden" id="section-blog">
+      <div class="section-header">
+        <div>
+          <h1 class="section-title">Blog</h1>
+          <p class="section-sub">Create, edit, and publish your articles.</p>
+        </div>
+        <button class="btn btn-primary" id="newPostBtn">+ New Post</button>
+      </div>
+      <div id="blogList"><div class="admin-spinner"><div class="spinner"></div></div></div>
+    </section>
+
+    <!-- ════════════ GALLERY MANAGER ════════════ -->
+    <section class="admin-section hidden" id="section-gallery">
+      <div class="section-header">
+        <div>
+          <h1 class="section-title">Gallery</h1>
+          <p class="section-sub">Upload photos — add coordinates to place them on the map.</p>
+        </div>
+        <button class="btn btn-primary" id="uploadPhotoBtn">+ Upload Photo</button>
+      </div>
+      <div id="galleryAdminGrid" class="gallery-admin-grid">
+        <div class="admin-spinner" style="grid-column:1/-1"><div class="spinner"></div></div>
+      </div>
+      <!-- Live photo map -->
+      <div class="map-wrap">
+        <div class="map-wrap-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 14 8 14s8-8.75 8-14a8 8 0 0 0-8-8z"/></svg>
+          Photo Locations — Live Map
+        </div>
+        <div id="adminMap"></div>
+      </div>
+    </section>
+
+    <!-- ════════════ MUSIC MANAGER ════════════ -->
+    <section class="admin-section hidden" id="section-music">
+      <div class="section-header">
+        <div>
+          <h1 class="section-title">Music</h1>
+          <p class="section-sub">Manage your discography releases.</p>
+        </div>
+        <button class="btn btn-primary" id="newReleaseBtn">+ New Release</button>
+      </div>
+      <div id="musicList"><div class="admin-spinner"><div class="spinner"></div></div></div>
+    </section>
+
+    <!-- ════════════ ACADEMIC MANAGER ════════════ -->
+    <section class="admin-section hidden" id="section-academic">
+      <div class="section-header">
+        <div>
+          <h1 class="section-title">Academic</h1>
+          <p class="section-sub">Manage publications, papers, and dissertations.</p>
+        </div>
+        <button class="btn btn-primary" id="newPubBtn">+ New Publication</button>
+      </div>
+      <div id="academicList"><div class="admin-spinner"><div class="spinner"></div></div></div>
+    </section>
+
+    <!-- ════════════ MESSAGES ════════════ -->
+    <section class="admin-section hidden" id="section-messages">
+      <div class="section-header">
+        <div>
+          <h1 class="section-title">Messages</h1>
+          <p class="section-sub">Contact messages from your website visitors.</p>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th><th>Email</th><th>Message</th><th>Date</th><th>Status</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="messagesBody">
+            <tr><td colspan="6" class="empty-state">Loading messages…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ════════════ SUBSCRIBERS ════════════ -->
+    <section class="admin-section hidden" id="section-subscribers">
+      <div class="section-header">
+        <div>
+          <h1 class="section-title">Subscribers</h1>
+          <p class="section-sub" id="subCountLabel">Loading…</p>
+        </div>
+        <button class="btn btn-ghost" id="exportCsvBtn">Export CSV</button>
+      </div>
+      <div class="search-bar">
+        <input type="text" class="search-input" id="subSearch" placeholder="Search by name or email…" />
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Name</th><th>Email</th><th>Phone</th><th>Subscribed</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="subscribersBody">
+            <tr><td colspan="5" class="empty-state">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ════════════ PROJECTS ════════════ -->
+    <section class="admin-section hidden" id="section-projects">
+      <div class="section-header">
+        <div>
+          <h1 class="section-title">Projects</h1>
+          <p class="section-sub">Manage your portfolio projects.</p>
+        </div>
+        <button class="btn btn-primary" id="newProjectBtn">+ New Project</button>
+      </div>
+      <div id="projectsList"><div class="admin-spinner"><div class="spinner"></div></div></div>
+    </section>
+
+    <!-- ════════════ ABOUT ME ════════════ -->
+    <section class="admin-section hidden" id="section-about">
+      <div class="section-header">
+        <div>
+          <h1 class="section-title">About Me</h1>
+          <p class="section-sub">Update your public profile information.</p>
+        </div>
+      </div>
+      <div class="form-panel">
+        <div class="form-panel-title">Profile Information</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="aboutName">Full Name</label>
+            <input type="text" id="aboutName" placeholder="Junior Ceranor Nelson" />
+          </div>
+          <div class="form-group">
+            <label for="aboutTagline">Tagline</label>
+            <input type="text" id="aboutTagline" placeholder="Diplomat, Educator, Institution Builder" />
+          </div>
+          <div class="form-group form-full">
+            <label for="aboutBio">Bio</label>
+            <textarea id="aboutBio" rows="7" placeholder="Your biography…"></textarea>
+          </div>
+          <div class="form-group form-full">
+            <label for="aboutPhotoUrl">Profile Photo URL</label>
+            <input type="url" id="aboutPhotoUrl" placeholder="https://…" />
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary" id="saveAboutBtn">Save Changes</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div><!-- /dashboard -->
+
+<!-- ═══════════════════════════════════════════════
+     MODALS
+═══════════════════════════════════════════════ -->
+
+<!-- Blog Modal -->
+<div class="modal-backdrop" id="blogModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="blogModalTitle">New Blog Post</span>
+      <button class="modal-close" data-close="blogModal">&times;</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-group form-full"><label for="bTitle">Title *</label><input type="text" id="bTitle" placeholder="Post title" /></div>
+      <div class="form-group"><label for="bDate">Date</label><input type="text" id="bDate" placeholder="March 2026" /></div>
+      <div class="form-group"><label for="bCategory">Category</label><input type="text" id="bCategory" placeholder="Diplomacy" /></div>
+      <div class="form-group form-full"><label for="bExcerpt">Excerpt</label><textarea id="bExcerpt" rows="3" placeholder="Short summary shown on listings…"></textarea></div>
+      <div class="form-group form-full"><label for="bContent">Content</label><textarea id="bContent" rows="9" placeholder="Full article content (HTML or plain text)…"></textarea></div>
+      <div class="form-group form-full"><label for="bImageUrl">Cover Image URL</label><input type="url" id="bImageUrl" placeholder="https://…" /></div>
+      <div class="form-group"><label for="bStatus">Status</label><select id="bStatus"><option value="published">Published</option><option value="draft">Draft</option></select></div>
+    </div>
+    <div class="form-actions" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
+      <button class="btn btn-primary" id="saveBlogBtn">Save Post</button>
+      <button class="btn btn-ghost" data-close="blogModal">Cancel</button>
+    </div>
+    <input type="hidden" id="bDocId" />
+  </div>
+</div>
+
+<!-- Gallery Modal -->
+<div class="modal-backdrop" id="galleryModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="galleryModalTitle">Upload Photo</span>
+      <button class="modal-close" data-close="galleryModal">&times;</button>
+    </div>
+    <div class="form-group" style="margin-bottom:16px;">
+      <label>Photo File</label>
+      <div class="upload-zone" id="galleryUploadZone">
+        <div class="upload-zone-icon"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+        <div class="upload-zone-label">Click or drag to upload</div>
+        <div class="upload-zone-text">JPG, PNG, WebP — max 5MB</div>
+        <input type="file" id="galleryFileInput" accept="image/*" style="display:none" />
+      </div>
+      <div class="upload-progress" id="uploadProgress"><div class="upload-progress-bar" id="uploadProgressBar" style="width:0%"></div></div>
+      <div id="galleryPreview" style="margin-top:10px;"></div>
+    </div>
+    <div class="form-grid">
+      <div class="form-group"><label for="gPlace">Place / Location</label><input type="text" id="gPlace" placeholder="Port-au-Prince, Haiti" /></div>
+      <div class="form-group"><label for="gDate">Date</label><input type="text" id="gDate" placeholder="January 2026" /></div>
+      <div class="form-group form-full"><label for="gDetails">Details / Caption</label><textarea id="gDetails" rows="3" placeholder="Describe this photo…"></textarea></div>
+      <div class="form-group form-full"><label for="gImageUrl">Or paste image URL directly</label><input type="url" id="gImageUrl" placeholder="https://… (optional if uploading file above)" /></div>
+      <div class="form-group"><label for="gLat">Latitude (for map pin)</label><input type="number" id="gLat" placeholder="18.5944" step="any" /></div>
+      <div class="form-group"><label for="gLng">Longitude (for map pin)</label><input type="number" id="gLng" placeholder="-72.3074" step="any" /></div>
+    </div>
+    <div class="form-actions" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
+      <button class="btn btn-primary" id="saveGalleryBtn">Save Photo</button>
+      <button class="btn btn-ghost" data-close="galleryModal">Cancel</button>
+    </div>
+    <input type="hidden" id="gDocId" />
+  </div>
+</div>
+
+<!-- Music Modal -->
+<div class="modal-backdrop" id="musicModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="musicModalTitle">New Release</span>
+      <button class="modal-close" data-close="musicModal">&times;</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-group form-full"><label for="mTitle">Title *</label><input type="text" id="mTitle" placeholder="Release title" /></div>
+      <div class="form-group"><label for="mType">Type</label><select id="mType"><option value="Single">Single</option><option value="EP">EP</option><option value="Album">Album</option></select></div>
+      <div class="form-group"><label for="mYear">Year</label><input type="text" id="mYear" placeholder="2026" /></div>
+      <div class="form-group form-full"><label for="mSpotify">Spotify Link</label><input type="url" id="mSpotify" placeholder="https://open.spotify.com/…" /></div>
+      <div class="form-group form-full"><label for="mApple">Apple Music Link</label><input type="url" id="mApple" placeholder="https://music.apple.com/…" /></div>
+      <div class="form-group form-full"><label for="mCover">Cover Image URL</label><input type="url" id="mCover" placeholder="https://…" /></div>
+    </div>
+    <div class="form-actions" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
+      <button class="btn btn-primary" id="saveMusicBtn">Save Release</button>
+      <button class="btn btn-ghost" data-close="musicModal">Cancel</button>
+    </div>
+    <input type="hidden" id="mDocId" />
+  </div>
+</div>
+
+<!-- Academic Modal -->
+<div class="modal-backdrop" id="academicModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="academicModalTitle">New Publication</span>
+      <button class="modal-close" data-close="academicModal">&times;</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-group form-full"><label for="aTitle">Title *</label><input type="text" id="aTitle" placeholder="Publication title" /></div>
+      <div class="form-group"><label for="aType">Type</label><select id="aType"><option value="Paper">Paper</option><option value="Dissertation">Dissertation</option><option value="Thesis">Thesis</option><option value="Policy Brief">Policy Brief</option><option value="Book">Book</option><option value="Article">Article</option></select></div>
+      <div class="form-group"><label for="aYear">Year</label><input type="text" id="aYear" placeholder="2026" /></div>
+      <div class="form-group form-full"><label for="aInstitution">Institution / Journal</label><input type="text" id="aInstitution" placeholder="Euclid University" /></div>
+      <div class="form-group form-full"><label for="aAbstract">Abstract</label><textarea id="aAbstract" rows="4" placeholder="Abstract or summary…"></textarea></div>
+      <div class="form-group form-full"><label for="aLink">External Link</label><input type="url" id="aLink" placeholder="https://zenodo.org/…" /></div>
+      <div class="form-group form-full"><label for="aPdfUrl">PDF URL</label><input type="url" id="aPdfUrl" placeholder="https://…" /></div>
+    </div>
+    <div class="form-actions" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
+      <button class="btn btn-primary" id="saveAcademicBtn">Save Publication</button>
+      <button class="btn btn-ghost" data-close="academicModal">Cancel</button>
+    </div>
+    <input type="hidden" id="aDocId" />
+  </div>
+</div>
+
+<!-- Project Modal -->
+<div class="modal-backdrop" id="projectModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="projectModalTitle">New Project</span>
+      <button class="modal-close" data-close="projectModal">&times;</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-group form-full"><label for="pTitle">Project Name *</label><input type="text" id="pTitle" placeholder="Project name" /></div>
+      <div class="form-group form-full"><label for="pDescription">Description</label><textarea id="pDescription" rows="4" placeholder="What this project does…"></textarea></div>
+      <div class="form-group form-full"><label for="pUrl">Project URL</label><input type="url" id="pUrl" placeholder="https://…" /></div>
+      <div class="form-group form-full"><label for="pLogoUrl">Logo URL</label><input type="url" id="pLogoUrl" placeholder="https://…" /></div>
+    </div>
+    <div class="form-actions" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
+      <button class="btn btn-primary" id="saveProjectBtn">Save Project</button>
+      <button class="btn btn-ghost" data-close="projectModal">Cancel</button>
+    </div>
+    <input type="hidden" id="pDocId" />
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- ═══════════════════════════════════════════════
+     SCRIPTS
+═══════════════════════════════════════════════ -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+'use strict';
+
+/* ══════════════════════════════════════════════════
+   FIREBASE
+══════════════════════════════════════════════════ */
+if (!firebase.apps.length) {
+  firebase.initializeApp({
+    apiKey:            "AIzaSyC6JxyAfS0TY02pGBMFFTNbbgF0xDuaT-A",
+    authDomain:        "junior-website-10186.firebaseapp.com",
+    projectId:         "junior-website-10186",
+    storageBucket:     "junior-website-10186.firebasestorage.app",
+    messagingSenderId: "553199484927",
+    appId:             "1:553199484927:web:7b0ff3f311e49b550371ca"
+  });
+}
+const db      = firebase.firestore();
+const auth    = firebase.auth();
+const storage = firebase.storage();
+
+/* ══════════════════════════════════════════════════
+   UTILS
+══════════════════════════════════════════════════ */
+function esc(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function toast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (type ? ' toast--' + type : '');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+function fmtDate(ts) {
+  if (!ts) return '—';
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  return d.toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' });
+}
+
+/* ══════════════════════════════════════════════════
+   MODALS
+══════════════════════════════════════════════════ */
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+document.querySelectorAll('[data-close]').forEach(btn => {
+  btn.addEventListener('click', () => closeModal(btn.dataset.close));
+});
+document.querySelectorAll('.modal-backdrop').forEach(bd => {
+  bd.addEventListener('click', e => { if (e.target === bd) closeModal(bd.id); });
+});
+
+/* ══════════════════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════════════════ */
+const SECTIONS = ['home','blog','gallery','music','academic','messages','subscribers','projects','about'];
+
+function showSection(name) {
+  SECTIONS.forEach(s => {
+    document.getElementById('section-' + s).classList.toggle('hidden', s !== name);
+  });
+  document.querySelectorAll('.sidebar-link[data-section]').forEach(a => {
+    a.classList.toggle('active', a.dataset.section === name);
+  });
+  if (name === 'gallery' && !window._mapInited) initMap();
+}
+
+document.querySelectorAll('.sidebar-link[data-section]').forEach(a => {
+  a.addEventListener('click', () => showSection(a.dataset.section));
+});
+
+/* ══════════════════════════════════════════════════
+   AUTH
+══════════════════════════════════════════════════ */
+const loginScreen = document.getElementById('loginScreen');
+const dashboard   = document.getElementById('dashboard');
+
+firebase.auth().onAuthStateChanged(user => {
+  if (user) {
+    loginScreen.style.display = 'none';
+    dashboard.style.display   = 'flex';
+    initDashboard();
+  } else {
+    loginScreen.style.display = 'flex';
+    dashboard.style.display   = 'none';
+  }
+});
+
+document.getElementById('loginForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const btn = document.getElementById('loginBtn');
+  const err = document.getElementById('loginError');
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass  = document.getElementById('loginPassword').value;
+  btn.textContent = 'Signing in…'; btn.disabled = true; err.textContent = '';
+  try {
+    await firebase.auth().signInWithEmailAndPassword(email, pass);
+  } catch (ex) {
+    const MAP = {
+      'auth/user-not-found':    'No account found with this email.',
+      'auth/wrong-password':    'Incorrect password.',
+      'auth/invalid-email':     'Please enter a valid email.',
+      'auth/too-many-requests': 'Too many attempts — try again later.',
+      'auth/invalid-credential':'Invalid email or password.',
+    };
+    err.textContent = MAP[ex.code] || ex.message;
+    btn.textContent = 'Sign In'; btn.disabled = false;
+  }
+});
+
+document.getElementById('signOutBtn').addEventListener('click', () => {
+  if (window.confirm('Sign out of the admin panel?')) firebase.auth().signOut();
+});
+
+/* ══════════════════════════════════════════════════
+   INIT
+══════════════════════════════════════════════════ */
+function initDashboard() {
+  loadStats();
+  loadBlog();
+  loadGallery();
+  loadMusic();
+  loadAcademic();
+  loadMessages();
+  loadSubscribers();
+  loadProjects();
+  loadAbout();
+}
+
+/* ══════════════════════════════════════════════════
+   STATS
+══════════════════════════════════════════════════ */
+function loadStats() {
+  const stat = id => document.getElementById(id);
+  db.collection('blog').onSnapshot(s => stat('stat-blog').textContent = s.size);
+  db.collection('gallery').onSnapshot(s => stat('stat-gallery').textContent = s.size);
+  db.collection('subscribers').onSnapshot(s => stat('stat-subscribers').textContent = s.size);
+  db.collection('projects').onSnapshot(s => stat('stat-projects').textContent = s.size);
+  db.collection('music').onSnapshot(s => stat('stat-music').textContent = s.size);
+  db.collection('academic').onSnapshot(s => stat('stat-academic').textContent = s.size);
+  db.collection('messages').where('read','==',false).onSnapshot(s => {
+    const n = s.size;
+    stat('stat-messages').textContent = n;
+    const badge = document.getElementById('msgBadge');
+    badge.textContent = n; badge.style.display = n > 0 ? 'inline' : 'none';
+  });
+  db.collection('_analytics').onSnapshot(s => {
+    let total = 0;
+    s.forEach(doc => total += (doc.data().views || 0));
+    stat('stat-pageviews').textContent = total || 0;
+  });
+}
+
+/* ══════════════════════════════════════════════════
+   BLOG
+══════════════════════════════════════════════════ */
+function loadBlog() {
+  const list = document.getElementById('blogList');
+  const render = docs => {
+    if (!docs.length) { list.innerHTML = '<div class="empty-state">No posts yet — click "+ New Post" to create one.</div>'; return; }
+    list.innerHTML = '';
+    const ul = document.createElement('div'); ul.className = 'items-list';
+    docs.forEach(doc => {
+      const d = doc.data();
+      const card = document.createElement('div'); card.className = 'item-card';
+      card.innerHTML = `
+        <div class="item-card-body">
+          <div class="item-card-title">${esc(d.title||'Untitled')}<span class="item-badge ${d.status==='published'?'badge-published':'badge-draft'}">${esc(d.status||'draft')}</span></div>
+          <div class="item-card-meta">${esc(d.category||'')}${d.date?' · '+esc(d.date):''}${d.excerpt?' · '+esc(d.excerpt.slice(0,70))+'…':''}</div>
+        </div>
+        <div class="item-card-actions">
+          <button class="btn btn-ghost btn-sm" onclick="editBlog('${doc.id}')">Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteBlog('${doc.id}')">Delete</button>
+        </div>`;
+      ul.appendChild(card);
+    });
+    list.appendChild(ul);
+  };
+  db.collection('blog').orderBy('createdAt','desc').onSnapshot(
+    s => render(s.docs),
+    () => db.collection('blog').onSnapshot(s => render(s.docs), () => {
+      list.innerHTML = '<div class="empty-state">Could not load posts — check Firestore permissions.</div>';
+    })
+  );
+}
+
+document.getElementById('newPostBtn').addEventListener('click', () => {
+  document.getElementById('blogModalTitle').textContent = 'New Blog Post';
+  ['bTitle','bDate','bCategory','bExcerpt','bContent','bImageUrl'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('bStatus').value = 'published';
+  document.getElementById('bDocId').value  = '';
+  openModal('blogModal');
+});
+
+window.editBlog = id => {
+  db.collection('blog').doc(id).get().then(doc => {
+    const d = doc.data();
+    document.getElementById('blogModalTitle').textContent = 'Edit Post';
+    document.getElementById('bTitle').value    = d.title    || '';
+    document.getElementById('bDate').value     = d.date     || '';
+    document.getElementById('bCategory').value = d.category || '';
+    document.getElementById('bExcerpt').value  = d.excerpt  || '';
+    document.getElementById('bContent').value  = d.content  || '';
+    document.getElementById('bImageUrl').value = d.imageUrl || '';
+    document.getElementById('bStatus').value   = d.status   || 'draft';
+    document.getElementById('bDocId').value    = id;
+    openModal('blogModal');
+  });
+};
+
+window.deleteBlog = id => {
+  if (!confirm('Delete this post permanently?')) return;
+  db.collection('blog').doc(id).delete().then(() => toast('Post deleted.','success')).catch(e => toast(e.message,'error'));
+};
+
+document.getElementById('saveBlogBtn').addEventListener('click', async () => {
+  const id = document.getElementById('bDocId').value;
+  const data = {
+    title:    document.getElementById('bTitle').value.trim(),
+    date:     document.getElementById('bDate').value.trim(),
+    category: document.getElementById('bCategory').value.trim(),
+    excerpt:  document.getElementById('bExcerpt').value.trim(),
+    content:  document.getElementById('bContent').value.trim(),
+    imageUrl: document.getElementById('bImageUrl').value.trim(),
+    status:   document.getElementById('bStatus').value,
+  };
+  if (!data.title) { toast('Title is required.','error'); return; }
+  try {
+    if (id) { await db.collection('blog').doc(id).update(data); toast('Post updated!','success'); }
+    else { data.createdAt = firebase.firestore.FieldValue.serverTimestamp(); await db.collection('blog').add(data); toast('Post published!','success'); }
+    closeModal('blogModal');
+  } catch (e) { toast(e.message,'error'); }
+});
+
+/* ══════════════════════════════════════════════════
+   GALLERY + MAP
+══════════════════════════════════════════════════ */
+let galleryUploadUrl = '';
+let adminMap = null;
+window._mapInited = false;
+let mapMarkers = {};
+
+function initMap() {
+  if (window._mapInited) return;
+  window._mapInited = true;
+  adminMap = L.map('adminMap', { scrollWheelZoom: false }).setView([20, 0], 2);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors'
+  }).addTo(adminMap);
+
+  // Custom gold icon
+  const goldIcon = L.divIcon({
+    html: `<svg width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="8" fill="#c9a84c" stroke="#fff" stroke-width="2"/></svg>`,
+    iconSize: [22, 22], iconAnchor: [11, 11], popupAnchor: [0, -14], className: ''
+  });
+
+  // Live feed — add/remove markers as photos change
+  db.collection('gallery').onSnapshot(snap => {
+    // Clear removed
+    Object.keys(mapMarkers).forEach(id => {
+      if (!snap.docs.find(d => d.id === id)) {
+        adminMap.removeLayer(mapMarkers[id]);
+        delete mapMarkers[id];
+      }
+    });
+    // Add/update
+    snap.forEach(doc => {
+      const d = doc.data();
+      if (!d.lat || !d.lng) return;
+      const lat = parseFloat(d.lat), lng = parseFloat(d.lng);
+      if (isNaN(lat) || isNaN(lng)) return;
+      if (mapMarkers[doc.id]) {
+        mapMarkers[doc.id].setLatLng([lat, lng]);
+      } else {
+        const m = L.marker([lat, lng], { icon: goldIcon })
+          .addTo(adminMap)
+          .bindPopup(`<strong>${esc(d.place||'Unknown')}</strong><br>${esc(d.date||'')}${d.imageUrl ? `<br><img src="${esc(d.imageUrl)}" style="max-width:160px;margin-top:6px;border-radius:2px;" />` : ''}`);
+        mapMarkers[doc.id] = m;
+      }
+    });
+  });
+}
+
+function loadGallery() {
+  const grid = document.getElementById('galleryAdminGrid');
+  const render = docs => {
+    grid.innerHTML = '';
+    if (!docs.length) { grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1">No photos yet — click "+ Upload Photo".</div>'; return; }
+    docs.forEach(doc => {
+      const d = doc.data();
+      const item = document.createElement('div'); item.className = 'gallery-admin-item';
+      item.innerHTML = `
+        ${d.imageUrl ? `<img src="${esc(d.imageUrl)}" alt="${esc(d.place||'')}" loading="lazy" onerror="this.style.display='none'" />` : '<div style="width:100%;height:130px;background:var(--light);display:flex;align-items:center;justify-content:center;color:var(--border)"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>'}
+        <div class="gallery-admin-item-body">
+          <div class="gallery-admin-item-place">${esc(d.place||'—')}</div>
+          <div class="gallery-admin-item-date">${esc(d.date||'—')}${d.lat&&d.lng?' · 📍':''}</div>
+        </div>
+        <div class="gallery-admin-item-actions">
+          <button class="btn btn-ghost btn-sm" onclick="editGallery('${doc.id}')">Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteGallery('${doc.id}','${esc(d.imageUrl||'')}')">Delete</button>
+        </div>`;
+      grid.appendChild(item);
+    });
+  };
+  db.collection('gallery').orderBy('createdAt','desc').onSnapshot(
+    s => render(s.docs),
+    () => db.collection('gallery').onSnapshot(s => render(s.docs))
+  );
+}
+
+document.getElementById('uploadPhotoBtn').addEventListener('click', () => {
+  galleryUploadUrl = '';
+  document.getElementById('galleryModalTitle').textContent = 'Upload Photo';
+  ['gPlace','gDate','gDetails','gImageUrl','gLat','gLng'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('gDocId').value = '';
+  document.getElementById('galleryPreview').innerHTML = '';
+  document.getElementById('uploadProgress').style.display = 'none';
+  openModal('galleryModal');
+});
+
+window.editGallery = id => {
+  db.collection('gallery').doc(id).get().then(doc => {
+    const d = doc.data();
+    document.getElementById('galleryModalTitle').textContent = 'Edit Photo';
+    document.getElementById('gPlace').value    = d.place    || '';
+    document.getElementById('gDate').value     = d.date     || '';
+    document.getElementById('gDetails').value  = d.details  || '';
+    document.getElementById('gImageUrl').value = d.imageUrl || '';
+    document.getElementById('gLat').value      = d.lat      || '';
+    document.getElementById('gLng').value      = d.lng      || '';
+    document.getElementById('gDocId').value    = id;
+    galleryUploadUrl = d.imageUrl || '';
+    if (d.imageUrl) document.getElementById('galleryPreview').innerHTML = `<img src="${esc(d.imageUrl)}" style="max-height:110px;border-radius:2px;margin-top:8px;" />`;
+    openModal('galleryModal');
+  });
+};
+
+window.deleteGallery = (id, url) => {
+  if (!confirm('Delete this photo permanently?')) return;
+  const ops = [db.collection('gallery').doc(id).delete()];
+  if (url && url.includes('firebasestorage')) {
+    try { ops.push(storage.refFromURL(url).delete()); } catch(e) {}
+  }
+  Promise.all(ops).then(() => toast('Photo deleted.','success')).catch(e => toast(e.message,'error'));
+};
+
+// File upload
+const uploadZone  = document.getElementById('galleryUploadZone');
+const fileInput   = document.getElementById('galleryFileInput');
+uploadZone.addEventListener('click', () => fileInput.click());
+uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.style.borderColor = 'var(--navy)'; });
+uploadZone.addEventListener('dragleave', () => { uploadZone.style.borderColor = ''; });
+uploadZone.addEventListener('drop', e => { e.preventDefault(); uploadZone.style.borderColor = ''; if (e.dataTransfer.files[0]) uploadGalleryFile(e.dataTransfer.files[0]); });
+fileInput.addEventListener('change', () => { if (fileInput.files[0]) uploadGalleryFile(fileInput.files[0]); });
+
+async function uploadGalleryFile(file) {
+  if (!file.type.startsWith('image/')) { toast('Please select an image file.','error'); return; }
+  if (file.size > 5*1024*1024) { toast('File too large — max 5MB.','error'); return; }
+  const prog = document.getElementById('uploadProgress'), bar = document.getElementById('uploadProgressBar'), prev = document.getElementById('galleryPreview');
+  prog.style.display = 'block'; bar.style.width = '0%';
+  const ref = storage.ref('gallery/' + Date.now() + '_' + file.name.replace(/[^a-z0-9.]/gi,'_'));
+  const task = ref.put(file);
+  task.on('state_changed',
+    s => { bar.style.width = Math.round(s.bytesTransferred/s.totalBytes*100)+'%'; },
+    e => { toast('Upload failed: '+e.message,'error'); prog.style.display='none'; },
+    async () => {
+      galleryUploadUrl = await ref.getDownloadURL();
+      document.getElementById('gImageUrl').value = galleryUploadUrl;
+      prev.innerHTML = `<img src="${esc(galleryUploadUrl)}" style="max-height:110px;border-radius:2px;margin-top:8px;" />`;
+      prog.style.display = 'none';
+      toast('Image uploaded!','success');
+    }
+  );
+}
+
+document.getElementById('saveGalleryBtn').addEventListener('click', async () => {
+  const id       = document.getElementById('gDocId').value;
+  const imageUrl = document.getElementById('gImageUrl').value.trim() || galleryUploadUrl;
+  if (!imageUrl) { toast('Please upload an image or paste a URL.','error'); return; }
+  const latVal = parseFloat(document.getElementById('gLat').value);
+  const lngVal = parseFloat(document.getElementById('gLng').value);
+  const data = {
+    imageUrl: imageUrl,
+    place:    document.getElementById('gPlace').value.trim(),
+    date:     document.getElementById('gDate').value.trim(),
+    details:  document.getElementById('gDetails').value.trim(),
+    ...((!isNaN(latVal) && document.getElementById('gLat').value) ? { lat: latVal } : {}),
+    ...((!isNaN(lngVal) && document.getElementById('gLng').value) ? { lng: lngVal } : {}),
+  };
+  try {
+    if (id) { await db.collection('gallery').doc(id).update(data); toast('Photo updated!','success'); }
+    else { data.createdAt = firebase.firestore.FieldValue.serverTimestamp(); await db.collection('gallery').add(data); toast('Photo saved!','success'); }
+    closeModal('galleryModal'); galleryUploadUrl = '';
+  } catch(e) { toast(e.message,'error'); }
+});
+
+/* ══════════════════════════════════════════════════
+   MUSIC
+══════════════════════════════════════════════════ */
+function loadMusic() {
+  const list = document.getElementById('musicList');
+  const render = docs => {
+    if (!docs.length) { list.innerHTML = '<div class="empty-state">No releases yet.</div>'; return; }
+    list.innerHTML = '';
+    const ul = document.createElement('div'); ul.className = 'items-list';
+    docs.forEach(doc => {
+      const d = doc.data();
+      const card = document.createElement('div'); card.className = 'item-card';
+      card.innerHTML = `
+        ${d.coverImageUrl ? `<img class="item-card-img" src="${esc(d.coverImageUrl)}" alt="${esc(d.title||'')}" onerror="this.style.display='none'" />` : '<div class="item-card-img-ph"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="18" r="3"/><polyline points="12 18 12 2 22 6"/></svg></div>'}
+        <div class="item-card-body">
+          <div class="item-card-title">${esc(d.title||'Untitled')}<span class="item-badge badge-draft">${esc(d.type||'Single')}</span></div>
+          <div class="item-card-meta">${esc(d.year||'')}${d.spotifyLink?' · Spotify':''}${d.appleMusicLink?' · Apple Music':''}</div>
+        </div>
+        <div class="item-card-actions">
+          <button class="btn btn-ghost btn-sm" onclick="editMusic('${doc.id}')">Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteMusic('${doc.id}')">Delete</button>
+        </div>`;
+      ul.appendChild(card);
+    });
+    list.appendChild(ul);
+  };
+  db.collection('music').orderBy('createdAt','desc').onSnapshot(s => render(s.docs), () => db.collection('music').onSnapshot(s => render(s.docs)));
+}
+
+document.getElementById('newReleaseBtn').addEventListener('click', () => {
+  document.getElementById('musicModalTitle').textContent = 'New Release';
+  ['mTitle','mYear','mSpotify','mApple','mCover'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('mType').value = 'Single';
+  document.getElementById('mDocId').value = '';
+  openModal('musicModal');
+});
+
+window.editMusic = id => {
+  db.collection('music').doc(id).get().then(doc => {
+    const d = doc.data();
+    document.getElementById('musicModalTitle').textContent = 'Edit Release';
+    document.getElementById('mTitle').value  = d.title          || '';
+    document.getElementById('mType').value   = d.type           || 'Single';
+    document.getElementById('mYear').value   = d.year           || '';
+    document.getElementById('mSpotify').value = d.spotifyLink   || '';
+    document.getElementById('mApple').value  = d.appleMusicLink || '';
+    document.getElementById('mCover').value  = d.coverImageUrl  || '';
+    document.getElementById('mDocId').value  = id;
+    openModal('musicModal');
+  });
+};
+
+window.deleteMusic = id => {
+  if (!confirm('Delete this release?')) return;
+  db.collection('music').doc(id).delete().then(() => toast('Release deleted.','success')).catch(e => toast(e.message,'error'));
+};
+
+document.getElementById('saveMusicBtn').addEventListener('click', async () => {
+  const id = document.getElementById('mDocId').value;
+  const data = {
+    title:          document.getElementById('mTitle').value.trim(),
+    type:           document.getElementById('mType').value,
+    year:           document.getElementById('mYear').value.trim(),
+    spotifyLink:    document.getElementById('mSpotify').value.trim(),
+    appleMusicLink: document.getElementById('mApple').value.trim(),
+    coverImageUrl:  document.getElementById('mCover').value.trim(),
+  };
+  if (!data.title) { toast('Title is required.','error'); return; }
+  try {
+    if (id) { await db.collection('music').doc(id).update(data); toast('Release updated!','success'); }
+    else { data.createdAt = firebase.firestore.FieldValue.serverTimestamp(); await db.collection('music').add(data); toast('Release added!','success'); }
+    closeModal('musicModal');
+  } catch(e) { toast(e.message,'error'); }
+});
+
+/* ══════════════════════════════════════════════════
+   ACADEMIC
+══════════════════════════════════════════════════ */
+function loadAcademic() {
+  const list = document.getElementById('academicList');
+  const render = docs => {
+    if (!docs.length) { list.innerHTML = '<div class="empty-state">No publications yet.</div>'; return; }
+    list.innerHTML = '';
+    const ul = document.createElement('div'); ul.className = 'items-list';
+    docs.forEach(doc => {
+      const d = doc.data();
+      const card = document.createElement('div'); card.className = 'item-card';
+      card.innerHTML = `
+        <div class="item-card-body">
+          <div class="item-card-title">${esc(d.title||'Untitled')}<span class="item-badge badge-draft">${esc(d.type||'Paper')}</span></div>
+          <div class="item-card-meta">${esc(d.institution||'')}${d.year?' · '+esc(d.year):''}</div>
+        </div>
+        <div class="item-card-actions">
+          <button class="btn btn-ghost btn-sm" onclick="editAcademic('${doc.id}')">Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteAcademic('${doc.id}')">Delete</button>
+        </div>`;
+      ul.appendChild(card);
+    });
+    list.appendChild(ul);
+  };
+  db.collection('academic').orderBy('createdAt','desc').onSnapshot(s => render(s.docs), () => db.collection('academic').onSnapshot(s => render(s.docs)));
+}
+
+document.getElementById('newPubBtn').addEventListener('click', () => {
+  document.getElementById('academicModalTitle').textContent = 'New Publication';
+  ['aTitle','aYear','aInstitution','aAbstract','aLink','aPdfUrl'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('aType').value = 'Paper';
+  document.getElementById('aDocId').value = '';
+  openModal('academicModal');
+});
+
+window.editAcademic = id => {
+  db.collection('academic').doc(id).get().then(doc => {
+    const d = doc.data();
+    document.getElementById('academicModalTitle').textContent = 'Edit Publication';
+    document.getElementById('aTitle').value       = d.title       || '';
+    document.getElementById('aType').value        = d.type        || 'Paper';
+    document.getElementById('aYear').value        = d.year        || '';
+    document.getElementById('aInstitution').value = d.institution || '';
+    document.getElementById('aAbstract').value    = d.abstract    || '';
+    document.getElementById('aLink').value        = d.link        || '';
+    document.getElementById('aPdfUrl').value      = d.pdfUrl      || '';
+    document.getElementById('aDocId').value       = id;
+    openModal('academicModal');
+  });
+};
+
+window.deleteAcademic = id => {
+  if (!confirm('Delete this publication?')) return;
+  db.collection('academic').doc(id).delete().then(() => toast('Publication deleted.','success')).catch(e => toast(e.message,'error'));
+};
+
+document.getElementById('saveAcademicBtn').addEventListener('click', async () => {
+  const id = document.getElementById('aDocId').value;
+  const data = {
+    title:       document.getElementById('aTitle').value.trim(),
+    type:        document.getElementById('aType').value,
+    year:        document.getElementById('aYear').value.trim(),
+    institution: document.getElementById('aInstitution').value.trim(),
+    abstract:    document.getElementById('aAbstract').value.trim(),
+    link:        document.getElementById('aLink').value.trim(),
+    pdfUrl:      document.getElementById('aPdfUrl').value.trim(),
+  };
+  if (!data.title) { toast('Title is required.','error'); return; }
+  try {
+    if (id) { await db.collection('academic').doc(id).update(data); toast('Publication updated!','success'); }
+    else { data.createdAt = firebase.firestore.FieldValue.serverTimestamp(); await db.collection('academic').add(data); toast('Publication saved!','success'); }
+    closeModal('academicModal');
+  } catch(e) { toast(e.message,'error'); }
+});
+
+/* ══════════════════════════════════════════════════
+   MESSAGES
+══════════════════════════════════════════════════ */
+function loadMessages() {
+  const tbody = document.getElementById('messagesBody');
+  const render = docs => {
+    if (!docs.length) { tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No messages yet.</td></tr>'; return; }
+    tbody.innerHTML = '';
+    docs.forEach(doc => {
+      const d = doc.data();
+      const preview = (d.message||'').slice(0,65)+((d.message||'').length>65?'…':'');
+      const dateStr = d.date ? (d.date.toDate ? d.date.toDate().toLocaleDateString() : d.date) : '—';
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td class="${!d.read?'unread':''}">${esc(d.name||'—')}</td>
+        <td><a href="mailto:${esc(d.email)}" style="color:var(--navy)">${esc(d.email||'—')}</a></td>
+        <td title="${esc(d.message||'')}">${esc(preview)}</td>
+        <td>${esc(dateStr)}</td>
+        <td><span style="font-family:Montserrat,sans-serif;font-size:0.62rem;font-weight:700;padding:3px 7px;border-radius:2px;background:${d.read?'rgba(22,163,74,0.1)':'rgba(220,38,38,0.1)'};color:${d.read?'var(--green)':'var(--red)'};">${d.read?'Read':'Unread'}</span></td>
+        <td class="actions">
+          ${!d.read?`<button class="btn btn-ghost btn-sm" onclick="markRead('${doc.id}')">Mark Read</button>`:''}
+          <button class="btn btn-danger btn-sm" onclick="deleteMsg('${doc.id}')">Delete</button>
+        </td>`;
+      tbody.appendChild(row);
+    });
+  };
+  db.collection('messages').orderBy('date','desc').onSnapshot(s => render(s.docs), () => db.collection('messages').onSnapshot(s => render(s.docs)));
+}
+
+window.markRead = id => {
+  db.collection('messages').doc(id).update({ read:true }).then(() => toast('Marked as read.','success')).catch(e => toast(e.message,'error'));
+};
+window.deleteMsg = id => {
+  if (!confirm('Delete this message?')) return;
+  db.collection('messages').doc(id).delete().then(() => toast('Message deleted.','success')).catch(e => toast(e.message,'error'));
+};
+
+/* ══════════════════════════════════════════════════
+   SUBSCRIBERS
+══════════════════════════════════════════════════ */
+let allSubs = [];
+
+function loadSubscribers() {
+  const label = document.getElementById('subCountLabel');
+  db.collection('subscribers').orderBy('createdAt','desc').onSnapshot(
+    s => { allSubs = s.docs; label.textContent = s.size+' subscriber'+(s.size!==1?'s':'')+' total'; renderSubs(); },
+    () => db.collection('subscribers').onSnapshot(s => { allSubs = s.docs; label.textContent = s.size+' subscriber'+(s.size!==1?'s':'')+' total'; renderSubs(); })
+  );
+}
+
+function renderSubs() {
+  const tbody = document.getElementById('subscribersBody');
+  const q = document.getElementById('subSearch').value.toLowerCase();
+  const filtered = q ? allSubs.filter(doc => {
+    const d = doc.data();
+    return (d.name||'').toLowerCase().includes(q)||(d.email||'').toLowerCase().includes(q);
+  }) : allSubs;
+  if (!filtered.length) { tbody.innerHTML = `<tr><td colspan="5" class="empty-state">${q?'No matches.':'No subscribers yet.'}</td></tr>`; return; }
+  tbody.innerHTML = '';
+  filtered.forEach(doc => {
+    const d = doc.data();
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${esc(d.name||'—')}</td>
+      <td><a href="mailto:${esc(d.email)}" style="color:var(--navy)">${esc(d.email||'—')}</a></td>
+      <td>${esc(d.phone||'—')}</td>
+      <td>${d.createdAt?(d.createdAt.toDate?d.createdAt.toDate().toLocaleDateString():d.createdAt):'—'}</td>
+      <td class="actions"><button class="btn btn-danger btn-sm" onclick="deleteSub('${doc.id}')">Remove</button></td>`;
+    tbody.appendChild(row);
+  });
+}
+
+document.getElementById('subSearch').addEventListener('input', renderSubs);
+
+window.deleteSub = id => {
+  if (!confirm('Remove this subscriber?')) return;
+  db.collection('subscribers').doc(id).delete().then(() => toast('Subscriber removed.','success')).catch(e => toast(e.message,'error'));
+};
+
+document.getElementById('exportCsvBtn').addEventListener('click', () => {
+  if (!allSubs.length) { toast('No subscribers to export.','error'); return; }
+  const rows = [['Name','Email','Phone','Subscribed Date']];
+  allSubs.forEach(doc => {
+    const d = doc.data();
+    const dt = d.createdAt?(d.createdAt.toDate?d.createdAt.toDate().toLocaleDateString():d.createdAt):'';
+    rows.push([d.name||'',d.email||'',d.phone||'',dt]);
+  });
+  const csv = rows.map(r => r.map(c => '"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download = 'subscribers.csv'; a.click();
+  toast('CSV exported!','success');
+});
+
+/* ══════════════════════════════════════════════════
+   PROJECTS
+══════════════════════════════════════════════════ */
+function loadProjects() {
+  const list = document.getElementById('projectsList');
+  const render = docs => {
+    if (!docs.length) { list.innerHTML = '<div class="empty-state">No projects yet.</div>'; return; }
+    list.innerHTML = '';
+    const ul = document.createElement('div'); ul.className = 'items-list';
+    docs.forEach(doc => {
+      const d = doc.data();
+      const card = document.createElement('div'); card.className = 'item-card';
+      card.innerHTML = `
+        ${d.logoUrl ? `<img class="item-card-img" src="${esc(d.logoUrl)}" alt="${esc(d.title||'')}" onerror="this.style.display='none'" />` : ''}
+        <div class="item-card-body">
+          <div class="item-card-title">${esc(d.title||'Untitled')}</div>
+          <div class="item-card-meta">${esc((d.description||'').slice(0,90))}${(d.description||'').length>90?'…':''}</div>
+        </div>
+        <div class="item-card-actions">
+          <button class="btn btn-ghost btn-sm" onclick="editProject('${doc.id}')">Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteProject('${doc.id}')">Delete</button>
+        </div>`;
+      ul.appendChild(card);
+    });
+    list.appendChild(ul);
+  };
+  db.collection('projects').orderBy('createdAt','desc').onSnapshot(s => render(s.docs), () => db.collection('projects').onSnapshot(s => render(s.docs)));
+}
+
+document.getElementById('newProjectBtn').addEventListener('click', () => {
+  document.getElementById('projectModalTitle').textContent = 'New Project';
+  ['pTitle','pDescription','pUrl','pLogoUrl'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('pDocId').value = '';
+  openModal('projectModal');
+});
+
+window.editProject = id => {
+  db.collection('projects').doc(id).get().then(doc => {
+    const d = doc.data();
+    document.getElementById('projectModalTitle').textContent = 'Edit Project';
+    document.getElementById('pTitle').value       = d.title       || '';
+    document.getElementById('pDescription').value = d.description || '';
+    document.getElementById('pUrl').value         = d.url         || '';
+    document.getElementById('pLogoUrl').value     = d.logoUrl     || '';
+    document.getElementById('pDocId').value       = id;
+    openModal('projectModal');
+  });
+};
+
+window.deleteProject = id => {
+  if (!confirm('Delete this project?')) return;
+  db.collection('projects').doc(id).delete().then(() => toast('Project deleted.','success')).catch(e => toast(e.message,'error'));
+};
+
+document.getElementById('saveProjectBtn').addEventListener('click', async () => {
+  const id = document.getElementById('pDocId').value;
+  const data = {
+    title:       document.getElementById('pTitle').value.trim(),
+    description: document.getElementById('pDescription').value.trim(),
+    url:         document.getElementById('pUrl').value.trim(),
+    logoUrl:     document.getElementById('pLogoUrl').value.trim(),
+  };
+  if (!data.title) { toast('Project name is required.','error'); return; }
+  try {
+    if (id) { await db.collection('projects').doc(id).update(data); toast('Project updated!','success'); }
+    else { data.createdAt = firebase.firestore.FieldValue.serverTimestamp(); await db.collection('projects').add(data); toast('Project added!','success'); }
+    closeModal('projectModal');
+  } catch(e) { toast(e.message,'error'); }
+});
+
+/* ══════════════════════════════════════════════════
+   ABOUT ME
+══════════════════════════════════════════════════ */
+function loadAbout() {
+  db.collection('about').doc('main').onSnapshot(doc => {
+    if (doc.exists) {
+      const d = doc.data();
+      document.getElementById('aboutName').value     = d.name     || '';
+      document.getElementById('aboutTagline').value  = d.tagline  || '';
+      document.getElementById('aboutBio').value      = d.bio      || '';
+      document.getElementById('aboutPhotoUrl').value = d.photoUrl || '';
+    }
+  });
+}
+
+document.getElementById('saveAboutBtn').addEventListener('click', async () => {
+  const data = {
+    name:      document.getElementById('aboutName').value.trim(),
+    tagline:   document.getElementById('aboutTagline').value.trim(),
+    bio:       document.getElementById('aboutBio').value.trim(),
+    photoUrl:  document.getElementById('aboutPhotoUrl').value.trim(),
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+  };
+  try {
+    await db.collection('about').doc('main').set(data, { merge:true });
+    toast('About Me saved!','success');
+  } catch(e) { toast(e.message,'error'); }
+});
+
+</script>
+</body>
+</html>

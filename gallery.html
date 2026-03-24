@@ -712,6 +712,17 @@
   <script src="gallery-page.js"></script>
   <script src="live-chat.js"></script>
 
+  <!-- Page view tracker -->
+  <script>
+  (function () {
+    if (typeof db === 'undefined') return;
+    db.collection('_analytics').doc('gallery').set(
+      { views: firebase.firestore.FieldValue.increment(1), page: 'gallery' },
+      { merge: true }
+    ).catch(function(){});
+  })();
+  </script>
+
   <!-- Dynamic gallery photos from Firestore -->
   <script>
   (function () {
@@ -764,19 +775,19 @@
       }
       snap.forEach(function (doc) {
         var d = doc.data();
-        if (!d.url) return; // skip docs without an image
+        if (!d.imageUrl) return; // skip docs without an image
         var item = document.createElement('div');
         item.className = 'gallery-item reveal';
         item.style.cursor = 'pointer';
         item.style.position = 'relative';
         item.style.overflow = 'hidden';
-        item.setAttribute('data-img',     d.url);
+        item.setAttribute('data-img',     d.imageUrl);
         item.setAttribute('data-caption', d.place || '');   // use place as caption title
         item.setAttribute('data-place',   d.place || '—');
         item.setAttribute('data-date',    d.date  || '—');
         item.setAttribute('data-details', d.details || '—');
         item.innerHTML =
-          '<img src="' + esc(d.url) + '" alt="' + esc(d.place || 'Gallery photo') + '" loading="lazy" />' +
+          '<img src="' + esc(d.imageUrl) + '" alt="' + esc(d.place || 'Gallery photo') + '" loading="lazy" />' +
           '<div class="gallery-item-overlay" style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 55%);display:flex;flex-direction:column;justify-content:flex-end;padding:14px;opacity:0;transition:opacity 0.25s;">' +
             '<span style="font-family:Montserrat,sans-serif;font-size:0.72rem;font-weight:700;color:#c9a84c;letter-spacing:0.1em;text-transform:uppercase;">' + esc(d.place || '') + '</span>' +
             '<span style="font-family:Inter,sans-serif;font-size:0.7rem;color:rgba(255,255,255,0.75);margin-top:2px;">' + esc(d.date || '') + '</span>' +

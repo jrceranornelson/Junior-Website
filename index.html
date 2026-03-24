@@ -559,8 +559,8 @@
     }
 
     function buildCard(id, post) {
-      var img = post.coverUrl
-        ? '<img src="' + esc(post.coverUrl) + '" alt="' + esc(post.title) + '" loading="lazy" />'
+      var img = post.imageUrl
+        ? '<img src="' + esc(post.imageUrl) + '" alt="' + esc(post.title) + '" loading="lazy" />'
         : '<div style="width:100%;height:100%;background:linear-gradient(135deg,#0b1d3a,#1a3a6e);"></div>';
       var excerpt = post.excerpt || '';
       if (excerpt.length > 140) excerpt = excerpt.slice(0, 140) + '…';
@@ -626,7 +626,7 @@
 
     function render(docs) {
       // Build a unified pool: Firestore published posts + static fallbacks
-      var published = docs.filter(function(d) { return d.data().published === true; });
+      var published = docs.filter(function(d) { return d.data().status === 'published'; });
 
       // Tag each Firestore doc with a sort timestamp
       var pool = published.map(function(doc) {
@@ -709,8 +709,8 @@
             (d.tag ? '<span class="project-tag">' + esc(d.tag) + '</span>' : '') +
             '<h3 class="project-card-title">' + esc(d.title || 'Untitled') + '</h3>' +
             '<p class="project-card-desc">' + esc(d.description || '') + '</p>' +
-            (d.link
-              ? '<a href="' + esc(d.link) + '" target="_blank" rel="noopener" class="project-card-link">Visit <span class="arrow">→</span></a>'
+            (d.url
+              ? '<a href="' + esc(d.url) + '" target="_blank" rel="noopener" class="project-card-link">Visit <span class="arrow">→</span></a>'
               : '') +
           '</div>';
         dynGrid.appendChild(card);
@@ -719,6 +719,83 @@
       if (statGrid) statGrid.style.display = 'none';
     }, function (err) {
       console.warn('Projects Firestore error:', err);
+    });
+  })();
+  </script>
+
+  <!-- Page view tracker -->
+  <script>
+  (function () {
+    if (typeof db === 'undefined') return;
+    db.collection('_analytics').doc('home').set(
+      { views: firebase.firestore.FieldValue.increment(1), page: 'home' },
+      { merge: true }
+    ).catch(function(){});
+  })();
+  </script>
+
+  <!-- Contact form → Firestore "messages" -->
+  <script>
+  (function () {
+    var form = document.getElementById('contactForm');
+    if (!form || typeof db === 'undefined') return;
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var btn = form.querySelector('button[type="submit"]');
+      var name    = (form.querySelector('#name') || {}).value  || '';
+      var email   = (form.querySelector('#email') || {}).value || '';
+      var message = (form.querySelector('#message') || {}).value || '';
+      if (!name || !email || !message) return;
+      btn.disabled = true; btn.textContent = 'Sending…';
+      db.collection('messages').add({
+        name: name.trim(), email: email.trim(), message: message.trim(),
+        date: firebase.firestore.FieldValue.serverTimestamp(),
+        read: false
+      }).then(function () {
+        btn.textContent = 'Message Sent ✓';
+        form.reset();
+        setTimeout(function () { btn.textContent = 'Send Message'; btn.disabled = false; }, 4000);
+      }).catch(function (err) {
+        console.error('Contact form error:', err);
+        btn.textContent = 'Send Message'; btn.disabled = false;
+        alert('Could not send message — please email me directly at me@juniorceranornelson.com');
+      });
+    });
+  })();
+  </script>
+
+  <!-- Subscribe form → Firestore "subscribers" -->
+  <script>
+  (function () {
+    var form = document.getElementById('subscribeForm');
+    var success = document.getElementById('subscribeSuccess');
+    var btn     = document.getElementById('subscribeBtn');
+    if (!form || typeof db === 'undefined') return;
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var name  = (document.getElementById('sub-name')  || {}).value  || '';
+      var email = (document.getElementById('sub-email') || {}).value || '';
+      var phone = (document.getElementById('sub-phone') || {}).value || '';
+      if (!name || !email) return;
+      btn.disabled = true;
+      var btnText = btn.querySelector('.subscribe-btn-text');
+      if (btnText) btnText.textContent = 'Subscribing…';
+      db.collection('subscribers').add({
+        name: name.trim(), email: email.trim(), phone: phone.trim(),
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(function () {
+        form.reset();
+        if (success) success.style.display = 'flex';
+        btn.disabled = false;
+        if (btnText) btnText.textContent = 'Subscribe';
+      }).catch(function (err) {
+        console.error('Subscribe error:', err);
+        btn.disabled = false;
+        if (btnText) btnText.textContent = 'Subscribe';
+        alert('Subscription failed — please try again.');
+      });
     });
   })();
   </script>

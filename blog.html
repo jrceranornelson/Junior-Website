@@ -347,8 +347,8 @@
     }
 
     function buildCard(id, post) {
-      var imgInner = post.coverUrl
-        ? '<img src="' + esc(post.coverUrl) + '" alt="' + esc(post.title) + '" loading="lazy" />'
+      var imgInner = post.imageUrl
+        ? '<img src="' + esc(post.imageUrl) + '" alt="' + esc(post.title) + '" loading="lazy" />'
         : '<div class="blog-img-placeholder"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>';
 
       var cat = post.category
@@ -374,8 +374,8 @@
 
     function render(docs) {
       grid.innerHTML = '';
-      // Show all docs — filter out drafts (published must be exactly true)
-      var posts = docs.filter(function(d) { return d.data().published === true; });
+      // Show all docs — filter out drafts (status must be 'published')
+      var posts = docs.filter(function(d) { return d.data().status === 'published'; });
 
       if (!posts.length) {
         countEl.style.display = 'none';
@@ -407,6 +407,14 @@
         var bs = (b.data().createdAt || {}).seconds || 0;
         return bs - as;
       });
+    }
+
+    // Page view tracker
+    if (typeof firebase !== 'undefined' && db) {
+      db.collection('_analytics').doc('blog').set(
+        { views: firebase.firestore.FieldValue.increment(1), page: 'blog' },
+        { merge: true }
+      ).catch(function(){});
     }
 
     // Primary: orderBy query with onSnapshot

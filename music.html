@@ -302,6 +302,17 @@
   <script src="preloader.js"></script>
   <script src="music-page.js"></script>
   <script src="live-chat.js"></script>
+  <!-- Page view tracker -->
+  <script>
+  (function () {
+    if (typeof db === 'undefined') return;
+    db.collection('_analytics').doc('music').set(
+      { views: firebase.firestore.FieldValue.increment(1), page: 'music' },
+      { merge: true }
+    ).catch(function(){});
+  })();
+  </script>
+
   <script>
   (function () {
     var grid = document.getElementById('musicGrid');
@@ -313,12 +324,12 @@
 
     function buildCard(r) {
       var typeClass = (r.type || '').toLowerCase() === 'album' ? 'mp-type--album' : 'mp-type--single';
-      var img = r.coverUrl
-        ? '<img src="' + esc(r.coverUrl) + '" alt="' + esc(r.title) + '" loading="lazy" />'
+      var img = r.coverImageUrl
+        ? '<img src="' + esc(r.coverImageUrl) + '" alt="' + esc(r.title) + '" loading="lazy" />'
         : '<div style="width:100%;height:100%;background:linear-gradient(135deg,#0b1d3a,#1a3a6e);display:flex;align-items:center;justify-content:center;"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(201,168,76,0.4)" stroke-width="1.5"><circle cx="9" cy="18" r="3"/><circle cx="19" cy="14" r="3"/><polyline points="12 18 12 2 22 6"/></svg></div>';
       var links = '';
-      if (r.spotifyUrl) links += '<a href="' + esc(r.spotifyUrl) + '" target="_blank" rel="noopener" class="mp-release-listen" style="margin-right:10px;">Spotify →</a>';
-      if (r.appleMusicUrl) links += '<a href="' + esc(r.appleMusicUrl) + '" target="_blank" rel="noopener" class="mp-release-listen">Apple Music →</a>';
+      if (r.spotifyLink) links += '<a href="' + esc(r.spotifyLink) + '" target="_blank" rel="noopener" class="mp-release-listen" style="margin-right:10px;">Spotify →</a>';
+      if (r.appleMusicLink) links += '<a href="' + esc(r.appleMusicLink) + '" target="_blank" rel="noopener" class="mp-release-listen">Apple Music →</a>';
       if (!links) links = '<span class="mp-release-listen" style="opacity:0.5;">Coming soon</span>';
       var card = document.createElement('article');
       card.className = 'mp-release-card';

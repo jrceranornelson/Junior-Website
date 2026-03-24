@@ -28,7 +28,7 @@ window.SOCIAL_CONFIG = {
   },
 
   facebook: {
-    handle:     'jrceranornelsopn',
+    handle:     'jrceranornelson',
     profileUrl: 'https://www.facebook.com/jrceranornelson',
     // Number of posts to show in the timeline feed
     postCount:  5,
@@ -36,8 +36,8 @@ window.SOCIAL_CONFIG = {
 
   linkedin: {
     // This is the slug that appears in your LinkedIn URL after /in/
-    vanity:     'jrceranoprnelson',
-    profileUrl: 'https://www.linkedin.com/in/jrceranoprnelson',
+    vanity:     'jrceranornelson',
+    profileUrl: 'https://www.linkedin.com/in/jrceranornelson',
   },
 
   twitter: {

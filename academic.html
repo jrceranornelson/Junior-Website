@@ -1080,6 +1080,17 @@
   <!-- LIVE CHAT -->
   <script src="live-chat.js"></script>
 
+  <!-- Page view tracker -->
+  <script>
+  (function () {
+    if (typeof db === 'undefined') return;
+    db.collection('_analytics').doc('academic').set(
+      { views: firebase.firestore.FieldValue.increment(1), page: 'academic' },
+      { merge: true }
+    ).catch(function(){});
+  })();
+  </script>
+
   <!-- Dynamic publications from Firestore -->
   <script>
   (function () {
@@ -1098,7 +1109,7 @@
       }
       snap.forEach(function (doc) {
         var d = doc.data();
-        var btnHref = d.externalLink || d.pdfUrl || '#';
+        var btnHref = d.link || d.pdfUrl || '#';
         var card = document.createElement('article');
         card.className = 'pub-card reveal';
         card.innerHTML =
