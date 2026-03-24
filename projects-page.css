@@ -331,12 +331,15 @@
   .pp-hero-sub { font-size: 1rem; }
 }
 
-/* ─── Mobile nav fix:
+/* ─── Tablet/mobile nav fix:
    projects-page.css sets #navbar .nav-link white (high specificity).
-   At ≤768px the drawer background is white, so nav links must be dark. ─── */
-@media (max-width: 768px) {
+   At ≤1024px the drawer background is white, so nav links must be dark. ─── */
+@media (max-width: 1024px) {
   #navbar .nav-link       { color: var(--black) !important; opacity: 1; }
   #navbar .nav-link:hover { color: var(--navy)  !important; opacity: 1; }
+}
+
+@media (max-width: 768px) {
   .pp-hero   { padding: 110px 0 64px; }
   .pp-section { padding: 64px 0; }
   .pp-hero-sub { font-size: 0.95rem; }

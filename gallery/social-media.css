@@ -130,6 +130,20 @@ ul  { list-style: none; }
   transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
+/* Contact button inside mobile/tablet drawer */
+.nav-cta-drawer-li { display: none; width: 100%; margin-top: 16px; list-style: none; }
+.nav-cta-drawer {
+  display: block;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.75rem; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 14px 24px;
+  background: var(--gold); color: var(--navy);
+  border-radius: 2px; text-align: center;
+  transition: background 0.22s ease;
+}
+.nav-cta-drawer:hover { background: var(--gold-light); }
+
 /* ═══════════════════════════════════════════════════════════
    PAGE HERO
 ═══════════════════════════════════════════════════════════ */
@@ -722,9 +736,43 @@ ul  { list-style: none; }
    RESPONSIVE
 ═══════════════════════════════════════════════════════════ */
 @media (max-width: 1024px) {
-  .platform-inner {
-    gap: 56px;
+  .platform-inner { gap: 56px; }
+
+  /* NAV — hamburger drawer */
+  .nav-toggle  { display: flex; }
+  .nav-cta     { display: none; }
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    position: fixed;
+    top: 0; right: -100%;
+    width: 78vw; max-width: 320px;
+    height: 100vh;
+    background: #0b1d3a;
+    padding: 80px 36px 40px;
+    gap: 4px;
+    box-shadow: -4px 0 24px rgba(0,0,0,0.3);
+    transition: right 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    z-index: 999;
+    overflow-y: auto;
+    align-items: flex-start;
+    justify-content: center;
   }
+  .nav-links.open { display: flex; right: 0; }
+  .nav-links::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.45);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+  }
+  .nav-links.open::before { opacity: 1; }
+  .nav-link { font-size: 0.95rem; padding: 10px 0; display: block; width: 100%; }
+  .nav-cta-drawer-li { display: block; }
 }
 
 @media (max-width: 900px) {
@@ -750,21 +798,6 @@ ul  { list-style: none; }
 }
 
 @media (max-width: 768px) {
-  .nav-links {
-    display: none;
-    flex-direction: column;
-    position: absolute;
-    top: 100%; left: 0; right: 0;
-    background: var(--navy-deep);
-    padding: 24px;
-    gap: 20px;
-    border-top: 1px solid rgba(255,255,255,0.1);
-  }
-
-  .nav-links.open { display: flex; }
-  .nav-toggle     { display: flex; }
-  .nav-cta        { display: none; }
-
   .page-title { font-size: clamp(2.4rem, 10vw, 4rem); }
   .platform-section { padding: 60px 5%; }
 }

@@ -180,6 +180,20 @@ ul  { list-style: none; }
 .nav-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; transform: scaleX(0); }
 .nav-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
+/* Contact button inside mobile/tablet drawer */
+.nav-cta-drawer-li { display: none; width: 100%; margin-top: 16px; list-style: none; }
+.nav-cta-drawer {
+  display: block;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.75rem; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 14px 24px;
+  background: var(--gold); color: var(--white);
+  border-radius: 2px; text-align: center;
+  transition: background 0.22s ease;
+}
+.nav-cta-drawer:hover { background: var(--gold-light); color: var(--white); }
+
 /* ─── WATERMARKS ──────────────────────────────────────────── */
 .watermarks {
   position: fixed;
@@ -406,12 +420,14 @@ ul  { list-style: none; }
 }
 
 /* ─── RESPONSIVE ──────────────────────────────────────────── */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
+  /* NAV — hamburger drawer on tablet & mobile */
   .nav-toggle { display: flex; }
+  .nav-cta    { display: none; }
   .nav-links {
     position: fixed;
     top: 0; right: -100%;
-    width: 78vw; max-width: 300px;
+    width: 78vw; max-width: 320px;
     height: 100vh;
     background: var(--white);
     flex-direction: column;
@@ -420,12 +436,11 @@ ul  { list-style: none; }
     gap: 4px;
     padding: 80px 36px 40px;
     box-shadow: -4px 0 24px rgba(0,0,0,0.12);
-    transition: right var(--transition);
+    transition: right 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     z-index: 999;
     overflow-y: auto;
   }
   .nav-links.open { right: 0; }
-  /* Dim backdrop behind open nav */
   .nav-links::before {
     content: '';
     position: fixed;
@@ -438,10 +453,11 @@ ul  { list-style: none; }
     z-index: -1;
   }
   .nav-links.open::before { opacity: 1; }
-  /* Larger tap targets inside drawer */
   .nav-link { color: var(--black); font-size: 0.95rem; padding: 10px 0; display: block; width: 100%; }
-  .nav-cta  { display: none; }
+  .nav-cta-drawer-li { display: block; }
+}
 
+@media (max-width: 768px) {
   .about-hero { min-height: 240px; padding-bottom: 40px; }
   .about-hero-title { font-size: clamp(2.5rem, 10vw, 4rem); }
   .about-main { padding: 52px 0 72px; }
