@@ -52,36 +52,84 @@ function initGalleryModal() {
   const backdrop  = modal.querySelector('.gallery-modal-backdrop');
   const closeBtn  = modal.querySelector('.gallery-modal-close');
   const gmCaption = document.getElementById('gm-caption');
+  const gmImage   = document.getElementById('gm-image');
   const gmPlace   = document.getElementById('gm-place');
   const gmDate    = document.getElementById('gm-date');
   const gmDetails = document.getElementById('gm-details');
 
-  function openModal(item) {
-    gmCaption.textContent = item.dataset.caption || 'Photo Details';
-    gmPlace.textContent   = item.dataset.place   || '—';
-    gmDate.textContent    = item.dataset.date     || '—';
-    gmDetails.textContent = item.dataset.details  || '—';
+  function openModal(data) {
+    /* data = { url, caption, place, date, details } */
+    if (gmImage) {
+      if (data.url) {
+        gmImage.src = data.url;
+        gmImage.alt = data.place || '';
+        gmImage.style.display = 'block';
+        modal.classList.add('has-photo');
+      } else {
+        gmImage.style.display = 'none';
+        modal.classList.remove('has-photo');
+      }
+    }
+    gmCaption.textContent = data.caption  || data.place || 'Photo';
+    gmPlace.textContent   = data.place    || '—';
+    gmDate.textContent    = data.date     || '—';
+    gmDetails.textContent = data.details  || '—';
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
   }
 
   function closeModal() {
-    modal.classList.remove('active');
+    modal.classList.remove('active', 'has-photo');
     document.body.style.overflow = '';
+    if (gmImage) { gmImage.src = ''; gmImage.style.display = 'none'; }
   }
 
+  /* Static album items — triggered by the info (i) button */
   document.querySelectorAll('.gallery-info-btn').forEach(btn => {
     btn.addEventListener('click', e => {
       e.stopPropagation();
-      openModal(btn.closest('.gallery-item'));
+      const item = btn.closest('.gallery-item');
+      openModal({
+        url:     item.querySelector('img')?.src || '',
+        caption: item.dataset.caption,
+        place:   item.dataset.place,
+        date:    item.dataset.date,
+        details: item.dataset.details
+      });
     });
+  });
+
+  /* Firestore gallery cards — click anywhere on the card */
+  document.addEventListener('click', e => {
+    const card = e.target.closest('.gallery-card');
+    if (!card) return;
+    openModal({
+      url:     card.dataset.url,
+      place:   card.dataset.place,
+      date:    card.dataset.date,
+      details: card.dataset.details
+    });
+  });
+
+  /* Keyboard support for gallery cards */
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      const card = e.target.closest('.gallery-card');
+      if (card) {
+        e.preventDefault();
+        openModal({
+          url:     card.dataset.url,
+          place:   card.dataset.place,
+          date:    card.dataset.date,
+          details: card.dataset.details
+        });
+      }
+    }
+    if (e.key === 'Escape') closeModal();
   });
 
   backdrop.addEventListener('click', closeModal);
   closeBtn.addEventListener('click', closeModal);
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeModal();
-  });
 }
 
 /* ─── ALBUM TOGGLE ──────────────────────────────────────────── */

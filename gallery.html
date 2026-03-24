@@ -651,7 +651,7 @@
         <button class="gallery-modal-close" aria-label="Close">&times;</button>
       </div>
       <!-- Full photo shown when clicking Firestore gallery items -->
-      <img id="gm-image" src="" alt="" style="display:none;width:100%;max-height:clamp(180px,55vh,480px);object-fit:contain;background:#0b1d3a;border-bottom:1px solid rgba(255,255,255,0.08);" />
+      <img id="gm-image" src="" alt="" />
       <div class="gallery-modal-body">
         <div class="gallery-modal-row">
           <div class="gallery-modal-icon-wrap">
@@ -732,7 +732,12 @@
       snapshot.forEach(doc => {
         const d = doc.data();
         grid.innerHTML += `
-          <div class="gallery-card">
+          <div class="gallery-card"
+               data-url="${d.imageUrl}"
+               data-place="${d.place || ''}"
+               data-date="${d.date || ''}"
+               data-details="${(d.details || '').replace(/"/g,'&quot;')}"
+               role="button" tabindex="0" aria-label="View photo from ${d.place || 'gallery'}">
             <img src="${d.imageUrl}" alt="${d.place}" />
             <div class="gallery-info">
               <span>${d.place}</span>
