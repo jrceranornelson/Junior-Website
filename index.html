@@ -321,71 +321,18 @@
       <div class="reveal-wrap">
         <h2 class="section-heading reveal-line">Blog &amp; Library</h2>
       </div>
-      <div class="blog-grid">
-
-        <article class="blog-card reveal">
-          <div class="blog-card-img">
-            <img src="gallery/haitian-diplomacy.png" alt="Reimagining Haitian Diplomacy in the 21st Century" />
-          </div>
-          <div class="blog-card-body">
-            <span class="blog-date">March 2026</span>
-            <h3 class="blog-title">Reimagining Haitian Diplomacy in the 21st Century</h3>
-            <p class="blog-excerpt">To help reintegrate Haiti into the world map of diplomacy, we must first understand that diplomacy in the 21st century is no longer built only through formal meetings, official speeches, and state-to-state relations.</p>
-            <a href="blog-haitian-diplomacy.html" class="blog-link">Read more <span class="arrow">→</span></a>
-          </div>
-        </article>
-
-        <article class="blog-card reveal">
-          <div class="blog-card-img">
-            <img src="gallery/education-infrastructure.png" alt="Education as National Infrastructure" />
-          </div>
-          <div class="blog-card-body">
-            <span class="blog-date">July 2022</span>
-            <h3 class="blog-title">Education as National Infrastructure in Haiti</h3>
-            <p class="blog-excerpt">Why placing education at the center of national development is one of the most urgent and sustainable choices Haiti can make.</p>
-            <a href="blog-education-infrastructure.html" class="blog-link">Read more <span class="arrow">→</span></a>
-          </div>
-        </article>
-
-        <article class="blog-card reveal">
-          <div class="blog-card-img">
-            <img src="gallery/nouvelle-diplomatie.png" alt="Une Nouvelle Diplomatie Haïtienne au Service du Développement Régional" />
-          </div>
-          <div class="blog-card-body">
-            <span class="blog-date">7 Janvier 2022</span>
-            <h3 class="blog-title">Une Nouvelle Diplomatie Haïtienne au Service du Développement Régional</h3>
-            <p class="blog-excerpt">La diplomatie peut jouer un rôle crucial dans notre plan de sauvetage — en servant le développement des régions rurales, en réformant ses méthodes et en élargissant ses horizons.</p>
-            <a href="blog-nouvelle-diplomatie.html" class="blog-link">Read more <span class="arrow">→</span></a>
-          </div>
-        </article>
-
-        <article class="blog-card reveal">
-          <div class="blog-card-img">
-            <img src="gallery/haiti-kenya.png" alt="L'exclusion d'Haïti de la politique de visa exempté du Kenya" />
-          </div>
-          <div class="blog-card-body">
-            <span class="blog-date">19 Juillet 2025</span>
-            <h3 class="blog-title">L'exclusion d'Haïti de la politique de visa exempté du Kenya</h3>
-            <p class="blog-excerpt">Une analyse diplomatique de l'exclusion d'Haïti de la mesure d'exemption de visa annoncée par le Kenya, et pourquoi le gouvernement haïtien doit répondre avec fermeté souveraine.</p>
-            <a href="blog-exclusion-kenya.html" class="blog-link">Read more <span class="arrow">→</span></a>
-          </div>
-        </article>
-
-        <article class="blog-card reveal">
-          <div class="blog-card-img">
-            <img src="gallery/gardez-le-silence.png" alt="À ceux qui ont trahi l'espérance du peuple haïtien ; gardez le silence !" />
-          </div>
-          <div class="blog-card-body">
-            <span class="blog-date">17 Juillet 2025</span>
-            <h3 class="blog-title">À ceux qui ont trahi l'espérance du peuple haïtien ; gardez le silence !</h3>
-            <p class="blog-excerpt">Une alerte à la jeunesse haïtienne face aux figures politiques qui, après avoir trahi la patrie, reprennent la parole pour appeler à l'unité — sans jamais reconnaître leurs fautes.</p>
-            <a href="blog-gardez-le-silence.html" class="blog-link">Read more <span class="arrow">→</span></a>
-          </div>
-        </article>
-
+      <div class="blog-grid" id="homeBlogGrid">
+        <!-- Spinner shown until Firestore responds -->
+        <div style="grid-column:1/-1;display:flex;justify-content:center;padding:60px 0;">
+          <div style="width:36px;height:36px;border:3px solid #e2ddd0;border-top-color:#c9a84c;border-radius:50%;animation:hbspin 0.75s linear infinite;"></div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-top:36px;">
+        <a href="/blog" class="btn btn-dark reveal">See more →</a>
       </div>
     </div>
   </section>
+  <style>@keyframes hbspin { to { transform: rotate(360deg); } }</style>
 
   <!-- ═══════════════════════════════════════════
        SUBSCRIBE
@@ -587,5 +534,60 @@
   <script src="script.js"></script>
   <!-- LIVE CHAT -->
   <script src="live-chat.js"></script>
+
+  <!-- Dynamic blog preview — 3 most recent published posts -->
+  <script>
+  (function () {
+    var grid = document.getElementById('homeBlogGrid');
+    if (!grid || typeof db === 'undefined') return;
+
+    function esc(s) {
+      return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function buildCard(id, post) {
+      var img = post.coverUrl
+        ? '<img src="' + esc(post.coverUrl) + '" alt="' + esc(post.title) + '" loading="lazy" />'
+        : '<div style="width:100%;height:100%;background:linear-gradient(135deg,#0b1d3a,#1a3a6e);"></div>';
+      var excerpt = post.excerpt || '';
+      if (excerpt.length > 140) excerpt = excerpt.slice(0, 140) + '…';
+      var card = document.createElement('article');
+      card.className = 'blog-card';
+      card.innerHTML =
+        '<div class="blog-card-img">' + img + '</div>' +
+        '<div class="blog-card-body">' +
+          (post.category ? '<span style="display:inline-block;font-family:Montserrat,sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:0.13em;text-transform:uppercase;color:#c9a84c;background:rgba(201,168,76,0.10);border:1px solid rgba(201,168,76,0.3);padding:4px 10px;border-radius:2px;margin-bottom:10px;">' + esc(post.category) + '</span>' : '') +
+          '<span class="blog-date">' + esc(post.date || '') + '</span>' +
+          '<h3 class="blog-title">' + esc(post.title || 'Untitled') + '</h3>' +
+          '<p class="blog-excerpt">' + esc(excerpt) + '</p>' +
+          '<a href="blog-post.html?id=' + encodeURIComponent(id) + '" class="blog-link">Read more <span class="arrow">→</span></a>' +
+        '</div>';
+      return card;
+    }
+
+    function render(docs) {
+      var published = docs.filter(function(d) { return d.data().published === true; }).slice(0, 3);
+      grid.innerHTML = '';
+      if (!published.length) return;
+      published.forEach(function(doc) { grid.appendChild(buildCard(doc.id, doc.data())); });
+    }
+
+    function sortDesc(docs) {
+      return docs.slice().sort(function(a, b) {
+        var as = (a.data().createdAt || {}).seconds || 0;
+        var bs = (b.data().createdAt || {}).seconds || 0;
+        return bs - as;
+      });
+    }
+
+    db.collection('blog').orderBy('createdAt', 'desc').limit(10).get()
+      .then(function(snap) { render(sortDesc(snap.docs)); })
+      .catch(function() {
+        db.collection('blog').get()
+          .then(function(snap) { render(sortDesc(snap.docs)); })
+          .catch(function() { grid.innerHTML = ''; });
+      });
+  })();
+  </script>
 </body>
 </html>
