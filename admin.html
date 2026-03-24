@@ -247,6 +247,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
         Gallery
       </button>
+      <button class="sidebar-link" data-section="videos">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Videos
+      </button>
       <button class="sidebar-link" data-section="music">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="18" r="3"/><circle cx="19" cy="14" r="3"/><polyline points="12 18 12 2 22 6"/></svg>
         Music
@@ -375,6 +379,18 @@
         </div>
         <div id="adminMap"></div>
       </div>
+    </section>
+
+    <!-- ════════════ VIDEOS MANAGER ════════════ -->
+    <section class="admin-section hidden" id="section-videos">
+      <div class="section-header">
+        <div>
+          <h1 class="section-title">Videos</h1>
+          <p class="section-sub">Manage gallery videos — YouTube, Vimeo, or direct links.</p>
+        </div>
+        <button class="btn btn-primary" id="addVideoBtn">+ Add Video</button>
+      </div>
+      <div id="videosList"><div class="admin-spinner"><div class="spinner"></div></div></div>
     </section>
 
     <!-- ════════════ MUSIC MANAGER ════════════ -->
@@ -617,6 +633,29 @@
   </div>
 </div>
 
+<!-- Video Modal -->
+<div class="modal-backdrop" id="videoModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="videoModalTitle">Add Video</span>
+      <button class="modal-close" data-close="videoModal">&times;</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-group form-full"><label for="vTitle">Title *</label><input type="text" id="vTitle" placeholder="Video title" /></div>
+      <div class="form-group form-full"><label for="vVideoUrl">Video URL * <span style="font-weight:400;color:var(--muted)">YouTube, Vimeo, or direct link</span></label><input type="url" id="vVideoUrl" placeholder="https://www.youtube.com/watch?v=…" /></div>
+      <div class="form-group"><label for="vPlace">Place / Location</label><input type="text" id="vPlace" placeholder="Port-au-Prince, Haiti" /></div>
+      <div class="form-group"><label for="vDate">Date</label><input type="text" id="vDate" placeholder="January 2026" /></div>
+      <div class="form-group form-full"><label for="vDescription">Description</label><textarea id="vDescription" rows="3" placeholder="Describe this video…"></textarea></div>
+      <div class="form-group form-full"><label for="vThumbnailUrl">Custom Thumbnail URL <span style="font-weight:400;color:var(--muted)">(optional — auto-generated for YouTube)</span></label><input type="url" id="vThumbnailUrl" placeholder="https://… (leave blank for auto)" /></div>
+    </div>
+    <div class="form-actions" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
+      <button class="btn btn-primary" id="saveVideoBtn">Save Video</button>
+      <button class="btn btn-ghost" data-close="videoModal">Cancel</button>
+    </div>
+    <input type="hidden" id="vDocId" />
+  </div>
+</div>
+
 <!-- Music Modal -->
 <div class="modal-backdrop" id="musicModal">
   <div class="modal">
@@ -754,7 +793,7 @@ document.querySelectorAll('.modal-backdrop').forEach(bd => {
 /* ══════════════════════════════════════════════════
    NAVIGATION
 ══════════════════════════════════════════════════ */
-const SECTIONS = ['home','blog','gallery','music','academic','messages','subscribers','projects','about','social'];
+const SECTIONS = ['home','blog','gallery','videos','music','academic','messages','subscribers','projects','about','social'];
 
 function showSection(name) {
   SECTIONS.forEach(s => {
@@ -820,6 +859,7 @@ function initDashboard() {
   loadStats();
   loadBlog();
   loadGallery();
+  loadVideos();
   loadMusic();
   loadAcademic();
   loadMessages();
@@ -1149,6 +1189,105 @@ document.getElementById('saveGalleryBtn').addEventListener('click', async () => 
     if (id) { await db.collection('gallery').doc(id).update(data); toast('Photo updated!','success'); }
     else { data.createdAt = firebase.firestore.FieldValue.serverTimestamp(); await db.collection('gallery').add(data); toast('Photo saved!','success'); }
     closeModal('galleryModal'); galleryUploadUrl = '';
+  } catch(e) { toast(e.message,'error'); }
+});
+
+/* ══════════════════════════════════════════════════
+   VIDEOS
+══════════════════════════════════════════════════ */
+function getVideoThumb(url) {
+  if (!url) return '';
+  const yt = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
+  if (yt) return 'https://img.youtube.com/vi/' + yt[1] + '/maxresdefault.jpg';
+  const vm = url.match(/vimeo\.com\/(\d+)/);
+  if (vm) return 'https://vumbnail.com/' + vm[1] + '.jpg';
+  return '';
+}
+
+function loadVideos() {
+  const list = document.getElementById('videosList');
+  const render = docs => {
+    if (!docs.length) { list.innerHTML = '<div class="empty-state">No videos yet — click "+ Add Video".</div>'; return; }
+    list.innerHTML = '';
+    docs.forEach(doc => {
+      const d = doc.data();
+      const t = d.thumbnailUrl || getVideoThumb(d.videoUrl || '');
+      const item = document.createElement('div'); item.className = 'gallery-admin-item';
+      item.innerHTML = `
+        <div style="position:relative;background:#0b1d3a;">
+          ${t ? `<img src="${esc(t)}" style="width:100%;height:130px;object-fit:cover;" onerror="this.style.display='none'" />` : '<div style="width:100%;height:130px;display:flex;align-items:center;justify-content:center;"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>'}
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;"><svg width="32" height="32" viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="rgba(0,0,0,0.45)"/><polygon points="10 8 16 12 10 16 10 8" fill="white"/></svg></div>
+        </div>
+        <div class="gallery-admin-item-body">
+          <div class="gallery-admin-item-place">${esc(d.title||'—')}</div>
+          <div class="gallery-admin-item-date">${esc(d.place||'')}${d.date?' · '+esc(d.date):''}</div>
+        </div>
+        <div class="gallery-admin-item-actions">
+          <button class="btn btn-ghost btn-sm" onclick="editVideo('${doc.id}')">Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteVideo('${doc.id}')">Delete</button>
+        </div>`;
+      list.appendChild(item);
+    });
+  };
+  db.collection('gallery_videos').orderBy('createdAt','desc').onSnapshot(
+    s => render(s.docs),
+    () => db.collection('gallery_videos').onSnapshot(s => render(s.docs))
+  );
+}
+
+document.getElementById('addVideoBtn').addEventListener('click', () => {
+  document.getElementById('videoModalTitle').textContent = 'Add Video';
+  ['vTitle','vVideoUrl','vPlace','vDate','vDescription','vThumbnailUrl'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('vDocId').value = '';
+  openModal('videoModal');
+});
+
+window.editVideo = id => {
+  db.collection('gallery_videos').doc(id).get().then(doc => {
+    const d = doc.data();
+    document.getElementById('videoModalTitle').textContent = 'Edit Video';
+    document.getElementById('vTitle').value        = d.title        || '';
+    document.getElementById('vVideoUrl').value     = d.videoUrl     || '';
+    document.getElementById('vPlace').value        = d.place        || '';
+    document.getElementById('vDate').value         = d.date         || '';
+    document.getElementById('vDescription').value  = d.description  || '';
+    document.getElementById('vThumbnailUrl').value = d.thumbnailUrl || '';
+    document.getElementById('vDocId').value        = id;
+    openModal('videoModal');
+  });
+};
+
+window.deleteVideo = id => {
+  if (!confirm('Delete this video?')) return;
+  db.collection('gallery_videos').doc(id).delete()
+    .then(() => toast('Video deleted.','success'))
+    .catch(e => toast(e.message,'error'));
+};
+
+document.getElementById('saveVideoBtn').addEventListener('click', async () => {
+  const id       = document.getElementById('vDocId').value;
+  const title    = document.getElementById('vTitle').value.trim();
+  const videoUrl = document.getElementById('vVideoUrl').value.trim();
+  if (!title)    { toast('Please enter a title.','error'); return; }
+  if (!videoUrl) { toast('Please enter a video URL.','error'); return; }
+  const data = {
+    title:        title,
+    videoUrl:     videoUrl,
+    place:        document.getElementById('vPlace').value.trim(),
+    date:         document.getElementById('vDate').value.trim(),
+    description:  document.getElementById('vDescription').value.trim(),
+    thumbnailUrl: document.getElementById('vThumbnailUrl').value.trim(),
+  };
+  try {
+    if (id) {
+      await db.collection('gallery_videos').doc(id).update(data);
+      toast('Video updated!','success');
+    } else {
+      data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+      await db.collection('gallery_videos').add(data);
+      toast('Video saved!','success');
+    }
+    closeModal('videoModal');
   } catch(e) { toast(e.message,'error'); }
 });
 
