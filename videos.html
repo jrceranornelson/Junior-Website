@@ -621,18 +621,21 @@
       }
     }
 
-    /* ── Firestore listener ── */
-    db.collection('gallery_videos')
-      .orderBy('createdAt', 'desc')
-      .onSnapshot(
-        snapshot => renderVideos(snapshot.docs),
-        () => db.collection('gallery_videos').onSnapshot(
-          snapshot => renderVideos(snapshot.docs),
-          () => {
-            container.innerHTML = `<div class="vp-empty"><p>Could not load videos.</p></div>`;
-          }
-        )
-      );
+    /* ── Firestore listener — read without orderBy, sort client-side ── */
+    db.collection('gallery_videos').onSnapshot(
+      snapshot => {
+        const docs = snapshot.docs.slice().sort((a, b) => {
+          const ta = a.data().createdAt ? (a.data().createdAt.toMillis ? a.data().createdAt.toMillis() : 0) : 0;
+          const tb = b.data().createdAt ? (b.data().createdAt.toMillis ? b.data().createdAt.toMillis() : 0) : 0;
+          return tb - ta;
+        });
+        renderVideos(docs);
+      },
+      err => {
+        console.error('gallery_videos read error:', err);
+        container.innerHTML = `<div class="vp-empty"><p>Could not load videos.</p></div>`;
+      }
+    );
 
   })();
   </script>
