@@ -18,7 +18,20 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-  <script src="firebase-config.js"></script>
+  <script>
+    // Firebase config inline — no external file dependency
+    if (!firebase.apps.length) {
+      firebase.initializeApp({
+        apiKey:            "AIzaSyC6JxyAfS0TY02pGBMFFTNbbgF0xDuaT-A",
+        authDomain:        "junior-website-10186.firebaseapp.com",
+        projectId:         "junior-website-10186",
+        storageBucket:     "junior-website-10186.firebasestorage.app",
+        messagingSenderId: "553199484927",
+        appId:             "1:553199484927:web:7b0ff3f311e49b550371ca"
+      });
+    }
+    const db = firebase.firestore();
+  </script>
 
   <style>
     /* ─── BLOG LISTING PAGE ────────────────────────────────── */
@@ -317,10 +330,9 @@
   'use strict';
 
   (function () {
-    const grid      = document.getElementById('blogGrid');
-    const countEl   = document.getElementById('blogCount');
+    var grid    = document.getElementById('blogGrid');
+    var countEl = document.getElementById('blogCount');
 
-    /* ── Sanitise text for attribute / text node insertion ── */
     function esc(s) {
       return String(s || '')
         .replace(/&/g, '&amp;')
@@ -329,109 +341,86 @@
         .replace(/"/g, '&quot;');
     }
 
-    /* ── Build one card element ─────────────────────────── */
     function buildCard(id, post) {
-      const imgInner = post.coverUrl
-        ? `<img src="${esc(post.coverUrl)}" alt="${esc(post.title)}" loading="lazy" />`
-        : `<div class="blog-img-placeholder">
-             <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/>
-             <circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-           </div>`;
+      var imgInner = post.coverUrl
+        ? '<img src="' + esc(post.coverUrl) + '" alt="' + esc(post.title) + '" loading="lazy" />'
+        : '<div class="blog-img-placeholder"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>';
 
-      const cat = post.category
-        ? `<span class="blog-category-badge">${esc(post.category)}</span>`
+      var cat = post.category
+        ? '<span class="blog-category-badge">' + esc(post.category) + '</span>'
         : '';
 
-      const excerpt = (post.excerpt || '').length > 160
-        ? esc(post.excerpt.slice(0, 160)) + '…'
-        : esc(post.excerpt || '');
+      var excerptRaw = post.excerpt || '';
+      var excerpt = esc(excerptRaw.length > 160 ? excerptRaw.slice(0, 160) + '…' : excerptRaw);
 
-      const card = document.createElement('article');
+      var card = document.createElement('article');
       card.className = 'blog-card';
-      card.innerHTML = `
-        <div class="blog-card-img">${imgInner}</div>
-        <div class="blog-card-body">
-          ${cat}
-          <span class="blog-date">${esc(post.date || '')}</span>
-          <h3 class="blog-title">${esc(post.title || 'Untitled')}</h3>
-          <p class="blog-excerpt">${excerpt}</p>
-          <a href="blog-post.html?id=${encodeURIComponent(id)}" class="blog-link">
-            Read more <span class="arrow">→</span>
-          </a>
-        </div>`;
+      card.innerHTML =
+        '<div class="blog-card-img">' + imgInner + '</div>' +
+        '<div class="blog-card-body">' +
+          cat +
+          '<span class="blog-date">' + esc(post.date || '') + '</span>' +
+          '<h3 class="blog-title">' + esc(post.title || 'Untitled') + '</h3>' +
+          '<p class="blog-excerpt">' + excerpt + '</p>' +
+          '<a href="blog-post.html?id=' + encodeURIComponent(id) + '" class="blog-link">Read more <span class="arrow">→</span></a>' +
+        '</div>';
       return card;
     }
 
-    /* ── Render helper ─────────────────────────────────── */
-    function renderDocs(docs) {
+    function render(docs) {
       grid.innerHTML = '';
+      // Show all docs — filter out drafts (published must be exactly true)
+      var posts = docs.filter(function(d) { return d.data().published === true; });
 
-      const published = docs.filter(d => d.data().published === true);
-
-      if (!published.length) {
+      if (!posts.length) {
         countEl.style.display = 'none';
-        grid.innerHTML = `
-          <div class="blog-state">
-            <svg viewBox="0 0 24 24">
-              <path d="M12 20h9"/>
-              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
-            </svg>
-            <p>No posts yet — check back soon.</p>
-          </div>`;
+        grid.innerHTML =
+          '<div class="blog-state">' +
+            '<svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>' +
+            '<p>No posts yet — check back soon.</p>' +
+          '</div>';
         return;
       }
 
-      const n = published.length;
-      countEl.textContent = n + ' post' + (n !== 1 ? 's' : '');
+      countEl.textContent = posts.length + ' post' + (posts.length !== 1 ? 's' : '');
       countEl.style.display = 'block';
-
-      published.forEach(doc => {
-        grid.appendChild(buildCard(doc.id, doc.data()));
-      });
+      posts.forEach(function(doc) { grid.appendChild(buildCard(doc.id, doc.data())); });
     }
 
-    /* ── Error state ───────────────────────────────────── */
-    function showError() {
+    function showError(msg) {
       countEl.style.display = 'none';
-      grid.innerHTML = `
-        <div class="blog-state">
-          <svg viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="10"/>
-            <line x1="12" y1="8" x2="12" y2="12"/>
-            <line x1="12" y1="16" x2="12.01" y2="16"/>
-          </svg>
-          <p>Could not load posts — please try again later.</p>
-        </div>`;
+      grid.innerHTML =
+        '<div class="blog-state">' +
+          '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>' +
+          '<p>' + (msg || 'Could not load posts — please try again later.') + '</p>' +
+        '</div>';
     }
 
-    /* ── Client-side sort by createdAt desc ────────────── */
     function sortDesc(docs) {
-      return docs.slice().sort((a, b) => {
-        const at = a.data().createdAt;
-        const bt = b.data().createdAt;
-        const as = at && at.seconds ? at.seconds : 0;
-        const bs = bt && bt.seconds ? bt.seconds : 0;
+      return docs.slice().sort(function(a, b) {
+        var as = (a.data().createdAt || {}).seconds || 0;
+        var bs = (b.data().createdAt || {}).seconds || 0;
         return bs - as;
       });
     }
 
-    /* ── Listen with orderBy, fall back if index missing ── */
-    let fallbackActive = false;
-
+    // Primary: orderBy query with onSnapshot
     db.collection('blog')
       .orderBy('createdAt', 'desc')
       .onSnapshot(
-        (snap) => { renderDocs(snap.docs); },
-        (err) => {
-          if (!fallbackActive &&
-              (err.code === 'failed-precondition' || err.code === 'unimplemented')) {
-            fallbackActive = true;
+        function(snap) { render(snap.docs); },
+        function(err) {
+          // Index not built yet — fall back to unordered snapshot + client sort
+          if (err.code === 'failed-precondition' || err.code === 'unimplemented') {
             db.collection('blog').onSnapshot(
-              (snap) => { renderDocs(sortDesc(snap.docs)); },
-              showError
+              function(snap) { render(sortDesc(snap.docs)); },
+              function() { showError(); }
             );
           } else {
-            showError();
+            // Permission denied or network error — try a one-time .get()
+            db.collection('blog').get()
+              .then(function(snap) { render(sortDesc(snap.docs)); })
+              .catch(function() { showError('Could not load posts — check Firestore rules at console.firebase.google.com'); });
           }
         }
       );
