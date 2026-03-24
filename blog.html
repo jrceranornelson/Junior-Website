@@ -330,8 +330,8 @@
 
     function render(docs) {
       grid.innerHTML = '';
-      // Filter out drafts (status must be 'published')
-      var posts = docs.filter(function(d) { return d.data().status === 'published'; });
+      // Hide only explicit drafts; show posts with status 'published' or no status set
+      var posts = docs.filter(function(d) { return d.data().status !== 'draft'; });
 
       if (!posts.length) {
         // Show the 5 built-in featured articles as fallback
