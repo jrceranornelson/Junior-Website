@@ -706,7 +706,13 @@
         </div>
 
         <!-- Dynamic publications loaded from Firestore -->
-        <div class="pub-grid" id="pubGridDynamic"></div>
+        <div class="pub-grid" id="pubGridDynamic">
+          <!-- Loading spinner shown until Firestore responds -->
+          <div id="pubGridSpinner" style="grid-column:1/-1;display:flex;justify-content:center;padding:60px 0;">
+            <div style="width:36px;height:36px;border:3px solid #e2ddd0;border-top-color:#c9a84c;border-radius:50%;animation:acadspin 0.75s linear infinite;"></div>
+          </div>
+          <style>@keyframes acadspin { to { transform: rotate(360deg); } }</style>
+        </div>
 
         <!-- Static / featured publications (always visible as baseline) -->
         <div class="pub-grid">
@@ -1086,7 +1092,10 @@
 
     db.collection('academic').orderBy('createdAt', 'desc').onSnapshot(function (snap) {
       grid.innerHTML = '';
-      if (snap.empty) return; // keep static pub-grid below visible
+      if (snap.empty) {
+        grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;font-family:\'Montserrat\',sans-serif;font-size:0.9rem;color:#8a8070;padding:40px 0;letter-spacing:0.04em;">No publications yet — check back soon.</p>';
+        return;
+      }
       snap.forEach(function (doc) {
         var d = doc.data();
         var btnHref = d.externalLink || d.pdfUrl || '#';
