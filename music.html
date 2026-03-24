@@ -187,94 +187,12 @@
         <h2 class="mp-section-title">Discography</h2>
       </div>
 
-      <div class="mp-disco-grid">
-
-        <!-- ✏️ ADD NEW RELEASES HERE -->
-
-        <article class="mp-release-card reveal">
-          <div class="mp-release-art">
-            <img src="https://placehold.co/300x300/0b1d3a/c9a84c?text=B%C3%B2katedral" alt="Bòkatedral" loading="lazy" />
-            <span class="mp-release-type mp-type--single">Single</span>
-          </div>
-          <div class="mp-release-info">
-            <h3 class="mp-release-title">B&ograve;katedral</h3>
-            <p class="mp-release-year">2026</p>
-            <a href="https://open.spotify.com/artist/6QbETmrW5S1SlH6kyNmud2"
-               target="_blank" rel="noopener"
-               class="mp-release-listen">Listen &rarr;</a>
-          </div>
-        </article>
-
-        <article class="mp-release-card reveal">
-          <div class="mp-release-art">
-            <img src="https://placehold.co/300x300/0b1d3a/c9a84c?text=S%C3%A8l+ou+m%27ap+swiv" alt="Sèl ou m'ap swiv" loading="lazy" />
-            <span class="mp-release-type mp-type--album">Album</span>
-          </div>
-          <div class="mp-release-info">
-            <h3 class="mp-release-title">S&egrave;l ou m&rsquo;ap swiv</h3>
-            <p class="mp-release-year">2025</p>
-            <a href="https://open.spotify.com/artist/6QbETmrW5S1SlH6kyNmud2"
-               target="_blank" rel="noopener"
-               class="mp-release-listen">Listen &rarr;</a>
-          </div>
-        </article>
-
-        <article class="mp-release-card reveal">
-          <div class="mp-release-art">
-            <img src="https://placehold.co/300x300/0b1d3a/c9a84c?text=Mango+Moon" alt="Mango Moon" loading="lazy" />
-            <span class="mp-release-type mp-type--single">Single</span>
-          </div>
-          <div class="mp-release-info">
-            <h3 class="mp-release-title">Mango Moon</h3>
-            <p class="mp-release-year">2025</p>
-            <a href="https://open.spotify.com/artist/6QbETmrW5S1SlH6kyNmud2"
-               target="_blank" rel="noopener"
-               class="mp-release-listen">Listen &rarr;</a>
-          </div>
-        </article>
-
-        <article class="mp-release-card reveal">
-          <div class="mp-release-art">
-            <img src="https://placehold.co/300x300/0b1d3a/c9a84c?text=Ti+pa+ti+pa" alt="Ti pa ti pa" loading="lazy" />
-            <span class="mp-release-type mp-type--single">Single</span>
-          </div>
-          <div class="mp-release-info">
-            <h3 class="mp-release-title">Ti pa ti pa</h3>
-            <p class="mp-release-year">2025</p>
-            <a href="https://open.spotify.com/artist/6QbETmrW5S1SlH6kyNmud2"
-               target="_blank" rel="noopener"
-               class="mp-release-listen">Listen &rarr;</a>
-          </div>
-        </article>
-
-        <article class="mp-release-card reveal">
-          <div class="mp-release-art">
-            <img src="https://placehold.co/300x300/0b1d3a/c9a84c?text=Menm+l%C3%A8+m+tonbe" alt="Menm lè m tonbe" loading="lazy" />
-            <span class="mp-release-type mp-type--single">Single</span>
-          </div>
-          <div class="mp-release-info">
-            <h3 class="mp-release-title">Menm l&egrave; m tonbe</h3>
-            <p class="mp-release-year">2025</p>
-            <a href="https://open.spotify.com/artist/6QbETmrW5S1SlH6kyNmud2"
-               target="_blank" rel="noopener"
-               class="mp-release-listen">Listen &rarr;</a>
-          </div>
-        </article>
-
-        <article class="mp-release-card reveal">
-          <div class="mp-release-art">
-            <img src="https://placehold.co/300x300/0b1d3a/c9a84c?text=Ti+bijou+nan+labou" alt="Ti bijou nan labou" loading="lazy" />
-            <span class="mp-release-type mp-type--single">Single</span>
-          </div>
-          <div class="mp-release-info">
-            <h3 class="mp-release-title">Ti bijou nan labou</h3>
-            <p class="mp-release-year">2025</p>
-            <a href="https://open.spotify.com/artist/6QbETmrW5S1SlH6kyNmud2"
-               target="_blank" rel="noopener"
-               class="mp-release-listen">Listen &rarr;</a>
-          </div>
-        </article>
-
+      <div class="mp-disco-grid" id="musicGrid">
+        <!-- Populated dynamically from Firestore -->
+        <div style="grid-column:1/-1;display:flex;justify-content:center;padding:80px 0;">
+          <div style="width:40px;height:40px;border:3px solid #e2ddd0;border-top-color:#c9a84c;border-radius:50%;animation:mspin 0.75s linear infinite;"></div>
+        </div>
+        <style>@keyframes mspin{to{transform:rotate(360deg);}}</style>
       </div><!-- /mp-disco-grid -->
     </div>
   </section>
@@ -363,8 +281,80 @@
     </div>
   </footer>
 
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+  <script>
+    if (!firebase.apps.length) {
+      firebase.initializeApp({
+        apiKey: "AIzaSyC6JxyAfS0TY02pGBMFFTNbbgF0xDuaT-A",
+        authDomain: "junior-website-10186.firebaseapp.com",
+        projectId: "junior-website-10186",
+        storageBucket: "junior-website-10186.firebasestorage.app",
+        messagingSenderId: "553199484927",
+        appId: "1:553199484927:web:7b0ff3f311e49b550371ca"
+      });
+    }
+    const db = firebase.firestore();
+  </script>
   <script src="preloader.js"></script>
   <script src="music-page.js"></script>
   <script src="live-chat.js"></script>
+  <script>
+  (function () {
+    var grid = document.getElementById('musicGrid');
+    if (!grid) return;
+
+    function esc(s) {
+      return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function buildCard(r) {
+      var typeClass = (r.type || '').toLowerCase() === 'album' ? 'mp-type--album' : 'mp-type--single';
+      var img = r.coverUrl
+        ? '<img src="' + esc(r.coverUrl) + '" alt="' + esc(r.title) + '" loading="lazy" />'
+        : '<div style="width:100%;height:100%;background:linear-gradient(135deg,#0b1d3a,#1a3a6e);display:flex;align-items:center;justify-content:center;"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(201,168,76,0.4)" stroke-width="1.5"><circle cx="9" cy="18" r="3"/><circle cx="19" cy="14" r="3"/><polyline points="12 18 12 2 22 6"/></svg></div>';
+      var links = '';
+      if (r.spotifyUrl) links += '<a href="' + esc(r.spotifyUrl) + '" target="_blank" rel="noopener" class="mp-release-listen" style="margin-right:10px;">Spotify →</a>';
+      if (r.appleMusicUrl) links += '<a href="' + esc(r.appleMusicUrl) + '" target="_blank" rel="noopener" class="mp-release-listen">Apple Music →</a>';
+      if (!links) links = '<span class="mp-release-listen" style="opacity:0.5;">Coming soon</span>';
+      var card = document.createElement('article');
+      card.className = 'mp-release-card';
+      card.innerHTML =
+        '<div class="mp-release-art">' + img + '<span class="mp-release-type ' + typeClass + '">' + esc(r.type || 'Single') + '</span></div>' +
+        '<div class="mp-release-info">' +
+          '<h3 class="mp-release-title">' + esc(r.title) + '</h3>' +
+          '<p class="mp-release-year">' + esc(String(r.year || '')) + '</p>' +
+          links +
+        '</div>';
+      return card;
+    }
+
+    function showSpinner() {
+      grid.innerHTML = '<div style="grid-column:1/-1;display:flex;justify-content:center;padding:80px 0;"><div style="width:40px;height:40px;border:3px solid #e2ddd0;border-top-color:#c9a84c;border-radius:50%;animation:mspin 0.75s linear infinite;"></div></div><style>@keyframes mspin{to{transform:rotate(360deg);}}</style>';
+    }
+
+    function render(docs) {
+      grid.innerHTML = '';
+      if (!docs.length) {
+        grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;font-family:Montserrat,sans-serif;font-size:0.9rem;color:#8a8070;padding:60px 0;">No releases yet — check back soon.</p>';
+        return;
+      }
+      docs.forEach(function(doc) { grid.appendChild(buildCard(doc.data())); });
+    }
+
+    showSpinner();
+    db.collection('music').orderBy('createdAt', 'desc').onSnapshot(
+      function(snap) { render(snap.docs); },
+      function() {
+        db.collection('music').get()
+          .then(function(snap) { render(snap.docs); })
+          .catch(function() { grid.innerHTML = ''; });
+      }
+    );
+  })();
+  </script>
 </body>
 </html>

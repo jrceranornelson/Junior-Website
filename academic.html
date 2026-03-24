@@ -705,6 +705,10 @@
           <h2 class="section-heading reveal-line">Publications &amp; Papers</h2>
         </div>
 
+        <!-- Dynamic publications loaded from Firestore -->
+        <div class="pub-grid" id="pubGridDynamic"></div>
+
+        <!-- Static / featured publications (always visible as baseline) -->
         <div class="pub-grid">
 
           <article class="pub-card reveal">
@@ -1048,8 +1052,60 @@
     revealEls.forEach(el  => observer.observe(el));
     revealLines.forEach(el => observer.observe(el));
   </script>
+  <!-- Firebase compat SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+  <script>
+    if (!firebase.apps.length) {
+      firebase.initializeApp({
+        apiKey: "AIzaSyC6JxyAfS0TY02pGBMFFTNbbgF0xDuaT-A",
+        authDomain: "junior-website-10186.firebaseapp.com",
+        projectId: "junior-website-10186",
+        storageBucket: "junior-website-10186.firebasestorage.app",
+        messagingSenderId: "553199484927",
+        appId: "1:553199484927:web:7b0ff3f311e49b550371ca"
+      });
+    }
+    var db = firebase.firestore();
+  </script>
   <script src="preloader.js"></script>
   <!-- LIVE CHAT -->
   <script src="live-chat.js"></script>
+
+  <!-- Dynamic publications from Firestore -->
+  <script>
+  (function () {
+    var grid = document.getElementById('pubGridDynamic');
+    if (!grid) return;
+
+    function esc(s) {
+      return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    db.collection('academic').orderBy('createdAt', 'desc').onSnapshot(function (snap) {
+      grid.innerHTML = '';
+      if (snap.empty) return; // keep static pub-grid below visible
+      snap.forEach(function (doc) {
+        var d = doc.data();
+        var btnHref = d.externalLink || d.pdfUrl || '#';
+        var card = document.createElement('article');
+        card.className = 'pub-card reveal';
+        card.innerHTML =
+          '<p class="pub-card-journal">' + esc((d.institution || '') + (d.type ? ' · ' + d.type : '')) + '</p>' +
+          '<h3 class="pub-card-title">' + esc(d.title || 'Untitled') + '</h3>' +
+          '<p class="pub-card-date">' + esc(d.year || '') + '</p>' +
+          (d.abstract ? '<p class="pub-card-abstract">' + esc(d.abstract) + '</p>' : '') +
+          (btnHref !== '#'
+            ? '<a href="' + esc(btnHref) + '" target="_blank" rel="noopener" class="pub-card-btn">Read Paper <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>'
+            : '');
+        grid.appendChild(card);
+      });
+    }, function (err) {
+      console.warn('Academic Firestore error:', err);
+    });
+  })();
+  </script>
 </body>
 </html>

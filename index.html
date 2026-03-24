@@ -144,7 +144,11 @@
   ═══════════════════════════════════════════ -->
   <section id="projects-grid" class="projects-grid-section section-pad section-pad-top-0">
     <div class="container">
-      <div class="projects-grid">
+      <!-- Dynamic projects from Firestore (shown only when Firestore has entries) -->
+      <div class="projects-grid" id="projectsGridDynamic" style="display:none;"></div>
+
+      <!-- Static projects grid (shown when Firestore is empty or loading) -->
+      <div class="projects-grid" id="projectsGridStatic">
 
         <div class="project-card reveal">
           <div class="project-card-img">
@@ -653,6 +657,54 @@
           .then(function(snap) { render(sortDesc(snap.docs)); })
           .catch(function() { grid.innerHTML = ''; });
       });
+  })();
+  </script>
+
+  <!-- Dynamic projects from Firestore -->
+  <script>
+  (function () {
+    var dynGrid = document.getElementById('projectsGridDynamic');
+    var statGrid = document.getElementById('projectsGridStatic');
+    if (!dynGrid || typeof db === 'undefined') return;
+
+    function esc(s) {
+      return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    db.collection('projects').orderBy('order').onSnapshot(function (snap) {
+      if (snap.empty) {
+        dynGrid.style.display = 'none';
+        if (statGrid) statGrid.style.display = '';
+        return;
+      }
+      dynGrid.innerHTML = '';
+      snap.forEach(function (doc) {
+        var d = doc.data();
+        var imgSrc = d.logoUrl
+          ? 'https://placehold.co/600x380/0b1d3a/c9a84c?text=' + encodeURIComponent(d.title || 'Project')
+          : 'https://placehold.co/600x380/0b1d3a/c9a84c?text=' + encodeURIComponent(d.title || 'Project');
+        var card = document.createElement('div');
+        card.className = 'project-card reveal';
+        card.innerHTML =
+          '<div class="project-card-img">' +
+            '<img src="' + esc(imgSrc) + '" alt="' + esc(d.title || '') + '" loading="lazy" />' +
+          '</div>' +
+          '<div class="project-card-body">' +
+            (d.logoUrl ? '<img src="' + esc(d.logoUrl) + '" alt="' + esc(d.title || '') + ' logo" class="project-logo" />' : '') +
+            (d.tag ? '<span class="project-tag">' + esc(d.tag) + '</span>' : '') +
+            '<h3 class="project-card-title">' + esc(d.title || 'Untitled') + '</h3>' +
+            '<p class="project-card-desc">' + esc(d.description || '') + '</p>' +
+            (d.link
+              ? '<a href="' + esc(d.link) + '" target="_blank" rel="noopener" class="project-card-link">Visit <span class="arrow">→</span></a>'
+              : '') +
+          '</div>';
+        dynGrid.appendChild(card);
+      });
+      dynGrid.style.display = '';
+      if (statGrid) statGrid.style.display = 'none';
+    }, function (err) {
+      console.warn('Projects Firestore error:', err);
+    });
   })();
   </script>
 </body>

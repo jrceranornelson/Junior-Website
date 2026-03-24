@@ -12,6 +12,9 @@
   <link rel="apple-touch-icon" sizes="180x180" href="favicon-180.png" />
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="gallery-page.css" />
+  <style>
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
 </head>
 <body>
 
@@ -45,7 +48,7 @@
         <li><a href="/gallery"        class="nav-link active">Gallery</a></li>
         <li><a href="/music"          class="nav-link">Music</a></li>
         <li><a href="/academic"       class="nav-link">Academic</a></li>
-        <li><a href="/#blog"     class="nav-link">Blog &amp; Library</a></li>
+        <li><a href="/blog"          class="nav-link">Blog &amp; Library</a></li>
         <li><a href="/#contact"  class="nav-link">Contact</a></li>
       </ul>
       <a href="/#contact" class="nav-cta">Contact Us</a>
@@ -59,6 +62,24 @@
     <div class="gp-hero-line"></div>
   </header>
 
+
+  <!-- ═══════════════════════════════════════════
+       RECENT PHOTOS (dynamic from Firestore)
+  ═══════════════════════════════════════════ -->
+  <section class="gp-section" id="recentPhotosSection" style="padding-bottom:0;">
+    <div class="container">
+      <div class="gp-section-header reveal">
+        <p class="gp-section-label">Latest Uploads</p>
+        <h2 class="gp-section-title">Recent Photos</h2>
+      </div>
+      <!-- spinner shown while loading -->
+      <div id="galleryFirestoreGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;min-height:80px;">
+        <div style="grid-column:1/-1;display:flex;align-items:center;justify-content:center;padding:60px 0;">
+          <div style="width:36px;height:36px;border:3px solid rgba(201,168,76,0.25);border-top-color:#c9a84c;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <!-- ═══════════════════════════════════════════
        ALBUMS
@@ -666,9 +687,66 @@
     </div>
   </div>
 
+  <!-- Firebase compat SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+  <script>
+    if (!firebase.apps.length) {
+      firebase.initializeApp({
+        apiKey: "AIzaSyC6JxyAfS0TY02pGBMFFTNbbgF0xDuaT-A",
+        authDomain: "junior-website-10186.firebaseapp.com",
+        projectId: "junior-website-10186",
+        storageBucket: "junior-website-10186.firebasestorage.app",
+        messagingSenderId: "553199484927",
+        appId: "1:553199484927:web:7b0ff3f311e49b550371ca"
+      });
+    }
+    var db = firebase.firestore();
+  </script>
   <script src="preloader.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="gallery-page.js"></script>
   <script src="live-chat.js"></script>
+
+  <!-- Dynamic gallery photos from Firestore -->
+  <script>
+  (function () {
+    var grid = document.getElementById('galleryFirestoreGrid');
+    if (!grid) return;
+
+    function esc(s) {
+      return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    db.collection('gallery').orderBy('createdAt', 'desc').onSnapshot(function (snap) {
+      grid.innerHTML = '';
+      if (snap.empty) {
+        grid.innerHTML = '<p style="color:var(--slate,#8a9ab5);text-align:center;padding:40px 0;font-family:Inter,sans-serif;">No photos yet — check back soon.</p>';
+        return;
+      }
+      snap.forEach(function (doc) {
+        var d = doc.data();
+        var item = document.createElement('div');
+        item.className = 'gallery-item reveal';
+        item.setAttribute('data-caption', d.caption || '');
+        item.setAttribute('data-place', d.place || '');
+        item.setAttribute('data-date', d.date || '');
+        item.setAttribute('data-details', d.details || '');
+        item.innerHTML =
+          '<img src="' + esc(d.url) + '" alt="' + esc(d.caption || 'Gallery photo') + '" loading="lazy" />' +
+          '<button class="gallery-info-btn" aria-label="Photo details">i</button>';
+        grid.appendChild(item);
+      });
+      // Re-run reveal observer for new elements
+      if (typeof revealObserver !== 'undefined') {
+        grid.querySelectorAll('.reveal').forEach(function(el){ revealObserver.observe(el); });
+      }
+    }, function (err) {
+      console.warn('Gallery Firestore error:', err);
+    });
+  })();
+  </script>
 </body>
 </html>
