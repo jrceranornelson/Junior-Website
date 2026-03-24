@@ -35,7 +35,8 @@
       "Bash(sed -i '' 's|href=\"\"#about\"\" class=\"\"nav-link\"\">About Me|href=\"\"/about\"\" class=\"\"nav-link\"\">About Me|g' index.html)",
       "Bash(sed -i '' 's|href=\"\"../index.html#about\"\" class=\"\"nav-link\"\">About Me|href=\"\"/about\"\" class=\"\"nav-link\"\">About Me|g' gallery/social-media.html)",
       "Bash(perl -i -pe 's|href=\"\"/#about\"\"\\\\s+class=\"\"nav-link\"\">About Me|href=\"\"/about\"\" class=\"\"nav-link\"\">About Me|g' blog-haitian-diplomacy.html blog-exclusion-kenya.html gallery.html blog-post.html academic.html blog.html blog-nouvelle-diplomatie.html blog-education-infrastructure.html blog-gardez-le-silence.html)",
-      "Bash(perl -i -pe 's|href=\"\"\\\\.\\\\./index\\\\.html#about\"\"\\\\s+class=\"\"nav-link\"\">About Me|href=\"\"/about\"\" class=\"\"nav-link\"\">About Me|g' gallery/social-media.html)"
+      "Bash(perl -i -pe 's|href=\"\"\\\\.\\\\./index\\\\.html#about\"\"\\\\s+class=\"\"nav-link\"\">About Me|href=\"\"/about\"\" class=\"\"nav-link\"\">About Me|g' gallery/social-media.html)",
+      "Bash(xargs perl:*)"
     ]
   }
 }
