@@ -6,7 +6,42 @@
    and wires up all platform embeds + scroll animations.
 ═══════════════════════════════════════════════════════════ */
 
-const cfg = window.SOCIAL_CONFIG || {};
+let cfg = window.SOCIAL_CONFIG || {};
+
+/* ─── 0. FIRESTORE OVERRIDE ─────────────────────────────── */
+/*
+ * Reads social/config from Firestore and merges the values into
+ * cfg so that admin-set post URLs override the static config.
+ * Falls back silently if Firebase isn't available.
+ */
+function loadFirestoreSocialConfig(callback) {
+  try {
+    const firestoreDb = window.db || (typeof firebase !== 'undefined' && firebase.apps.length ? firebase.firestore() : null);
+    if (!firestoreDb) { callback(); return; }
+
+    firestoreDb.collection('social').doc('config').get().then(doc => {
+      if (doc.exists) {
+        const d = doc.data();
+        // Merge Firestore values into cfg (Firestore wins)
+        cfg = cfg || {};
+        cfg.instagram = cfg.instagram || {};
+        cfg.twitter   = cfg.twitter   || {};
+        cfg.tiktok    = cfg.tiktok    || {};
+        cfg.linkedin  = cfg.linkedin  || {};
+        cfg.facebook  = cfg.facebook  || {};
+
+        if (d.instagramPostUrl)  cfg.instagram.latestPostUrl = d.instagramPostUrl;
+        if (d.twitterHandle)     cfg.twitter.handle          = d.twitterHandle;
+        if (d.tiktokHandle)      cfg.tiktok.handle           = d.tiktokHandle;
+        if (d.linkedinVanity)    cfg.linkedin.vanity         = d.linkedinVanity;
+        if (d.facebookPageUrl)   cfg.facebook.pageUrl        = d.facebookPageUrl;
+      }
+      callback();
+    }).catch(() => callback());
+  } catch(e) {
+    callback();
+  }
+}
 
 /* ─── 1. NAVBAR ─────────────────────────────────────────── */
 function initNavbar() {
@@ -184,6 +219,12 @@ function initTikTok() {
  * Auto-updates: YES — shows live posts if profile is public.
  */
 function initFacebook() {
+  const fbCfg   = cfg.facebook || {};
+  const pageUrl = fbCfg.pageUrl;
+  if (pageUrl) {
+    const fbDiv = document.querySelector('.fb-page');
+    if (fbDiv) fbDiv.setAttribute('data-href', pageUrl);
+  }
   function processFB() {
     if (window.FB && window.FB.XFBML) {
       window.FB.XFBML.parse();
@@ -251,10 +292,20 @@ function initParallax() {
 /* ─── INIT ──────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
   initNavbar();
-  initInstagram();
-  initTwitter();
-  initTikTok();
-  initFacebook();
   initFluidReveal();
   initParallax();
+
+  // Load Firestore overrides first, then render embeds
+  loadFirestoreSocialConfig(() => {
+    // Update LinkedIn badge vanity from config if set
+    const liVanity = (cfg.linkedin || {}).vanity;
+    if (liVanity) {
+      const liDiv = document.querySelector('.LI-profile-badge');
+      if (liDiv) liDiv.setAttribute('data-vanity', liVanity);
+    }
+    initInstagram();
+    initTwitter();
+    initTikTok();
+    initFacebook();
+  });
 });

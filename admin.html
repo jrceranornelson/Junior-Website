@@ -263,6 +263,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         About Me
       </button>
+      <button class="sidebar-link" data-section="social">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        Social Media
+      </button>
       <div class="nav-group-label">Community</div>
       <button class="sidebar-link" data-section="messages" id="nav-messages">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
@@ -489,6 +493,45 @@
       </div>
     </section>
 
+    <!-- ════════════ SOCIAL MEDIA ════════════ -->
+    <section class="admin-section hidden" id="section-social">
+      <div class="section-header">
+        <div>
+          <h1 class="section-title">Social Media</h1>
+          <p class="section-sub">Update the post links shown on your Social Media page. Save to reflect immediately.</p>
+        </div>
+      </div>
+      <div class="form-panel">
+        <div class="form-panel-title">Platform Links</div>
+        <div class="form-grid">
+          <div class="form-group form-full">
+            <label for="socialIgPost">Instagram — Latest Post URL</label>
+            <input type="url" id="socialIgPost" placeholder="https://www.instagram.com/p/XXXXXXXXXXX/" />
+            <small style="color:var(--muted,#888);font-size:0.8rem;">Paste the URL of the Instagram post you want embedded on the page.</small>
+          </div>
+          <div class="form-group">
+            <label for="socialTwitterHandle">Twitter / X — Handle</label>
+            <input type="text" id="socialTwitterHandle" placeholder="jrceranornelson" />
+          </div>
+          <div class="form-group">
+            <label for="socialTiktokHandle">TikTok — Handle</label>
+            <input type="text" id="socialTiktokHandle" placeholder="jrceranornelson" />
+          </div>
+          <div class="form-group">
+            <label for="socialLinkedinVanity">LinkedIn — Vanity URL slug</label>
+            <input type="text" id="socialLinkedinVanity" placeholder="jrceranornelson" />
+          </div>
+          <div class="form-group">
+            <label for="socialFbPage">Facebook — Page URL</label>
+            <input type="url" id="socialFbPage" placeholder="https://www.facebook.com/jrceranornelson" />
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary" id="saveSocialBtn">Save Changes</button>
+        </div>
+      </div>
+    </section>
+
   </main>
 </div><!-- /dashboard -->
 
@@ -691,7 +734,7 @@ document.querySelectorAll('.modal-backdrop').forEach(bd => {
 /* ══════════════════════════════════════════════════
    NAVIGATION
 ══════════════════════════════════════════════════ */
-const SECTIONS = ['home','blog','gallery','music','academic','messages','subscribers','projects','about'];
+const SECTIONS = ['home','blog','gallery','music','academic','messages','subscribers','projects','about','social'];
 
 function showSection(name) {
   SECTIONS.forEach(s => {
@@ -763,6 +806,7 @@ function initDashboard() {
   loadSubscribers();
   loadProjects();
   loadAbout();
+  loadSocial();
 }
 
 /* ══════════════════════════════════════════════════
@@ -1373,6 +1417,35 @@ document.getElementById('saveAboutBtn').addEventListener('click', async () => {
   try {
     await db.collection('about').doc('main').set(data, { merge:true });
     toast('About Me saved!','success');
+  } catch(e) { toast(e.message,'error'); }
+});
+
+/* ═══ SOCIAL MEDIA ═══ */
+function loadSocial() {
+  db.collection('social').doc('config').onSnapshot(doc => {
+    if (doc.exists) {
+      const d = doc.data();
+      document.getElementById('socialIgPost').value         = d.instagramPostUrl  || '';
+      document.getElementById('socialTwitterHandle').value  = d.twitterHandle     || '';
+      document.getElementById('socialTiktokHandle').value   = d.tiktokHandle      || '';
+      document.getElementById('socialLinkedinVanity').value = d.linkedinVanity    || '';
+      document.getElementById('socialFbPage').value         = d.facebookPageUrl   || '';
+    }
+  });
+}
+
+document.getElementById('saveSocialBtn').addEventListener('click', async () => {
+  const data = {
+    instagramPostUrl: document.getElementById('socialIgPost').value.trim(),
+    twitterHandle:    document.getElementById('socialTwitterHandle').value.trim(),
+    tiktokHandle:     document.getElementById('socialTiktokHandle').value.trim(),
+    linkedinVanity:   document.getElementById('socialLinkedinVanity').value.trim(),
+    facebookPageUrl:  document.getElementById('socialFbPage').value.trim(),
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+  };
+  try {
+    await db.collection('social').doc('config').set(data, { merge:true });
+    toast('Social Media links saved!','success');
   } catch(e) { toast(e.message,'error'); }
 });
 
