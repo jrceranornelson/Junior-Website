@@ -84,18 +84,16 @@ function initGalleryModal() {
     if (gmImage) { gmImage.src = ''; gmImage.style.display = 'none'; }
   }
 
-  /* Static album items — triggered by the info (i) button */
-  document.querySelectorAll('.gallery-info-btn').forEach(btn => {
-    btn.addEventListener('click', e => {
-      e.stopPropagation();
-      const item = btn.closest('.gallery-item');
-      openModal({
-        url:     item.querySelector('img')?.src || '',
-        caption: item.dataset.caption,
-        place:   item.dataset.place,
-        date:    item.dataset.date,
-        details: item.dataset.details
-      });
+  /* All gallery items (albums + singles) — click anywhere on the item */
+  document.addEventListener('click', e => {
+    const item = e.target.closest('.gallery-item');
+    if (!item) return;
+    openModal({
+      url:     item.querySelector('img')?.src || '',
+      caption: item.dataset.caption,
+      place:   item.dataset.place,
+      date:    item.dataset.date,
+      details: item.dataset.details
     });
   });
 
@@ -111,14 +109,16 @@ function initGalleryModal() {
     });
   });
 
-  /* Keyboard support for gallery cards */
+  /* Keyboard support for both item types */
   document.addEventListener('keydown', e => {
     if (e.key === 'Enter' || e.key === ' ') {
-      const card = e.target.closest('.gallery-card');
+      const card = e.target.closest('.gallery-card') || e.target.closest('.gallery-item');
       if (card) {
         e.preventDefault();
+        const isItem = card.classList.contains('gallery-item');
         openModal({
-          url:     card.dataset.url,
+          url:     isItem ? (card.querySelector('img')?.src || '') : card.dataset.url,
+          caption: card.dataset.caption,
           place:   card.dataset.place,
           date:    card.dataset.date,
           details: card.dataset.details
