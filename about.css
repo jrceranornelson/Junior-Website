@@ -155,19 +155,30 @@ ul  { list-style: none; }
 .nav-toggle {
   display: none;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   gap: 5px;
   background: none;
   border: none;
   cursor: pointer;
-  padding: 6px;
+  padding: 10px;
+  min-width: 44px;
+  min-height: 44px;
+  -webkit-tap-highlight-color: transparent;
 }
 .nav-toggle span {
   display: block;
   width: 24px; height: 2px;
   background: var(--white);
-  transition: background var(--transition-fast);
+  transform-origin: center;
+  transition: background var(--transition-fast), transform var(--transition-fast), opacity var(--transition-fast);
 }
 #navbar.scrolled .nav-toggle span { background: var(--black); }
+
+/* Hamburger → X when nav is open */
+.nav-toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.nav-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
 /* ─── WATERMARKS ──────────────────────────────────────────── */
 .watermarks {
@@ -406,14 +417,29 @@ ul  { list-style: none; }
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
-    gap: 28px;
-    padding: 0 36px;
+    gap: 4px;
+    padding: 80px 36px 40px;
     box-shadow: -4px 0 24px rgba(0,0,0,0.12);
     transition: right var(--transition);
     z-index: 999;
+    overflow-y: auto;
   }
   .nav-links.open { right: 0; }
-  .nav-link { color: var(--black); font-size: 0.88rem; }
+  /* Dim backdrop behind open nav */
+  .nav-links::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.45);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+  }
+  .nav-links.open::before { opacity: 1; }
+  /* Larger tap targets inside drawer */
+  .nav-link { color: var(--black); font-size: 0.95rem; padding: 10px 0; display: block; width: 100%; }
   .nav-cta  { display: none; }
 
   .about-hero { min-height: 240px; padding-bottom: 40px; }
@@ -436,4 +462,11 @@ ul  { list-style: none; }
   .about-lead { font-size: 0.95rem; }
   .about-body { font-size: 0.9rem; line-height: 1.8; }
   .btn { width: 100%; text-align: center; }
+  .nav-links { padding: 80px 24px 40px; }
+}
+
+@media (max-width: 360px) {
+  .nav-links { padding: 80px 20px 40px; }
+  .about-hero-title { font-size: clamp(1.8rem, 12vw, 2.6rem); }
+  .btn { padding: 13px 22px; font-size: 0.7rem; }
 }

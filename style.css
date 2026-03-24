@@ -455,20 +455,31 @@ body.preloading { overflow: hidden; }
 .nav-toggle {
   display: none;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   gap: 5px;
   background: none;
   border: none;
   cursor: pointer;
-  padding: 6px;
+  padding: 10px;
+  min-width: 44px;
+  min-height: 44px;
+  -webkit-tap-highlight-color: transparent;
 }
 .nav-toggle span {
   display: block;
   width: 24px;
   height: 2px;
   background: var(--white);
+  transform-origin: center;
   transition: background var(--transition-fast), transform var(--transition-fast), opacity var(--transition-fast);
 }
 #navbar.scrolled .nav-toggle span { background: var(--black); }
+
+/* Hamburger → X when nav is open */
+.nav-toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.nav-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
 /* ═══════════════════════════════════════════════════════════
    HERO
@@ -1389,7 +1400,7 @@ body.preloading { overflow: hidden; }
   }
   /* Reset desktop orphan overrides — in 2-col they create a broken implicit column */
   .blog-grid .blog-card:nth-child(4) { grid-column: auto; }
-  .blog-grid .blog-card:nth-child(5) { grid-column: 1 / span 2; max-width: 50%; justify-self: center; }
+  .blog-grid .blog-card:nth-child(5) { grid-column: auto; max-width: none; }
   .blog-card-img { height: 210px; }
   .blog-card-body { padding: 24px; }
   .blog-title { font-size: 1rem; }
@@ -1425,14 +1436,29 @@ body.preloading { overflow: hidden; }
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
-    gap: 28px;
-    padding: 0 36px;
+    gap: 4px;
+    padding: 80px 36px 40px;
     box-shadow: var(--shadow-lg);
     transition: right var(--transition);
     z-index: 999;
+    overflow-y: auto;
   }
   .nav-links.open { right: 0; }
-  .nav-link { color: var(--black); font-size: 0.88rem; }
+  /* Dim backdrop behind open nav */
+  .nav-links::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.45);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+  }
+  .nav-links.open::before { opacity: 1; }
+  /* Larger tap targets inside drawer */
+  .nav-link { color: var(--black); font-size: 0.95rem; padding: 10px 0; display: block; width: 100%; }
 
   /* HERO */
   .hero { min-height: 100svh; }
@@ -1512,8 +1538,8 @@ body.preloading { overflow: hidden; }
     gap: 40px;
   }
   .contact-socials { gap: 12px; }
-  .social-link { width: 38px; height: 38px; }
-  .social-link svg { width: 15px; height: 15px; }
+  .social-link { width: 44px; height: 44px; }
+  .social-link svg { width: 16px; height: 16px; }
 
   /* FORM */
   .form-group input,
@@ -1808,7 +1834,7 @@ body.preloading { overflow: hidden; }
 
   /* GALLERY */
   .gallery-grid { grid-template-columns: 1fr; gap: 8px; }
-  .gallery-item { height: 220px; }
+  .gallery-item { height: 180px; }
 
   /* PROJECTS */
   .project-card-body { padding: 20px 20px 28px; }
@@ -1852,4 +1878,28 @@ body.preloading { overflow: hidden; }
     gap: 14px;
   }
   .gallery-modal-header { padding: 16px; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVE — ULTRA-SMALL (≤ 360px)
+═══════════════════════════════════════════════════════════ */
+@media (max-width: 360px) {
+  .container { width: 96%; }
+  .section-pad { padding: 44px 0; }
+
+  .hero-first,
+  .hero-last { font-size: clamp(1.5rem, 11vw, 2.2rem); }
+
+  .nav-links { padding: 80px 24px 40px; }
+
+  .btn { padding: 13px 22px; font-size: 0.7rem; }
+
+  .project-card-body { padding: 16px 16px 22px; }
+  .blog-card-body    { padding: 14px; }
+  .blog-card-img     { height: 170px; }
+
+  .section-heading { font-size: clamp(1.5rem, 8vw, 2rem); }
+
+  .footer-inner { gap: 20px; }
+  .social-link  { width: 40px; height: 40px; }
 }
