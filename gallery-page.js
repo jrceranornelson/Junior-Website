@@ -136,7 +136,6 @@ function initWorldMap() {
     minZoom: 2
   });
 
-  /* Dark / minimal tile layer */
   L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
     attribution:
       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' +
@@ -145,7 +144,6 @@ function initWorldMap() {
     maxZoom: 19
   }).addTo(map);
 
-  /* Gold dot custom icon */
   const goldDot = L.divIcon({
     className: 'gold-dot-icon',
     html: '<div class="gold-dot"></div>',
@@ -154,108 +152,19 @@ function initWorldMap() {
     tooltipAnchor: [0, -14]
   });
 
-  /* ✏️ ADD NEW LOCATIONS HERE
-     Each entry needs:
-       name    — display label shown in the tooltip
-       coords  — [latitude, longitude]
-       photos  — array of image paths (one is picked at random for the tooltip preview)
-                 Use real paths like 'gallery/photo7.jpg' or placeholder URLs
-  ─────────────────────────────────────────────── */
-  const locations = [
-    {
-      name: 'Bali, Indonesia',
-      coords: [-8.3405, 115.0920],
-      photos: [
-        'gallery/photo2.png',
-        'gallery/photo3.jpg',
-        'gallery/photo4.jpg',
-        'gallery/photo5.jpg',
-        'gallery/photo6.jpg'
-      ]
-    },
-    {
-      name: 'Malden, Massachusetts, USA',
-      coords: [42.4251, -71.0662],
-      photos: [
-        'gallery/photo-reading-kissinger.jpg'
-      ]
-    },
-    {
-      name: 'Everett, Massachusetts, USA',
-      coords: [42.4084, -71.0537],
-      photos: [
-        'https://placehold.co/220x145/0b1d3a/c9a84c?text=Everett%2C+MA'
-      ]
-    },
-    {
-      name: 'Santo Domingo, Dominican Republic',
-      coords: [18.4861, -69.9312],
-      photos: [
-        'gallery/photo-hotel-lobby-white.jpg'
-      ]
-    },
-    {
-      name: 'Pétion-Ville, Haiti',
-      coords: [18.5127, -72.2851],
-      photos: [
-        'gallery/photo7.jpg',
-        'gallery/photo-grey-suit-ornate.jpg',
-        'gallery/photo-hotel-lobby-white.jpg',
-        'gallery/photo-haiti-stole-my-heart.jpg'
-      ]
-    },
-    {
-      name: 'Brisbane, Australia',
-      coords: [-27.4698, 153.0251],
-      photos: [
-        'gallery/photo-haiti-stole-my-heart.jpg'
-      ]
-    },
-    {
-      name: 'Melbourne, Australia',
-      coords: [-37.8136, 144.9631],
-      photos: [
-        'gallery/photo-grey-suit-ornate.jpg'
-      ]
-    },
-    {
-      name: 'Sorrento, Victoria, Australia',
-      coords: [-38.3428, 144.7433],
-      photos: [
-        'gallery/photo-red-chair-leather.jpg'
-      ]
-    },
-    {
-      name: 'Pandawa Cliff Estate, Bali, Indonesia',
-      coords: [-8.8480, 115.1681],
-      photos: [
-        'gallery/vacation-bali-pandawa.jpg'
-      ]
-    },
-    {
-      name: 'Washington D.C., USA',
-      coords: [38.9072, -77.0369],
-      photos: [
-        'https://placehold.co/220x145/0b1d3a/c9a84c?text=Washington+D.C.'
-      ]
-    }
-  ];
-  /* ─────────────────────────────────────────────── */
+  /* Tracks all markers by normalised place name to prevent duplicates */
+  const _markers = new Map();
 
-  /* Force Leaflet to recalculate size after fonts/layout settle */
-  setTimeout(() => map.invalidateSize(), 300);
-
-  locations.forEach(loc => {
-    /* Pick a random photo from the array */
-    const photo = loc.photos[Math.floor(Math.random() * loc.photos.length)];
-
+  function placeMarker(name, coords, photos) {
+    const key = name.trim().toLowerCase();
+    if (_markers.has(key)) return; // already pinned
+    const photo = photos[Math.floor(Math.random() * photos.length)];
     const tooltipHtml = `
       <div class="map-tooltip-inner">
-        <img src="${photo}" alt="${loc.name}" class="map-tooltip-img" />
-        <span class="map-tooltip-name">${loc.name}</span>
+        <img src="${photo}" alt="${name}" class="map-tooltip-img" />
+        <span class="map-tooltip-name">${name}</span>
       </div>`;
-
-    const marker = L.marker(loc.coords, { icon: goldDot });
+    const marker = L.marker(coords, { icon: goldDot });
     marker.bindTooltip(tooltipHtml, {
       permanent: false,
       direction: 'top',
@@ -263,7 +172,137 @@ function initWorldMap() {
       offset: [0, -4]
     });
     marker.addTo(map);
-  });
+    _markers.set(key, marker);
+  }
+
+  /* ── Static locations (for hardcoded album photos) ── */
+  const staticLocations = [
+    {
+      name: 'Bali, Indonesia',
+      coords: [-8.3405, 115.0920],
+      photos: ['gallery/photo2.png','gallery/photo3.jpg','gallery/photo4.jpg','gallery/photo5.jpg','gallery/photo6.jpg']
+    },
+    {
+      name: 'Malden, Massachusetts, USA',
+      coords: [42.4251, -71.0662],
+      photos: ['gallery/photo-reading-kissinger.jpg']
+    },
+    {
+      name: 'Everett, Massachusetts, USA',
+      coords: [42.4084, -71.0537],
+      photos: ['https://placehold.co/220x145/0b1d3a/c9a84c?text=Everett%2C+MA']
+    },
+    {
+      name: 'Santo Domingo, Dominican Republic',
+      coords: [18.4861, -69.9312],
+      photos: ['gallery/photo-hotel-lobby-white.jpg']
+    },
+    {
+      name: 'Pétion-Ville, Haiti',
+      coords: [18.5127, -72.2851],
+      photos: ['gallery/photo7.jpg','gallery/photo-grey-suit-ornate.jpg','gallery/photo-hotel-lobby-white.jpg','gallery/photo-haiti-stole-my-heart.jpg']
+    },
+    {
+      name: 'Brisbane, Australia',
+      coords: [-27.4698, 153.0251],
+      photos: ['gallery/photo-haiti-stole-my-heart.jpg']
+    },
+    {
+      name: 'Melbourne, Australia',
+      coords: [-37.8136, 144.9631],
+      photos: ['gallery/photo-grey-suit-ornate.jpg']
+    },
+    {
+      name: 'Sorrento, Victoria, Australia',
+      coords: [-38.3428, 144.7433],
+      photos: ['gallery/photo-red-chair-leather.jpg']
+    },
+    {
+      name: 'Pandawa Cliff Estate, Bali, Indonesia',
+      coords: [-8.8480, 115.1681],
+      photos: ['gallery/vacation-bali-pandawa.jpg']
+    },
+    {
+      name: 'Washington D.C., USA',
+      coords: [38.9072, -77.0369],
+      photos: ['https://placehold.co/220x145/0b1d3a/c9a84c?text=Washington+D.C.']
+    }
+  ];
+
+  staticLocations.forEach(loc => placeMarker(loc.name, loc.coords, loc.photos));
+
+  setTimeout(() => map.invalidateSize(), 300);
+
+  /* ── Dynamic markers from Firestore ─────────────────────────
+     Geocodes each unique place name entered when uploading a photo.
+     Results are cached in sessionStorage (1 call per place per session).
+  ──────────────────────────────────────────────────────────── */
+  const _geoCache = (function () {
+    try { return JSON.parse(sessionStorage.getItem('_geoCache') || '{}'); } catch(e) { return {}; }
+  })();
+
+  function saveGeoCache() {
+    try { sessionStorage.setItem('_geoCache', JSON.stringify(_geoCache)); } catch(e) {}
+  }
+
+  /* Queue-based geocoder — respects Nominatim's 1 req/sec limit */
+  const _geoQueue = [];
+  let _geoRunning = false;
+
+  function geocode(place) {
+    return new Promise(resolve => {
+      const key = place.trim().toLowerCase();
+      if (_geoCache[key]) { resolve(_geoCache[key]); return; }
+      _geoQueue.push({ place, key, resolve });
+      if (!_geoRunning) _drainGeoQueue();
+    });
+  }
+
+  function _drainGeoQueue() {
+    if (!_geoQueue.length) { _geoRunning = false; return; }
+    _geoRunning = true;
+    const { place, key, resolve } = _geoQueue.shift();
+    fetch(
+      'https://nominatim.openstreetmap.org/search?q=' +
+      encodeURIComponent(place) + '&format=json&limit=1',
+      { headers: { 'Accept-Language': 'en' } }
+    )
+      .then(r => r.json())
+      .then(data => {
+        if (data && data[0]) {
+          const coords = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+          _geoCache[key] = coords;
+          saveGeoCache();
+          resolve(coords);
+        } else {
+          resolve(null);
+        }
+      })
+      .catch(() => resolve(null))
+      .finally(() => setTimeout(_drainGeoQueue, 1100));
+  }
+
+  /* Listen to gallery collection — add a dot for every new place */
+  if (typeof firebase !== 'undefined' && firebase.apps.length) {
+    const firestoreDb = window.db || firebase.firestore();
+    firestoreDb.collection('gallery').onSnapshot(snapshot => {
+      /* Group images by place */
+      const byPlace = {};
+      snapshot.forEach(doc => {
+        const d = doc.data();
+        if (!d.place || !d.imageUrl) return;
+        (byPlace[d.place] = byPlace[d.place] || []).push(d.imageUrl);
+      });
+
+      Object.entries(byPlace).forEach(([place, photos]) => {
+        const key = place.trim().toLowerCase();
+        if (_markers.has(key)) return; // already on the map
+        geocode(place).then(coords => {
+          if (coords) placeMarker(place, coords, photos);
+        });
+      });
+    });
+  }
 }
 
 /* ─── SINGLES CHRONOLOGICAL SORT ────────────────────────────── */
