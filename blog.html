@@ -333,17 +333,20 @@
       // Hide only explicit drafts; show posts with status 'published' or no status set
       var posts = docs.filter(function(d) { return d.data().status !== 'draft'; });
 
-      if (!posts.length) {
-        // Show the 5 built-in featured articles as fallback
-        countEl.textContent = STATIC_ARTICLES.length + ' featured articles';
-        countEl.style.display = 'block';
-        STATIC_ARTICLES.forEach(function(a) { grid.appendChild(buildStaticCard(a)); });
-        return;
-      }
+      // Collect Firestore doc IDs so we don't duplicate static articles
+      var firestoreIds = posts.map(function(d) { return d.id; });
 
-      countEl.textContent = posts.length + ' post' + (posts.length !== 1 ? 's' : '');
+      // Static articles not already in Firestore
+      var staticToShow = STATIC_ARTICLES.filter(function(a) {
+        return firestoreIds.indexOf(a.id) === -1;
+      });
+
+      var total = posts.length + staticToShow.length;
+      countEl.textContent = total + ' post' + (total !== 1 ? 's' : '');
       countEl.style.display = 'block';
+
       posts.forEach(function(doc) { grid.appendChild(buildCard(doc.id, doc.data())); });
+      staticToShow.forEach(function(a) { grid.appendChild(buildStaticCard(a)); });
     }
 
     function showError(msg) {
