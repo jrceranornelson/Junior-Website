@@ -231,6 +231,13 @@ function initWorldMap() {
       photos: [
         'gallery/vacation-bali-pandawa.jpg'
       ]
+    },
+    {
+      name: 'Washington D.C., USA',
+      coords: [38.9072, -77.0369],
+      photos: [
+        'https://placehold.co/220x145/0b1d3a/c9a84c?text=Washington+D.C.'
+      ]
     }
   ];
   /* ─────────────────────────────────────────────── */
