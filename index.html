@@ -565,9 +565,10 @@
       return card;
     }
 
-    // Static fallback cards shown when Firestore has fewer than 3 published posts
+    // Static articles with unix timestamps for sorting (newest first)
     var staticFallbacks = [
       {
+        sortTs: 1740787200, // March 2026
         img: 'gallery/haitian-diplomacy.png',
         category: 'Diplomacy',
         date: 'March 2026',
@@ -576,6 +577,7 @@
         href: 'blog-haitian-diplomacy.html'
       },
       {
+        sortTs: 1752883200, // 19 July 2025
         img: 'gallery/haiti-kenya.png',
         category: 'Analyse',
         date: '19 Juillet 2025',
@@ -584,6 +586,7 @@
         href: 'blog-exclusion-kenya.html'
       },
       {
+        sortTs: 1752710400, // 17 July 2025
         img: 'gallery/gardez-le-silence.png',
         category: 'Politique',
         date: '17 Juillet 2025',
@@ -609,14 +612,30 @@
     }
 
     function render(docs) {
-      var published = docs.filter(function(d) { return d.data().published === true; }).slice(0, 3);
+      // Build a unified pool: Firestore published posts + static fallbacks
+      var published = docs.filter(function(d) { return d.data().published === true; });
+
+      // Tag each Firestore doc with a sort timestamp
+      var pool = published.map(function(doc) {
+        var ts = (doc.data().createdAt || {}).seconds || 0;
+        return { sortTs: ts, type: 'firestore', doc: doc };
+      });
+
+      // Add static fallbacks not already covered by Firestore (pad to at least 3 total)
+      staticFallbacks.forEach(function(s) { pool.push({ sortTs: s.sortTs, type: 'static', data: s }); });
+
+      // Sort newest first, take top 3
+      pool.sort(function(a, b) { return b.sortTs - a.sortTs; });
+      pool = pool.slice(0, 3);
+
       grid.innerHTML = '';
-      published.forEach(function(doc) { grid.appendChild(buildCard(doc.id, doc.data())); });
-      // Pad with static fallbacks until we have 3 cards
-      var needed = 3 - published.length;
-      for (var i = 0; i < needed && i < staticFallbacks.length; i++) {
-        grid.appendChild(buildStaticCard(staticFallbacks[i]));
-      }
+      pool.forEach(function(item) {
+        if (item.type === 'firestore') {
+          grid.appendChild(buildCard(item.doc.id, item.doc.data()));
+        } else {
+          grid.appendChild(buildStaticCard(item.data));
+        }
+      });
     }
 
     function sortDesc(docs) {
