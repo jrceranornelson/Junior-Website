@@ -897,9 +897,9 @@
       });
     }
 
-    db.collection('gallery').orderBy('createdAt', 'desc').onSnapshot(
+    db.collection('gallery_videos').orderBy('createdAt', 'desc').onSnapshot(
       snapshot => renderVideos(snapshot.docs),
-      () => db.collection('gallery').onSnapshot(
+      () => db.collection('gallery_videos').onSnapshot(
         snapshot => renderVideos(snapshot.docs),
         () => { grid.innerHTML = '<div class="videos-empty-state">Could not load videos.</div>'; }
       )
@@ -909,7 +909,7 @@
 
   <!-- Recent Photos from Firestore -->
   <script>
-  db.collection("gallery")
+  db.collection("gallery_videos")
     .orderBy("createdAt", "desc")
     .onSnapshot(snapshot => {
       const grid = document.getElementById("recent-photos-grid");
