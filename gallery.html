@@ -655,6 +655,8 @@
         <p class="gallery-modal-title" id="gm-caption">Photo Details</p>
         <button class="gallery-modal-close" aria-label="Close">&times;</button>
       </div>
+      <!-- Full photo shown when clicking Firestore gallery items -->
+      <img id="gm-image" src="" alt="" style="display:none;width:100%;max-height:420px;object-fit:contain;background:#0b1d3a;border-bottom:1px solid rgba(255,255,255,0.08);" />
       <div class="gallery-modal-body">
         <div class="gallery-modal-row">
           <div class="gallery-modal-icon-wrap">
@@ -716,6 +718,40 @@
     var grid = document.getElementById('galleryFirestoreGrid');
     if (!grid) return;
 
+    // Modal elements
+    var modal    = document.getElementById('galleryModal');
+    var gmImg    = document.getElementById('gm-image');
+    var gmCap    = document.getElementById('gm-caption');
+    var gmPlace  = document.getElementById('gm-place');
+    var gmDate   = document.getElementById('gm-date');
+    var gmDetails= document.getElementById('gm-details');
+
+    function openPhotoModal(item) {
+      if (!modal) return;
+      var imgSrc = item.getAttribute('data-img') || '';
+      if (gmImg) {
+        if (imgSrc) {
+          gmImg.src = imgSrc;
+          gmImg.alt = item.getAttribute('data-caption') || '';
+          gmImg.style.display = 'block';
+        } else {
+          gmImg.style.display = 'none';
+        }
+      }
+      if (gmCap)     gmCap.textContent     = item.getAttribute('data-caption') || 'Photo';
+      if (gmPlace)   gmPlace.textContent   = item.getAttribute('data-place')   || '—';
+      if (gmDate)    gmDate.textContent     = item.getAttribute('data-date')    || '—';
+      if (gmDetails) gmDetails.textContent  = item.getAttribute('data-details') || '—';
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    // Event delegation — works for all dynamically added items
+    grid.addEventListener('click', function (e) {
+      var item = e.target.closest('.gallery-item');
+      if (item) openPhotoModal(item);
+    });
+
     function esc(s) {
       return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
@@ -730,19 +766,17 @@
         var d = doc.data();
         var item = document.createElement('div');
         item.className = 'gallery-item reveal';
+        item.style.cursor = 'pointer';
+        item.setAttribute('data-img',     d.url || '');
         item.setAttribute('data-caption', d.caption || '');
-        item.setAttribute('data-place', d.place || '');
-        item.setAttribute('data-date', d.date || '');
+        item.setAttribute('data-place',   d.place || '');
+        item.setAttribute('data-date',    d.date || '');
         item.setAttribute('data-details', d.details || '');
         item.innerHTML =
           '<img src="' + esc(d.url) + '" alt="' + esc(d.caption || 'Gallery photo') + '" loading="lazy" />' +
-          '<button class="gallery-info-btn" aria-label="Photo details">i</button>';
+          '<button class="gallery-info-btn" aria-label="View photo" style="pointer-events:none;" tabindex="-1">&#128247;</button>';
         grid.appendChild(item);
       });
-      // Re-run reveal observer for new elements
-      if (typeof revealObserver !== 'undefined') {
-        grid.querySelectorAll('.reveal').forEach(function(el){ revealObserver.observe(el); });
-      }
     }, function (err) {
       console.warn('Gallery Firestore error:', err);
     });
