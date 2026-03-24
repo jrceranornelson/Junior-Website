@@ -560,7 +560,19 @@
       <div class="form-group"><label for="bCategory">Category</label><input type="text" id="bCategory" placeholder="Diplomacy" /></div>
       <div class="form-group form-full"><label for="bExcerpt">Excerpt</label><textarea id="bExcerpt" rows="3" placeholder="Short summary shown on listings…"></textarea></div>
       <div class="form-group form-full"><label for="bContent">Content</label><textarea id="bContent" rows="9" placeholder="Full article content (HTML or plain text)…"></textarea></div>
-      <div class="form-group form-full"><label for="bImageUrl">Cover Image URL</label><input type="url" id="bImageUrl" placeholder="https://…" /></div>
+      <div class="form-group form-full">
+        <label>Cover Image</label>
+        <div class="upload-zone" id="blogUploadZone">
+          <div class="upload-zone-icon"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+          <div class="upload-zone-label">Click or drag to upload</div>
+          <div class="upload-zone-text">JPG, PNG, WebP — max 5MB</div>
+          <input type="file" id="blogFileInput" accept="image/*" style="display:none" />
+        </div>
+        <div class="upload-progress" id="blogUploadProgress"><div class="upload-progress-bar" id="blogUploadProgressBar" style="width:0%"></div></div>
+        <div id="blogCoverPreview" style="margin-top:10px;"></div>
+        <label for="bImageUrl" style="margin-top:12px;display:block;">Or paste image URL</label>
+        <input type="url" id="bImageUrl" placeholder="https://… (optional if uploading above)" />
+      </div>
       <div class="form-group"><label for="bStatus">Status</label><select id="bStatus"><option value="published">Published</option><option value="draft">Draft</option></select></div>
     </div>
     <div class="form-actions" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
@@ -879,6 +891,9 @@ document.getElementById('newPostBtn').addEventListener('click', () => {
   ['bTitle','bDate','bCategory','bExcerpt','bContent','bImageUrl'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('bStatus').value = 'published';
   document.getElementById('bDocId').value  = '';
+  blogCoverUploadUrl = '';
+  document.getElementById('blogCoverPreview').innerHTML = '';
+  document.getElementById('blogUploadProgress').style.display = 'none';
   openModal('blogModal');
 });
 
@@ -893,6 +908,12 @@ window.editBlog = id => {
     document.getElementById('bContent').value  = d.content  || '';
     document.getElementById('bImageUrl').value = d.imageUrl || '';
     document.getElementById('bStatus').value   = d.status   || 'draft';
+    blogCoverUploadUrl = d.imageUrl || '';
+    document.getElementById('blogUploadProgress').style.display = 'none';
+    const prev = document.getElementById('blogCoverPreview');
+    prev.innerHTML = d.imageUrl
+      ? `<img src="${esc(d.imageUrl)}" style="max-height:110px;border-radius:4px;margin-top:8px;" />`
+      : '';
     document.getElementById('bDocId').value    = id;
     openModal('blogModal');
   });
@@ -905,13 +926,15 @@ window.deleteBlog = id => {
 
 document.getElementById('saveBlogBtn').addEventListener('click', async () => {
   const id = document.getElementById('bDocId').value;
+  // Prefer the file-upload URL; fall back to the manually pasted URL
+  const imageUrl = blogCoverUploadUrl || document.getElementById('bImageUrl').value.trim();
   const data = {
     title:    document.getElementById('bTitle').value.trim(),
     date:     document.getElementById('bDate').value.trim(),
     category: document.getElementById('bCategory').value.trim(),
     excerpt:  document.getElementById('bExcerpt').value.trim(),
     content:  document.getElementById('bContent').value.trim(),
-    imageUrl: document.getElementById('bImageUrl').value.trim(),
+    imageUrl,
     status:   document.getElementById('bStatus').value,
   };
   if (!data.title) { toast('Title is required.','error'); return; }
@@ -919,12 +942,57 @@ document.getElementById('saveBlogBtn').addEventListener('click', async () => {
     if (id) { await db.collection('blog').doc(id).update(data); toast('Post updated!','success'); }
     else { data.createdAt = firebase.firestore.FieldValue.serverTimestamp(); await db.collection('blog').add(data); toast('Post published!','success'); }
     closeModal('blogModal');
+    blogCoverUploadUrl = '';
   } catch (e) { toast(e.message,'error'); }
 });
 
 /* ══════════════════════════════════════════════════
    GALLERY + MAP
 ══════════════════════════════════════════════════ */
+/* ── Blog cover upload ── */
+let blogCoverUploadUrl = '';
+
+(function () {
+  const zone      = document.getElementById('blogUploadZone');
+  const fileInput = document.getElementById('blogFileInput');
+
+  zone.addEventListener('click', () => fileInput.click());
+  zone.addEventListener('dragover',  e => { e.preventDefault(); zone.style.borderColor = 'var(--navy)'; });
+  zone.addEventListener('dragleave', () => { zone.style.borderColor = ''; });
+  zone.addEventListener('drop', e => {
+    e.preventDefault(); zone.style.borderColor = '';
+    if (e.dataTransfer.files[0]) uploadBlogCover(e.dataTransfer.files[0]);
+  });
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files[0]) uploadBlogCover(fileInput.files[0]);
+  });
+
+  async function uploadBlogCover(file) {
+    if (!file.type.startsWith('image/')) { toast('Please select an image file.', 'error'); return; }
+    if (file.size > 5 * 1024 * 1024)    { toast('File too large — max 5MB.', 'error'); return; }
+
+    const prog = document.getElementById('blogUploadProgress');
+    const bar  = document.getElementById('blogUploadProgressBar');
+    const prev = document.getElementById('blogCoverPreview');
+    prog.style.display = 'block'; bar.style.width = '0%';
+
+    const ref  = storage.ref('blog/' + Date.now() + '_' + file.name.replace(/[^a-z0-9.]/gi, '_'));
+    const task = ref.put(file);
+
+    task.on('state_changed',
+      s => { bar.style.width = Math.round(s.bytesTransferred / s.totalBytes * 100) + '%'; },
+      e => { toast('Upload failed: ' + e.message, 'error'); prog.style.display = 'none'; },
+      async () => {
+        blogCoverUploadUrl = await ref.getDownloadURL();
+        document.getElementById('bImageUrl').value = blogCoverUploadUrl;
+        prev.innerHTML = `<img src="${esc(blogCoverUploadUrl)}" style="max-height:110px;border-radius:4px;margin-top:8px;" />`;
+        prog.style.display = 'none';
+        toast('Cover image uploaded!', 'success');
+      }
+    );
+  }
+})();
+
 let galleryUploadUrl = '';
 let adminMap = null;
 window._mapInited = false;
