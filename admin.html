@@ -856,6 +856,7 @@ document.getElementById('signOutBtn').addEventListener('click', () => {
    INIT
 ══════════════════════════════════════════════════ */
 function initDashboard() {
+  seedVideos();
   loadStats();
   loadBlog();
   loadGallery();
@@ -1195,6 +1196,32 @@ document.getElementById('saveGalleryBtn').addEventListener('click', async () => 
 /* ══════════════════════════════════════════════════
    VIDEOS
 ══════════════════════════════════════════════════ */
+/* One-time seed: add static videos that aren't yet in Firestore */
+async function seedVideos() {
+  const seeds = [
+    {
+      _seedId:     'IMG_2113',
+      title:       'iFly Singapore',
+      videoUrl:    '/gallery/video-IMG_2113.mov',
+      thumbnailUrl:'/gallery/photo-ifly-singapore-2017.jpg',
+      place:       'iFly Singapore, Singapore',
+      date:        'January 6, 2017',
+      description: 'Sky-divinity — defying gravity at iFly Singapore.',
+    },
+  ];
+  for (const seed of seeds) {
+    const id = seed._seedId;
+    const ref = db.collection('gallery_videos').doc(id);
+    const snap = await ref.get().catch(() => null);
+    if (!snap || !snap.exists) {
+      const data = Object.assign({}, seed);
+      delete data._seedId;
+      data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+      await ref.set(data).catch(() => {});
+    }
+  }
+}
+
 function getVideoThumb(url) {
   if (!url) return '';
   const yt = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);

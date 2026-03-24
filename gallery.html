@@ -644,8 +644,8 @@
         </div>
         <button class="video-modal-close" id="vpmClose" aria-label="Close">&times;</button>
       </div>
-      <div class="video-modal-player">
-        <iframe id="vpm-iframe" src="" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+      <div class="video-modal-player" id="vpm-player">
+        <!-- filled dynamically: iframe for YouTube/Vimeo, video tag for direct files -->
       </div>
       <p class="video-modal-desc" id="vpm-desc"></p>
     </div>
@@ -788,6 +788,8 @@
     function ytId(url) { const m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/); return m ? m[1] : null; }
     function vmId(url) { const m = url.match(/vimeo\.com\/(\d+)/); return m ? m[1] : null; }
 
+    function isDirectFile(url) { return /\.(mp4|mov|webm|ogg|avi|mkv)(\?|$)/i.test(url); }
+
     function embedUrl(url) {
       const y = ytId(url); if (y) return 'https://www.youtube.com/embed/' + y + '?autoplay=1&rel=0';
       const v = vmId(url); if (v) return 'https://player.vimeo.com/video/' + v + '?autoplay=1';
@@ -805,13 +807,16 @@
 
     /* Modal */
     const modal    = document.getElementById('videoPlayerModal');
-    const iframe   = document.getElementById('vpm-iframe');
+    const player   = document.getElementById('vpm-player');
     const vpmTitle = document.getElementById('vpm-title');
     const vpmMeta  = document.getElementById('vpm-meta');
     const vpmDesc  = document.getElementById('vpm-desc');
 
     function openVideo(d) {
-      iframe.src     = embedUrl(d.videoUrl);
+      const url = d.videoUrl || '';
+      player.innerHTML = isDirectFile(url)
+        ? `<video src="${esc(url)}" controls autoplay playsinline style="width:100%;height:100%;background:#000;"></video>`
+        : `<iframe src="${esc(embedUrl(url))}" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;"></iframe>`;
       vpmTitle.textContent = d.title || '';
       vpmMeta.textContent  = [d.place, d.date].filter(Boolean).join(' · ');
       vpmDesc.textContent  = d.description || '';
@@ -821,7 +826,7 @@
 
     function closeVideo() {
       modal.classList.remove('active');
-      iframe.src = '';
+      player.innerHTML = '';
       document.body.style.overflow = '';
     }
 
