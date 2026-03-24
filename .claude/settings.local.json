@@ -23,7 +23,11 @@
       "Bash(DST=\"/Users/jrceranornelson/junior-website/gallery\")",
       "Bash(for i:*)",
       "Bash(cp \"$SRC/IMG_$i.jpg\" \"$DST/work-diplomacy-$i.jpg\")",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(npm --version)",
+      "Bash(grep -rn 'href=\"\"\"\"blog\\\\.html\\\\|href=\"\"\"\"about\\\\.html\\\\|href=\"\"\"\"music\\\\.html\\\\|href=\"\"\"\"academic\\\\.html\\\\|href=\"\"\"\"gallery\\\\.html\\\\|href=\"\"\"\"admin\\\\.html\\\\|href=\"\"\"\"contact\\\\.html\\\\|href=\"\"\"\"index\\\\.html' /Users/jrceranornelson/junior-website/*.html)",
+      "Bash(perl -i -pe ':*)",
+      "Bash(wc:*)"
     ]
   }
 }
