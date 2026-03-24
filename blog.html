@@ -15,7 +15,9 @@
 
   <!-- Firebase CDN (compat) -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
   <script src="firebase-config.js"></script>
 
   <style>
@@ -291,6 +293,25 @@
 
   <script src="about.js"></script>
   <script src="live-chat.js"></script>
+
+  <!-- Preloader dismiss (about.js does not handle this) -->
+  <script>
+  (function () {
+    const preloader = document.getElementById('preloader');
+    if (!preloader) return;
+    document.body.classList.add('preloading');
+    function dismiss() {
+      preloader.classList.add('preloader-done');
+      document.body.classList.remove('preloading');
+      preloader.addEventListener('transitionend', function () {
+        preloader.remove();
+      }, { once: true });
+      // Safety fallback — remove even if transitionend never fires
+      setTimeout(function () { preloader.remove(); }, 800);
+    }
+    setTimeout(dismiss, 2700);
+  })();
+  </script>
 
   <script>
   'use strict';
