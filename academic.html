@@ -1101,19 +1101,19 @@
       return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 
-    db.collection('academic').orderBy('createdAt', 'desc').onSnapshot(function (snap) {
+    function renderAcademic(docs) {
       grid.innerHTML = '';
-      if (snap.empty) {
+      if (!docs.length) {
         grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;font-family:\'Montserrat\',sans-serif;font-size:0.9rem;color:#8a8070;padding:40px 0;letter-spacing:0.04em;">No publications yet — check back soon.</p>';
         return;
       }
-      snap.forEach(function (doc) {
+      docs.forEach(function (doc) {
         var d = doc.data();
         var btnHref = d.link || d.pdfUrl || '#';
         var card = document.createElement('article');
         card.className = 'pub-card reveal';
         card.innerHTML =
-          '<p class="pub-card-journal">' + esc((d.institution || '') + (d.type ? ' · ' + d.type : '')) + '</p>' +
+          '<p class="pub-card-journal">' + esc((d.institution || '') + (d.type ? ' \u00b7 ' + d.type : '')) + '</p>' +
           '<h3 class="pub-card-title">' + esc(d.title || 'Untitled') + '</h3>' +
           '<p class="pub-card-date">' + esc(d.year || '') + '</p>' +
           (d.abstract ? '<p class="pub-card-abstract">' + esc(d.abstract) + '</p>' : '') +
@@ -1122,9 +1122,21 @@
             : '');
         grid.appendChild(card);
       });
-    }, function (err) {
-      console.warn('Academic Firestore error:', err);
-    });
+    }
+
+    db.collection('academic').orderBy('createdAt', 'desc').onSnapshot(
+      function (snap) { renderAcademic(snap.docs); },
+      function () {
+        // orderBy index not ready — fall back to unordered
+        db.collection('academic').onSnapshot(
+          function (snap) { renderAcademic(snap.docs); },
+          function (err) {
+            console.warn('Academic Firestore error:', err);
+            grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#c9a84c;padding:40px 0;font-family:Inter,sans-serif;">Could not load publications. Please try again later.</p>';
+          }
+        );
+      }
+    );
   })();
   </script>
 </body>

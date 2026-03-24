@@ -216,90 +216,7 @@
     </div>
   </section>
 
-  <!-- FEATURED ARTICLES (static) -->
-  <section class="blog-page-section" style="padding-top: 0;">
-    <div class="blog-page-container">
-      <div style="display:flex;align-items:center;gap:16px;margin-bottom:36px;">
-        <div style="flex:1;height:1px;background:rgba(201,168,76,0.25);"></div>
-        <p style="font-family:'Montserrat',sans-serif;font-size:0.65rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);white-space:nowrap;margin:0;">Featured Articles</p>
-        <div style="flex:1;height:1px;background:rgba(201,168,76,0.25);"></div>
-      </div>
-      <p class="blog-count">5 featured articles</p>
-      <div class="blog-grid">
-
-        <!-- March 2026 -->
-        <article class="blog-card">
-          <div class="blog-card-img">
-            <img src="gallery/haitian-diplomacy.png" alt="Reimagining Haitian Diplomacy in the 21st Century" loading="lazy" />
-          </div>
-          <div class="blog-card-body">
-            <span class="blog-category-badge">Diplomacy</span>
-            <span class="blog-date">March 2026</span>
-            <h3 class="blog-title">Reimagining Haitian Diplomacy in the 21st Century</h3>
-            <p class="blog-excerpt">To help reintegrate Haiti into the world map of diplomacy, we must first understand that diplomacy in the 21st century is no longer built only through formal meetings, official speeches, and state-to-state relations.</p>
-            <a href="blog-haitian-diplomacy.html" class="blog-link">Read more <span class="arrow">→</span></a>
-          </div>
-        </article>
-
-        <!-- 19 Juillet 2025 -->
-        <article class="blog-card">
-          <div class="blog-card-img">
-            <img src="gallery/haiti-kenya.png" alt="L'exclusion d'Haïti de la politique de visa exempté du Kenya" loading="lazy" />
-          </div>
-          <div class="blog-card-body">
-            <span class="blog-category-badge">Analyse</span>
-            <span class="blog-date">19 Juillet 2025</span>
-            <h3 class="blog-title">L'exclusion d'Haïti de la politique de visa exempté du Kenya</h3>
-            <p class="blog-excerpt">Une analyse diplomatique de l'exclusion d'Haïti de la mesure d'exemption de visa annoncée par le Kenya, et pourquoi le gouvernement haïtien doit répondre avec fermeté souveraine.</p>
-            <a href="blog-exclusion-kenya.html" class="blog-link">Read more <span class="arrow">→</span></a>
-          </div>
-        </article>
-
-        <!-- 17 Juillet 2025 -->
-        <article class="blog-card">
-          <div class="blog-card-img">
-            <img src="gallery/gardez-le-silence.png" alt="Gardez le silence" loading="lazy" />
-          </div>
-          <div class="blog-card-body">
-            <span class="blog-category-badge">Politique</span>
-            <span class="blog-date">17 Juillet 2025</span>
-            <h3 class="blog-title">À ceux qui ont trahi l'espérance du peuple haïtien ; gardez le silence !</h3>
-            <p class="blog-excerpt">Une alerte à la jeunesse haïtienne face aux figures politiques qui, après avoir trahi la patrie, reprennent la parole pour appeler à l'unité — sans jamais reconnaître leurs fautes.</p>
-            <a href="blog-gardez-le-silence.html" class="blog-link">Read more <span class="arrow">→</span></a>
-          </div>
-        </article>
-
-        <!-- July 2022 -->
-        <article class="blog-card">
-          <div class="blog-card-img">
-            <img src="gallery/education-infrastructure.png" alt="Education as National Infrastructure" loading="lazy" />
-          </div>
-          <div class="blog-card-body">
-            <span class="blog-category-badge">Education</span>
-            <span class="blog-date">July 2022</span>
-            <h3 class="blog-title">Education as National Infrastructure in Haiti</h3>
-            <p class="blog-excerpt">Why placing education at the center of national development is one of the most urgent and sustainable choices Haiti can make.</p>
-            <a href="blog-education-infrastructure.html" class="blog-link">Read more <span class="arrow">→</span></a>
-          </div>
-        </article>
-
-        <!-- 7 Janvier 2022 -->
-        <article class="blog-card">
-          <div class="blog-card-img">
-            <img src="gallery/nouvelle-diplomatie.png" alt="Une Nouvelle Diplomatie Haïtienne" loading="lazy" />
-          </div>
-          <div class="blog-card-body">
-            <span class="blog-category-badge">Diplomatie</span>
-            <span class="blog-date">7 Janvier 2022</span>
-            <h3 class="blog-title">Une Nouvelle Diplomatie Haïtienne au Service du Développement Régional</h3>
-            <p class="blog-excerpt">La diplomatie peut jouer un rôle crucial dans notre plan de sauvetage — en servant le développement des régions rurales, en réformant ses méthodes et en élargissant ses horizons.</p>
-            <a href="blog-nouvelle-diplomatie.html" class="blog-link">Read more <span class="arrow">→</span></a>
-          </div>
-        </article>
-
-      </div>
-    </div>
-  </section>
+  <!-- Static featured articles are used as in-grid fallback when Firestore returns 0 published posts (see JS below) -->
 
   <!-- FOOTER -->
   <footer class="about-footer">
@@ -372,18 +289,55 @@
       return card;
     }
 
+    // Fallback static articles shown when Firestore has no published posts
+    var STATIC_ARTICLES = [
+      { id:'haitian-diplomacy', imageUrl:'gallery/haitian-diplomacy.png', category:'Diplomacy', date:'March 2026',
+        title:'Reimagining Haitian Diplomacy in the 21st Century',
+        excerpt:'To help reintegrate Haiti into the world map of diplomacy, we must first understand that diplomacy in the 21st century is no longer built only through formal meetings, official speeches, and state-to-state relations.',
+        href:'blog-haitian-diplomacy.html' },
+      { id:'exclusion-kenya', imageUrl:'gallery/haiti-kenya.png', category:'Analyse', date:'19 Juillet 2025',
+        title:"L\u2019exclusion d\u2019Ha\u00efti de la politique de visa exempt\u00e9 du Kenya",
+        excerpt:"Une analyse diplomatique de l\u2019exclusion d\u2019Ha\u00efti de la mesure d\u2019exemption de visa annonc\u00e9e par le Kenya, et pourquoi le gouvernement ha\u00eftien doit r\u00e9pondre avec fermet\u00e9 souveraine.",
+        href:'blog-exclusion-kenya.html' },
+      { id:'gardez-silence', imageUrl:'gallery/gardez-le-silence.png', category:'Politique', date:'17 Juillet 2025',
+        title:'\u00c0 ceux qui ont trahi l\u2019esp\u00e9rance du peuple ha\u00eftien\u00a0; gardez le silence\u00a0!',
+        excerpt:"Une alerte \u00e0 la jeunesse ha\u00eftienne face aux figures politiques qui, apr\u00e8s avoir trahi la patrie, reprennent la parole pour appeler \u00e0 l\u2019unit\u00e9 \u2014 sans jamais reconna\u00eetre leurs fautes.",
+        href:'blog-gardez-le-silence.html' },
+      { id:'education-infrastructure', imageUrl:'gallery/education-infrastructure.png', category:'Education', date:'July 2022',
+        title:'Education as National Infrastructure in Haiti',
+        excerpt:'Why placing education at the center of national development is one of the most urgent and sustainable choices Haiti can make.',
+        href:'blog-education-infrastructure.html' },
+      { id:'nouvelle-diplomatie', imageUrl:'gallery/nouvelle-diplomatie.png', category:'Diplomatie', date:'7 Janvier 2022',
+        title:'Une Nouvelle Diplomatie Ha\u00eftienne au Service du D\u00e9veloppement R\u00e9gional',
+        excerpt:'La diplomatie peut jouer un r\u00f4le crucial dans notre plan de sauvetage \u2014 en servant le d\u00e9veloppement des r\u00e9gions rurales, en r\u00e9formant ses m\u00e9thodes et en \u00e9largissant ses horizons.',
+        href:'blog-nouvelle-diplomatie.html' }
+    ];
+
+    function buildStaticCard(a) {
+      var card = document.createElement('article');
+      card.className = 'blog-card';
+      card.innerHTML =
+        '<div class="blog-card-img"><img src="' + esc(a.imageUrl) + '" alt="' + esc(a.title) + '" loading="lazy" /></div>' +
+        '<div class="blog-card-body">' +
+          '<span class="blog-category-badge">' + esc(a.category) + '</span>' +
+          '<span class="blog-date">' + esc(a.date) + '</span>' +
+          '<h3 class="blog-title">' + esc(a.title) + '</h3>' +
+          '<p class="blog-excerpt">' + esc(a.excerpt.length > 160 ? a.excerpt.slice(0,160) + '\u2026' : a.excerpt) + '</p>' +
+          '<a href="' + esc(a.href) + '" class="blog-link">Read more <span class="arrow">\u2192</span></a>' +
+        '</div>';
+      return card;
+    }
+
     function render(docs) {
       grid.innerHTML = '';
-      // Show all docs — filter out drafts (status must be 'published')
+      // Filter out drafts (status must be 'published')
       var posts = docs.filter(function(d) { return d.data().status === 'published'; });
 
       if (!posts.length) {
-        countEl.style.display = 'none';
-        grid.innerHTML =
-          '<div class="blog-state">' +
-            '<svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>' +
-            '<p>No posts yet — check back soon.</p>' +
-          '</div>';
+        // Show the 5 built-in featured articles as fallback
+        countEl.textContent = STATIC_ARTICLES.length + ' featured articles';
+        countEl.style.display = 'block';
+        STATIC_ARTICLES.forEach(function(a) { grid.appendChild(buildStaticCard(a)); });
         return;
       }
 

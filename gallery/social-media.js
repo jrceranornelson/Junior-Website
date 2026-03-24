@@ -8,38 +8,66 @@
 
 let cfg = window.SOCIAL_CONFIG || {};
 
-/* ─── 0. FIRESTORE OVERRIDE ─────────────────────────────── */
+/* ─── 0. FIRESTORE LIVE SYNC ────────────────────────────── */
 /*
- * Reads social/config from Firestore and merges the values into
- * cfg so that admin-set post URLs override the static config.
- * Falls back silently if Firebase isn't available.
+ * Listens to social/config in real-time with onSnapshot so
+ * any change saved in the admin panel reflects on the page
+ * immediately (on the next page load or within seconds).
+ *
+ * On first snapshot → calls callback() to render embeds.
+ * On subsequent snapshots → re-renders only the Instagram embed
+ * (other platforms show live timelines that don't need a re-render).
  */
+let _socialInitDone = false;
+
 function loadFirestoreSocialConfig(callback) {
   try {
-    const firestoreDb = window.db || (typeof firebase !== 'undefined' && firebase.apps.length ? firebase.firestore() : null);
+    const firestoreDb = window.db ||
+      (typeof firebase !== 'undefined' && firebase.apps.length
+        ? firebase.firestore() : null);
+
     if (!firestoreDb) { callback(); return; }
 
-    firestoreDb.collection('social').doc('config').get().then(doc => {
+    firestoreDb.collection('social').doc('config').onSnapshot(doc => {
+      cfg = cfg || {};
+      cfg.instagram = cfg.instagram || {};
+      cfg.twitter   = cfg.twitter   || {};
+      cfg.tiktok    = cfg.tiktok    || {};
+      cfg.linkedin  = cfg.linkedin  || {};
+      cfg.facebook  = cfg.facebook  || {};
+
       if (doc.exists) {
         const d = doc.data();
-        // Merge Firestore values into cfg (Firestore wins)
-        cfg = cfg || {};
-        cfg.instagram = cfg.instagram || {};
-        cfg.twitter   = cfg.twitter   || {};
-        cfg.tiktok    = cfg.tiktok    || {};
-        cfg.linkedin  = cfg.linkedin  || {};
-        cfg.facebook  = cfg.facebook  || {};
-
         if (d.instagramPostUrl)  cfg.instagram.latestPostUrl = d.instagramPostUrl;
+        if (d.twitterPostUrl)    cfg.twitter.latestPostUrl   = d.twitterPostUrl;
+        if (d.tiktokPostUrl)     cfg.tiktok.latestPostUrl    = d.tiktokPostUrl;
         if (d.twitterHandle)     cfg.twitter.handle          = d.twitterHandle;
         if (d.tiktokHandle)      cfg.tiktok.handle           = d.tiktokHandle;
         if (d.linkedinVanity)    cfg.linkedin.vanity         = d.linkedinVanity;
         if (d.facebookPageUrl)   cfg.facebook.pageUrl        = d.facebookPageUrl;
       }
-      callback();
-    }).catch(() => callback());
+
+      if (!_socialInitDone) {
+        // First load — run full init
+        _socialInitDone = true;
+        callback();
+      } else {
+        // Admin changed a value — re-render Instagram only
+        const igContainer = document.getElementById('ig-embed');
+        const igFallback  = document.getElementById('ig-fallback');
+        const wrapEl      = document.getElementById('ig-embed-container')
+                              ?.querySelector('.embed-wrap');
+        if (igContainer) igContainer.innerHTML = '';
+        if (wrapEl)      wrapEl.classList.remove('embed-wrap--fallback');
+        if (igFallback)  igFallback.classList.remove('visible');
+        initInstagram();
+      }
+    }, () => {
+      // Firestore unavailable — render with static config
+      if (!_socialInitDone) { _socialInitDone = true; callback(); }
+    });
   } catch(e) {
-    callback();
+    if (!_socialInitDone) { _socialInitDone = true; callback(); }
   }
 }
 

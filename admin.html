@@ -505,9 +505,17 @@
         <div class="form-panel-title">Platform Links</div>
         <div class="form-grid">
           <div class="form-group form-full">
-            <label for="socialIgPost">Instagram — Latest Post URL</label>
+            <label for="socialIgPost">Instagram — Post URL</label>
             <input type="url" id="socialIgPost" placeholder="https://www.instagram.com/p/XXXXXXXXXXX/" />
-            <small style="color:var(--muted,#888);font-size:0.8rem;">Paste the URL of the Instagram post you want embedded on the page.</small>
+            <small style="color:var(--muted,#888);font-size:0.8rem;">Paste the URL of any Instagram post to embed it. Update this each time you want to feature a new post.</small>
+          </div>
+          <div class="form-group form-full">
+            <label for="socialTwitterPost">Twitter / X — Tweet URL <span style="font-weight:400;color:var(--muted);">(optional — leave blank to show full timeline)</span></label>
+            <input type="url" id="socialTwitterPost" placeholder="https://x.com/jrceranornelson/status/XXXXXXXXXXX" />
+          </div>
+          <div class="form-group form-full">
+            <label for="socialTiktokPost">TikTok — Video URL <span style="font-weight:400;color:var(--muted);">(optional — leave blank to show profile)</span></label>
+            <input type="url" id="socialTiktokPost" placeholder="https://www.tiktok.com/@jrceranornelson/video/XXXXXXXXXXX" />
           </div>
           <div class="form-group">
             <label for="socialTwitterHandle">Twitter / X — Handle</label>
@@ -1426,6 +1434,8 @@ function loadSocial() {
     if (doc.exists) {
       const d = doc.data();
       document.getElementById('socialIgPost').value         = d.instagramPostUrl  || '';
+      document.getElementById('socialTwitterPost').value    = d.twitterPostUrl    || '';
+      document.getElementById('socialTiktokPost').value     = d.tiktokPostUrl     || '';
       document.getElementById('socialTwitterHandle').value  = d.twitterHandle     || '';
       document.getElementById('socialTiktokHandle').value   = d.tiktokHandle      || '';
       document.getElementById('socialLinkedinVanity').value = d.linkedinVanity    || '';
@@ -1437,6 +1447,8 @@ function loadSocial() {
 document.getElementById('saveSocialBtn').addEventListener('click', async () => {
   const data = {
     instagramPostUrl: document.getElementById('socialIgPost').value.trim(),
+    twitterPostUrl:   document.getElementById('socialTwitterPost').value.trim(),
+    tiktokPostUrl:    document.getElementById('socialTiktokPost').value.trim(),
     twitterHandle:    document.getElementById('socialTwitterHandle').value.trim(),
     tiktokHandle:     document.getElementById('socialTiktokHandle').value.trim(),
     linkedinVanity:   document.getElementById('socialLinkedinVanity').value.trim(),
