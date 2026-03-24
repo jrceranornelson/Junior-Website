@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog &amp; Library — Junior Ceranor Nelson</title>
+  <meta name="description" content="Articles, essays, and ideas by Junior Ceranor Nelson on diplomacy, education, development, and leadership." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon-180.png" />
+  <link rel="stylesheet" href="about.css" />
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Firebase CDN (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+
+  <style>
+    /* ─── BLOG LISTING PAGE ────────────────────────────────── */
+    .blog-page-section {
+      position: relative;
+      z-index: 1;
+      padding: 80px 0 120px;
+    }
+
+    .blog-page-container {
+      width: 92%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Category badge on cards */
+    .blog-category-badge {
+      display: inline-block;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--gold);
+      background: rgba(201,168,76,0.10);
+      border: 1px solid rgba(201,168,76,0.3);
+      padding: 4px 10px;
+      border-radius: 2px;
+      margin-bottom: 10px;
+    }
+
+    /* Loading spinner */
+    .blog-spinner-wrap {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 100px 0;
+    }
+
+    .blog-spinner {
+      width: 44px;
+      height: 44px;
+      border: 3px solid var(--border);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: blog-spin 0.75s linear infinite;
+    }
+
+    @keyframes blog-spin { to { transform: rotate(360deg); } }
+
+    /* Empty / error state */
+    .blog-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 100px 20px;
+    }
+
+    .blog-state svg {
+      width: 48px;
+      height: 48px;
+      fill: none;
+      stroke: #d5cfc3;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      display: block;
+      margin: 0 auto 20px;
+    }
+
+    .blog-state p {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+
+    /* Image fallback (when no cover) */
+    .blog-img-placeholder {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, var(--navy) 0%, #1a3a6e 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .blog-img-placeholder svg {
+      width: 40px;
+      height: 40px;
+      fill: none;
+      stroke: rgba(201,168,76,0.35);
+      stroke-width: 1.5;
+      stroke-linecap: round;
+    }
+
+    /* Post count label */
+    .blog-count {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 36px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="preloader-logo-wrap">
+      <svg class="preloader-ring" viewBox="0 0 126 126" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="63" cy="63" r="59" />
+      </svg>
+      <img src="logo.png" alt="Junior Ceranor Nelson" class="preloader-logo" />
+    </div>
+    <p class="preloader-name">Junior Ceranor Nelson</p>
+    <div class="preloader-bar-wrap">
+      <div class="preloader-bar"></div>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="logo.png" alt="Junior Ceranor Nelson" class="nav-logo-img" />
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html#home"     class="nav-link">Home</a></li>
+        <li><a href="index.html#about"    class="nav-link">About Me</a></li>
+        <li><a href="index.html#projects" class="nav-link">Projects</a></li>
+        <li><a href="gallery.html"        class="nav-link">Gallery</a></li>
+        <li><a href="music.html"          class="nav-link">Music</a></li>
+        <li><a href="academic.html"       class="nav-link">Academic</a></li>
+        <li><a href="blog.html"           class="nav-link active">Blog &amp; Library</a></li>
+        <li><a href="index.html#contact"  class="nav-link">Contact</a></li>
+      </ul>
+      <a href="index.html#contact" class="nav-cta">Contact Us</a>
+    </div>
+  </nav>
+
+  <!-- WATERMARKS -->
+  <div class="watermarks" aria-hidden="true">
+    <img src="logos/unhdip.png"            class="wm wm-1" alt="" />
+    <img src="logos/omnedu.png"            class="wm wm-2" alt="" />
+    <img src="logos/bokatedral.png"        class="wm wm-3" alt="" />
+    <img src="logos/haitistolemyheart.png" class="wm wm-4" alt="" />
+    <img src="logos/sprintagility.png"     class="wm wm-5" alt="" />
+    <img src="logos/unhdip.png"            class="wm wm-6" alt="" />
+    <img src="logos/omnedu.png"            class="wm wm-7" alt="" />
+    <img src="logos/bokatedral.png"        class="wm wm-8" alt="" />
+    <img src="logos/haitistolemyheart.png" class="wm wm-9" alt="" />
+    <img src="logos/sprintagility.png"     class="wm wm-10" alt="" />
+  </div>
+
+  <!-- PAGE HERO -->
+  <header class="about-hero">
+    <div class="about-hero-inner">
+      <p class="about-hero-label">Insights &amp; Ideas</p>
+      <h1 class="about-hero-title">Blog &amp; Library</h1>
+      <div class="about-hero-line"></div>
+    </div>
+  </header>
+
+  <!-- BLOG GRID -->
+  <section class="blog-page-section">
+    <div class="blog-page-container">
+      <p class="blog-count" id="blogCount" style="display:none;"></p>
+      <div class="blog-grid" id="blogGrid">
+        <!-- Loading spinner shown until Firestore responds -->
+        <div class="blog-spinner-wrap">
+          <div class="blog-spinner"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="about-footer">
+    <div class="about-container">
+      <span class="footer-name">Junior Ceranor Nelson</span>
+      <span class="footer-copy">&copy; 2026. All rights reserved.</span>
+    </div>
+  </footer>
+
+  <script src="about.js"></script>
+  <script src="live-chat.js"></script>
+
+  <script>
+  'use strict';
+
+  (function () {
+    const grid      = document.getElementById('blogGrid');
+    const countEl   = document.getElementById('blogCount');
+
+    /* ── Sanitise text for attribute / text node insertion ── */
+    function esc(s) {
+      return String(s || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    /* ── Build one card element ─────────────────────────── */
+    function buildCard(id, post) {
+      const imgInner = post.coverUrl
+        ? `<img src="${esc(post.coverUrl)}" alt="${esc(post.title)}" loading="lazy" />`
+        : `<div class="blog-img-placeholder">
+             <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/>
+             <circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+           </div>`;
+
+      const cat = post.category
+        ? `<span class="blog-category-badge">${esc(post.category)}</span>`
+        : '';
+
+      const excerpt = (post.excerpt || '').length > 160
+        ? esc(post.excerpt.slice(0, 160)) + '…'
+        : esc(post.excerpt || '');
+
+      const card = document.createElement('article');
+      card.className = 'blog-card';
+      card.innerHTML = `
+        <div class="blog-card-img">${imgInner}</div>
+        <div class="blog-card-body">
+          ${cat}
+          <span class="blog-date">${esc(post.date || '')}</span>
+          <h3 class="blog-title">${esc(post.title || 'Untitled')}</h3>
+          <p class="blog-excerpt">${excerpt}</p>
+          <a href="blog-post.html?id=${encodeURIComponent(id)}" class="blog-link">
+            Read more <span class="arrow">→</span>
+          </a>
+        </div>`;
+      return card;
+    }
+
+    /* ── Render helper ─────────────────────────────────── */
+    function renderDocs(docs) {
+      grid.innerHTML = '';
+
+      const published = docs.filter(d => d.data().published === true);
+
+      if (!published.length) {
+        countEl.style.display = 'none';
+        grid.innerHTML = `
+          <div class="blog-state">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 20h9"/>
+              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+            </svg>
+            <p>No posts yet — check back soon.</p>
+          </div>`;
+        return;
+      }
+
+      const n = published.length;
+      countEl.textContent = n + ' post' + (n !== 1 ? 's' : '');
+      countEl.style.display = 'block';
+
+      published.forEach(doc => {
+        grid.appendChild(buildCard(doc.id, doc.data()));
+      });
+    }
+
+    /* ── Error state ───────────────────────────────────── */
+    function showError() {
+      countEl.style.display = 'none';
+      grid.innerHTML = `
+        <div class="blog-state">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          <p>Could not load posts — please try again later.</p>
+        </div>`;
+    }
+
+    /* ── Client-side sort by createdAt desc ────────────── */
+    function sortDesc(docs) {
+      return docs.slice().sort((a, b) => {
+        const at = a.data().createdAt;
+        const bt = b.data().createdAt;
+        const as = at && at.seconds ? at.seconds : 0;
+        const bs = bt && bt.seconds ? bt.seconds : 0;
+        return bs - as;
+      });
+    }
+
+    /* ── Listen with orderBy, fall back if index missing ── */
+    let fallbackActive = false;
+
+    db.collection('blog')
+      .orderBy('createdAt', 'desc')
+      .onSnapshot(
+        (snap) => { renderDocs(snap.docs); },
+        (err) => {
+          if (!fallbackActive &&
+              (err.code === 'failed-precondition' || err.code === 'unimplemented')) {
+            fallbackActive = true;
+            db.collection('blog').onSnapshot(
+              (snap) => { renderDocs(sortDesc(snap.docs)); },
+              showError
+            );
+          } else {
+            showError();
+          }
+        }
+      );
+  })();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog — Junior Ceranor Nelson</title>
+  <meta name="description" content="" id="metaDesc" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon-180.png" />
+  <link rel="stylesheet" href="about.css" />
+  <link rel="stylesheet" href="blog-article.css" />
+  <link rel="stylesheet" href="blog-engagement.css" />
+
+  <!-- Firebase CDN (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+
+  <style>
+    /* ── Article hero ───────────────────────────────────── */
+    .article-hero {
+      position: relative;
+      height: 520px;
+      overflow: hidden;
+      margin-top: 80px;
+    }
+
+    .article-hero img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+    }
+
+    .article-hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(11,29,58,0.35) 0%, rgba(11,29,58,0.72) 100%);
+    }
+
+    .article-hero-content {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 48px 5% 52px;
+      max-width: 860px;
+    }
+
+    /* Hero placeholder when no cover image */
+    .article-hero-placeholder {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #0b1d3a 0%, #1a3a6e 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .article-hero-placeholder svg {
+      width: 64px;
+      height: 64px;
+      fill: none;
+      stroke: rgba(201,168,76,0.3);
+      stroke-width: 1.5;
+      stroke-linecap: round;
+    }
+
+    .article-category {
+      display: inline-block;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #c9a84c;
+      background: rgba(201,168,76,0.15);
+      border: 1px solid rgba(201,168,76,0.4);
+      padding: 6px 14px;
+      border-radius: 2px;
+      margin-bottom: 18px;
+    }
+
+    .article-hero-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      color: #ffffff;
+      margin-bottom: 16px;
+    }
+
+    .article-meta {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .article-date {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.65);
+    }
+
+    .article-author {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: rgba(255,255,255,0.65);
+    }
+
+    .article-author span { color: #c9a84c; }
+
+    /* ── Article body ───────────────────────────────────── */
+    .article-body {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 80px 5% 100px;
+    }
+
+    .article-excerpt {
+      font-size: 1.18rem;
+      line-height: 1.75;
+      color: #1a1a1a;
+      font-weight: 500;
+      border-left: 4px solid #c9a84c;
+      padding: 8px 0 8px 24px;
+      margin-bottom: 48px;
+    }
+
+    .article-text p {
+      font-size: 1.05rem;
+      line-height: 1.9;
+      color: #2a2a2a;
+      margin-bottom: 28px;
+    }
+
+    .article-text p:last-child { margin-bottom: 0; }
+
+    .article-divider {
+      width: 60px;
+      height: 3px;
+      background: #c9a84c;
+      border-radius: 2px;
+      margin: 48px 0;
+    }
+
+    /* ── Back link ──────────────────────────────────────── */
+    .article-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #0b1d3a;
+      border-bottom: 2px solid #c9a84c;
+      padding-bottom: 2px;
+      transition: color 0.22s ease, gap 0.22s ease;
+    }
+
+    .article-back:hover { color: #c9a84c; gap: 12px; }
+    .article-back svg { width: 16px; height: 16px; }
+
+    .article-nav {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 40px 5% 80px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid #e2ddd0;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    /* ── Loading / error states ─────────────────────────── */
+    .post-state {
+      max-width: 760px;
+      margin: 120px auto;
+      padding: 0 5%;
+      text-align: center;
+    }
+
+    .post-state svg {
+      width: 48px;
+      height: 48px;
+      fill: none;
+      stroke: #d5cfc3;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      display: block;
+      margin: 0 auto 20px;
+    }
+
+    .post-state p {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #8a8070;
+      letter-spacing: 0.04em;
+    }
+
+    .post-spinner {
+      width: 44px;
+      height: 44px;
+      border: 3px solid #e2ddd0;
+      border-top-color: #c9a84c;
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+      margin: 120px auto;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Hidden until loaded */
+    #postHero,
+    #postMain { display: none; }
+  </style>
+</head>
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <div class="preloader-logo-wrap">
+      <svg class="preloader-ring" viewBox="0 0 126 126" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="63" cy="63" r="59" />
+      </svg>
+      <img src="logo.png" alt="Junior Ceranor Nelson" class="preloader-logo" />
+    </div>
+    <p class="preloader-name">Junior Ceranor Nelson</p>
+    <div class="preloader-bar-wrap">
+      <div class="preloader-bar"></div>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="logo.png" alt="Junior Ceranor Nelson" class="nav-logo-img" />
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html#home"     class="nav-link">Home</a></li>
+        <li><a href="index.html#about"    class="nav-link">About Me</a></li>
+        <li><a href="index.html#projects" class="nav-link">Projects</a></li>
+        <li><a href="gallery.html"        class="nav-link">Gallery</a></li>
+        <li><a href="music.html"          class="nav-link">Music</a></li>
+        <li><a href="academic.html"       class="nav-link">Academic</a></li>
+        <li><a href="blog.html"           class="nav-link active">Blog &amp; Library</a></li>
+        <li><a href="index.html#contact"  class="nav-link">Contact</a></li>
+      </ul>
+      <a href="index.html#contact" class="nav-cta">Contact Us</a>
+    </div>
+  </nav>
+
+  <!-- WATERMARKS -->
+  <div class="watermarks" aria-hidden="true">
+    <img src="logos/unhdip.png"            class="wm wm-1" alt="" />
+    <img src="logos/omnedu.png"            class="wm wm-2" alt="" />
+    <img src="logos/bokatedral.png"        class="wm wm-3" alt="" />
+    <img src="logos/haitistolemyheart.png" class="wm wm-4" alt="" />
+    <img src="logos/sprintagility.png"     class="wm wm-5" alt="" />
+    <img src="logos/unhdip.png"            class="wm wm-6" alt="" />
+    <img src="logos/omnedu.png"            class="wm wm-7" alt="" />
+    <img src="logos/bokatedral.png"        class="wm wm-8" alt="" />
+    <img src="logos/haitistolemyheart.png" class="wm wm-9" alt="" />
+    <img src="logos/sprintagility.png"     class="wm wm-10" alt="" />
+  </div>
+
+  <!-- LOADING SPINNER (shown until Firestore responds) -->
+  <div class="post-spinner" id="postSpinner"></div>
+
+  <!-- ERROR / NOT FOUND STATE -->
+  <div class="post-state" id="postError" style="display:none;">
+    <svg viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="12" y1="8" x2="12" y2="12"/>
+      <line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+    <p id="postErrorMsg">Post not found — it may have been removed.</p>
+  </div>
+
+  <!-- ARTICLE HERO (populated by JS) -->
+  <header class="article-hero" id="postHero">
+    <div id="postHeroImg"></div>
+    <div class="article-hero-overlay"></div>
+    <div class="article-hero-content">
+      <span class="article-category" id="postCategory" style="display:none;"></span>
+      <h1 class="article-hero-title" id="postTitle"></h1>
+      <div class="article-meta">
+        <span class="article-date" id="postDate"></span>
+        <span class="article-author">By <span>Junior Ceranor Nelson</span></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ARTICLE BODY + ENGAGEMENT (populated by JS) -->
+  <main id="postMain">
+    <article class="article-body">
+      <p class="article-excerpt" id="postExcerpt" style="display:none;"></p>
+      <div class="article-divider" id="postDivider" style="display:none;"></div>
+      <div class="article-text" id="postContent"></div>
+    </article>
+
+    <!-- LIKE & COMMENTS -->
+    <section class="engagement-section" aria-label="Likes and comments">
+
+      <div class="like-block">
+        <button class="like-btn" id="likeBtn" aria-pressed="false" aria-label="Like this article">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          <span id="likeCount">0</span>
+        </button>
+        <span class="like-label">people found this helpful</span>
+      </div>
+
+      <div class="comments-block">
+        <h2 class="comments-heading">
+          Comments
+          <span class="comment-count" id="commentCount">0</span>
+        </h2>
+
+        <form class="comment-form" id="commentForm" novalidate>
+          <div class="comment-form-row">
+            <div class="comment-form-group">
+              <label for="commentName">Your Name *</label>
+              <input type="text" id="commentName" placeholder="e.g. Marie Dupont" maxlength="60" required />
+            </div>
+            <div class="comment-form-group">
+              <label for="commentText">Your Comment *</label>
+              <input type="text" style="display:none" aria-hidden="true" tabindex="-1" />
+            </div>
+          </div>
+          <div class="comment-form-group" style="margin-bottom:0;">
+            <label for="commentText" class="sr-only">Your Comment</label>
+            <textarea id="commentText" placeholder="Share your thoughts on this article…" maxlength="1000" required></textarea>
+          </div>
+          <div class="comment-form-footer">
+            <span class="comment-form-note">Your comment will appear immediately.</span>
+            <button type="submit" class="comment-submit-btn" id="commentSubmit">
+              Post Comment
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+            </button>
+          </div>
+          <div class="comment-success" id="commentSuccess" aria-live="polite">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            Comment posted!
+          </div>
+        </form>
+
+        <div class="comment-list" id="commentList" aria-live="polite"></div>
+      </div>
+
+    </section>
+
+    <!-- BOTTOM NAV -->
+    <div class="article-nav">
+      <a href="blog.html" class="article-back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 12H5M5 12l7 7M5 12l7-7"/></svg>
+        Back to Blog
+      </a>
+      <a href="index.html#contact" class="btn btn-dark">Get in Touch</a>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="about-footer">
+    <div class="about-container">
+      <span class="footer-name">Junior Ceranor Nelson</span>
+      <span class="footer-copy">&copy; 2026. All rights reserved.</span>
+    </div>
+  </footer>
+
+  <script src="about.js"></script>
+  <script src="blog-engagement.js"></script>
+  <script src="live-chat.js"></script>
+
+  <script>
+  'use strict';
+
+  (function () {
+    const spinner  = document.getElementById('postSpinner');
+    const errEl    = document.getElementById('postError');
+    const errMsg   = document.getElementById('postErrorMsg');
+    const heroEl   = document.getElementById('postHero');
+    const mainEl   = document.getElementById('postMain');
+
+    /* ── Sanitise for text node insertion ─────────────── */
+    function esc(s) {
+      return String(s || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    /* ── Show error state ──────────────────────────────── */
+    function showError(msg) {
+      spinner.style.display = 'none';
+      if (msg) errMsg.textContent = msg;
+      errEl.style.display = 'block';
+    }
+
+    /* ── Render post into DOM ──────────────────────────── */
+    function renderPost(id, post) {
+      /* Page title & meta */
+      document.title = (post.title || 'Blog Post') + ' — Junior Ceranor Nelson';
+      const metaDesc = document.getElementById('metaDesc');
+      if (metaDesc) metaDesc.setAttribute('content', post.excerpt || '');
+
+      /* Hero image */
+      const heroImg = document.getElementById('postHeroImg');
+      if (post.coverUrl) {
+        heroImg.innerHTML = `<img src="${esc(post.coverUrl)}" alt="${esc(post.title)}" />`;
+      } else {
+        heroImg.innerHTML = `
+          <div class="article-hero-placeholder">
+            <svg viewBox="0 0 24 24">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <polyline points="21 15 16 10 5 21"/>
+            </svg>
+          </div>`;
+      }
+
+      /* Category */
+      const catEl = document.getElementById('postCategory');
+      if (post.category) {
+        catEl.textContent = post.category;
+        catEl.style.display = '';
+      }
+
+      /* Title & date */
+      document.getElementById('postTitle').textContent = post.title || 'Untitled';
+      document.getElementById('postDate').textContent  = post.date  || '';
+
+      /* Excerpt */
+      const excerptEl = document.getElementById('postExcerpt');
+      if (post.excerpt) {
+        excerptEl.textContent = post.excerpt;
+        excerptEl.style.display = '';
+        document.getElementById('postDivider').style.display = '';
+      }
+
+      /* Content — stored as HTML in Firestore */
+      const contentEl = document.getElementById('postContent');
+      if (post.content) {
+        contentEl.innerHTML = post.content;
+      } else {
+        contentEl.innerHTML = '<p>No content available for this post.</p>';
+      }
+
+      /* Show hero + main, hide spinner */
+      spinner.style.display   = 'none';
+      heroEl.style.display    = '';
+      mainEl.style.display    = '';
+
+      /* Initialise engagement with the Firestore doc ID */
+      initEngagement(id);
+    }
+
+    /* ── Read post ID from URL ──────────────────────────── */
+    const postId = new URLSearchParams(window.location.search).get('id');
+
+    if (!postId) {
+      showError('No post specified.');
+      return;
+    }
+
+    /* ── Fetch from Firestore ───────────────────────────── */
+    db.collection('blog').doc(postId).get()
+      .then(doc => {
+        if (!doc.exists) {
+          showError('Post not found — it may have been removed.');
+          return;
+        }
+        const post = doc.data();
+        if (post.published === false) {
+          showError('This post is not available.');
+          return;
+        }
+        renderPost(doc.id, post);
+      })
+      .catch(() => {
+        showError('Could not load the post — please try again later.');
+      });
+  })();
+  </script>
+
+</body>
+</html>
