@@ -572,7 +572,7 @@
       </div>
 
       <!-- Status banner -->
-      <div id="liveStatusBanner" style="display:none;margin-bottom:24px;padding:16px 20px;border-radius:8px;background:#fef2f2;border:1.5px solid #fca5a5;display:flex;align-items:center;gap:12px;">
+      <div id="liveStatusBanner" style="display:none;margin-bottom:24px;padding:16px 20px;border-radius:8px;background:#fef2f2;border:1.5px solid #fca5a5;align-items:center;gap:12px;">
         <span style="width:12px;height:12px;border-radius:50%;background:#ef4444;flex-shrink:0;animation:liveDotAdmin 1s ease-in-out infinite;display:inline-block;"></span>
         <span id="liveStatusText" style="font-family:'Montserrat',sans-serif;font-size:0.85rem;font-weight:700;color:#dc2626;">You are currently LIVE</span>
       </div>
@@ -898,7 +898,7 @@ document.querySelectorAll('.modal-backdrop').forEach(bd => {
 /* ══════════════════════════════════════════════════
    NAVIGATION
 ══════════════════════════════════════════════════ */
-const SECTIONS = ['home','blog','gallery','videos','music','academic','messages','subscribers','projects','about','social'];
+const SECTIONS = ['home','blog','gallery','videos','music','academic','messages','subscribers','projects','about','social','live'];
 
 function showSection(name) {
   SECTIONS.forEach(s => {
