@@ -733,14 +733,22 @@
       return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 
-    db.collection('projects').orderBy('order').limit(3).onSnapshot(function (snap) {
+    db.collection('projects').onSnapshot(function (snap) {
       if (snap.empty) {
         dynGrid.style.display = 'none';
         if (statGrid) statGrid.style.display = '';
         return;
       }
+      // Sort newest-first client-side so all projects show regardless of fields
+      var docs = snap.docs.slice().sort(function(a,b){
+        var at = a.data().createdAt, bt = b.data().createdAt;
+        if (!at && !bt) return 0; if (!at) return 1; if (!bt) return -1;
+        return (bt.toMillis ? bt.toMillis() : bt) - (at.toMillis ? at.toMillis() : at);
+      }).slice(0,3);
+      snap = { docs: docs, empty: docs.length === 0 };
+      if (snap.empty) { dynGrid.style.display='none'; if(statGrid) statGrid.style.display=''; return; }
       dynGrid.innerHTML = '';
-      snap.forEach(function (doc) {
+      docs.forEach(function (doc) {
         var d = doc.data();
         var imgSrc = d.logoUrl
           ? 'https://placehold.co/600x380/0b1d3a/c9a84c?text=' + encodeURIComponent(d.title || 'Project')

@@ -439,7 +439,7 @@
       return '<li>' + esc(text) + '</li>';
     }
 
-    db.collection('projects').orderBy('order').onSnapshot(function (snap) {
+    db.collection('projects').onSnapshot(function (snap) {
       if (snap.empty) {
         dynGrid.style.display = 'none';
         if (statGrid) statGrid.style.display = '';
@@ -470,8 +470,8 @@
             '<p class="pp-card-desc">' + esc(d.description || '') + '</p>' +
             featuresHtml +
             '<div class="pp-card-footer">' +
-              (d.link
-                ? '<a href="' + esc(d.link) + '" target="_blank" rel="noopener" class="pp-card-link">Visit website <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>'
+              (d.link || d.url
+                ? '<a href="' + esc(d.link || d.url) + '" target="_blank" rel="noopener" class="pp-card-link">Visit website <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>'
                 : '') +
             '</div>' +
           '</div>';
