@@ -115,8 +115,13 @@
         <h2 class="gp-section-title">Albums</h2>
       </div>
 
-      <!-- Albums grid -->
-      <div class="albums-grid">
+      <!-- Dynamic albums from Firestore (shown if Firestore has data) -->
+      <div id="albumsDynGrid" class="albums-grid" style="display:none;"></div>
+      <!-- Dynamic album expanded panels go here -->
+      <div id="albumsDynPanels"></div>
+
+      <!-- Static albums grid (shown if Firestore has no data) -->
+      <div class="albums-grid" id="albumsStatGrid">
 
         <!-- ── BALI ALBUM ── -->
         <article class="album-card reveal" data-album-id="bali">
@@ -806,35 +811,142 @@
   })();
   </script>
 
-  <!-- Recent Photos from Firestore -->
+  <!-- Recent Photos from Firestore (limit 2) -->
   <script>
-  db.collection("gallery")
-    .orderBy("createdAt", "desc")
-    .onSnapshot(snapshot => {
-      const grid = document.getElementById("recent-photos-grid");
-      if (snapshot.empty) {
-        grid.innerHTML = "<p>No photos yet.</p>";
+  (function() {
+    function escAttr(s) { return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    db.collection("gallery")
+      .orderBy("createdAt", "desc")
+      .limit(2)
+      .onSnapshot(function(snapshot) {
+        var grid = document.getElementById("recent-photos-grid");
+        grid.innerHTML = "";
+        if (snapshot.empty) {
+          grid.innerHTML = "<p style='text-align:center;color:#888;padding:24px 0;'>No photos yet.</p>";
+          return;
+        }
+        snapshot.forEach(function(doc) {
+          var d = doc.data();
+          var card = document.createElement('div');
+          card.className = 'gallery-card';
+          card.setAttribute('data-url', d.imageUrl || '');
+          card.setAttribute('data-place', d.place || '');
+          card.setAttribute('data-date', d.date || '');
+          card.setAttribute('data-details', d.details || '');
+          card.setAttribute('role', 'button');
+          card.setAttribute('tabindex', '0');
+          card.setAttribute('aria-label', 'View photo from ' + escAttr(d.place || 'gallery'));
+          card.innerHTML = '<img src="' + escAttr(d.imageUrl) + '" alt="' + escAttr(d.place) + '" />' +
+            '<div class="gallery-info"><span>' + escAttr(d.place) + '</span><span>' + escAttr(d.date) + '</span></div>';
+          grid.appendChild(card);
+        });
+      });
+
+    // Note: dynamic map markers from Firestore are already handled by gallery-page.js
+    // which geocodes place names and adds gold dot markers to the map automatically.
+  })();
+  </script>
+  <!-- Dynamic albums from Firestore -->
+  <script>
+  (function() {
+    function escAttr(s) { return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    var dynGrid   = document.getElementById('albumsDynGrid');
+    var dynPanels = document.getElementById('albumsDynPanels');
+    var statGrid  = document.getElementById('albumsStatGrid');
+
+    db.collection('albums').orderBy('createdAt','desc').onSnapshot(function(snap) {
+      if (snap.empty) {
+        if (dynGrid)  dynGrid.style.display  = 'none';
+        if (statGrid) statGrid.style.display = '';
         return;
       }
-      grid.innerHTML = "";
-      snapshot.forEach(doc => {
-        const d = doc.data();
-        grid.innerHTML += `
-          <div class="gallery-card"
-               data-url="${d.imageUrl}"
-               data-place="${d.place || ''}"
-               data-date="${d.date || ''}"
-               data-details="${(d.details || '').replace(/"/g,'&quot;')}"
-               role="button" tabindex="0" aria-label="View photo from ${d.place || 'gallery'}">
-            <img src="${d.imageUrl}" alt="${d.place}" />
-            <div class="gallery-info">
-              <span>${d.place}</span>
-              <span>${d.date}</span>
-            </div>
-          </div>`;
+      if (statGrid) statGrid.style.display = 'none';
+      if (dynGrid)  dynGrid.style.display  = '';
+      dynGrid.innerHTML  = '';
+      dynPanels.innerHTML = '';
+
+      snap.forEach(function(doc) {
+        var d    = doc.data();
+        var id   = 'dyn-' + doc.id;
+        var photos = Array.isArray(d.photos) ? d.photos : [];
+        var cover  = d.coverUrl || (photos[0] || '');
+
+        // Album card
+        var card = document.createElement('article');
+        card.className = 'album-card reveal';
+        card.setAttribute('data-album-id', id);
+        card.innerHTML =
+          '<div class="album-stack-wrap">' +
+            (cover ? '<img src="' + escAttr(cover) + '" class="stack-img stack-1" alt="" aria-hidden="true" onerror="this.style.display=\'none\'" />' : '<div class="album-placeholder-img placeholder-1"></div>') +
+            '<span class="album-count-badge">' + photos.length + ' photo' + (photos.length !== 1 ? 's' : '') + '</span>' +
+          '</div>' +
+          '<div class="album-info">' +
+            '<h3 class="album-name">' + escAttr(d.name || 'Album') + '</h3>' +
+            '<div class="album-meta">' +
+              (d.category ? '<span class="album-meta-item"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>' + escAttr(d.category) + '</span>' : '') +
+            '</div>' +
+            '<button class="album-open-btn" data-album-id="' + id + '" aria-expanded="false">View Album <svg class="album-btn-arrow" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>' +
+          '</div>';
+        dynGrid.appendChild(card);
+
+        // Expanded panel
+        var panel = document.createElement('div');
+        panel.className  = 'album-expanded';
+        panel.id         = 'album-panel-' + id;
+        panel.setAttribute('aria-hidden','true');
+        var photosHtml = photos.length
+          ? photos.map(function(url){
+              return '<div class="gallery-item" data-caption="' + escAttr(d.name||'') + '" data-place="' + escAttr(d.category||'') + '" data-date="" data-details="' + escAttr(d.description||'') + '">' +
+                '<img src="' + escAttr(url) + '" alt="' + escAttr(d.name||'') + '" loading="lazy" />' +
+                '<button class="gallery-info-btn" aria-label="Photo details">i</button>' +
+              '</div>';
+            }).join('')
+          : '<p style="text-align:center;padding:40px;color:#888;">No photos in this album yet.</p>';
+        panel.innerHTML =
+          '<div class="album-expanded-header">' +
+            '<div><p class="album-expanded-label">Album</p><h3 class="album-expanded-title">' + escAttr(d.name||'Album') + '</h3></div>' +
+            '<button class="album-close-btn" data-album-id="' + id + '" aria-label="Close album"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>' +
+          '</div>' +
+          '<div class="gp-grid">' + photosHtml + '</div>';
+        dynPanels.appendChild(panel);
       });
+
+      // Re-attach open/close event handlers for dynamic albums
+      dynGrid.querySelectorAll('.album-open-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var aId = btn.getAttribute('data-album-id');
+          var panel = document.getElementById('album-panel-' + aId);
+          if (!panel) return;
+          var isOpen = panel.getAttribute('aria-hidden') === 'false';
+          // Close all
+          dynPanels.querySelectorAll('.album-expanded').forEach(function(p){ p.setAttribute('aria-hidden','true'); });
+          dynGrid.querySelectorAll('.album-open-btn').forEach(function(b){ b.setAttribute('aria-expanded','false'); });
+          if (!isOpen) {
+            panel.setAttribute('aria-hidden','false');
+            btn.setAttribute('aria-expanded','true');
+            panel.scrollIntoView({behavior:'smooth',block:'start'});
+          }
+        });
+      });
+      dynPanels.querySelectorAll('.album-close-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var aId = btn.getAttribute('data-album-id');
+          var panel = document.getElementById('album-panel-' + aId);
+          if (panel) panel.setAttribute('aria-hidden','true');
+          dynGrid.querySelectorAll('.album-open-btn[data-album-id="' + aId + '"]').forEach(function(b){ b.setAttribute('aria-expanded','false'); });
+        });
+      });
+
+    }, function() {
+      // Firestore error — show static
+      if (dynGrid)  dynGrid.style.display  = 'none';
+      if (statGrid) statGrid.style.display = '';
     });
+  })();
   </script>
+
 <script src="live-button.js"></script>
 <script>
 if ('serviceWorker' in navigator) {

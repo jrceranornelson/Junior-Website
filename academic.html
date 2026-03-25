@@ -655,21 +655,29 @@
           <h2 class="section-heading reveal-line">PhD Dissertation</h2>
         </div>
 
-        <div class="phd-featured reveal" style="margin-top: 52px;">
+        <!-- Static dissertation (shown if Firestore returns nothing) -->
+        <div class="phd-featured reveal" id="phdFeaturedStatic" style="margin-top: 52px;">
           <div class="phd-status-badge">PhD Dissertation — In Progress</div>
-          <!-- ✏️ EDIT HERE: dissertation title -->
           <h2 class="phd-title">
             Agenda control in United Nations peace and security negotiations (2015–2023): a state-level analysis of procedural advantage, diplomatic network centrality, and influence outcomes
           </h2>
-          <!-- ✏️ EDIT HERE: institution name -->
           <p class="phd-institution">Euclid University</p>
-          <!-- ✏️ EDIT HERE: short description -->
           <p class="phd-description">
             This dissertation examines how states leverage procedural mechanisms and diplomatic network positioning to shape negotiation outcomes within the UN Security Council framework. Through a combination of network analysis and qualitative case studies spanning 2015–2023, it identifies the structural advantages that enable smaller states to exert disproportionate influence in multilateral security deliberations.
           </p>
           <a href="mailto:me@juniorceranornelson.com?subject=Request%20for%20PhD%20Abstract" class="btn btn-gold">
             Request Abstract
           </a>
+        </div>
+        <!-- Dynamic dissertation (shown when Firestore has data) -->
+        <div id="phdFeaturedDynamic" style="margin-top:52px;display:none;">
+          <div class="phd-featured reveal">
+            <div class="phd-status-badge" id="dynPhdBadge">PhD Dissertation</div>
+            <h2 class="phd-title" id="dynPhdTitle"></h2>
+            <p class="phd-institution" id="dynPhdInstitution"></p>
+            <p class="phd-description" id="dynPhdDescription"></p>
+            <div id="dynPhdLink"></div>
+          </div>
         </div>
       </div>
     </section>
@@ -683,7 +691,10 @@
           <h2 class="section-heading reveal-line">Theses &amp; Dissertations</h2>
         </div>
 
-        <div class="thesis-grid">
+        <!-- Dynamic theses grid from Firestore -->
+        <div class="thesis-grid" id="thesisGridDynamic" style="display:none;"></div>
+        <!-- Static theses grid (shown if no Firestore data) -->
+        <div class="thesis-grid" id="thesisGridStatic">
 
           <!-- PhD card (mirrors the featured section) -->
           <article class="thesis-card reveal">
@@ -719,7 +730,7 @@
             </a>
           </article>
 
-        </div>
+        </div><!-- /thesisGridStatic -->
       </div>
     </section>
 
@@ -880,7 +891,10 @@
           <h2 class="section-heading reveal-line">Academic &amp; Professional Affiliations</h2>
         </div>
 
-        <div class="affil-list">
+        <!-- Dynamic affiliations from Firestore -->
+        <div class="affil-list" id="affilListDynamic" style="display:none;"></div>
+        <!-- Static affiliations (shown if no Firestore data) -->
+        <div class="affil-list" id="affilListStatic">
 
           <div class="affil-row reveal">
             <div class="affil-title">PhD Candidate — International Relations &amp; Diplomacy</div>
@@ -912,7 +926,7 @@
             <div class="affil-year">2018 – Present</div>
           </div>
 
-        </div>
+        </div><!-- /affilListStatic -->
       </div>
     </section>
 
@@ -925,7 +939,10 @@
           <h2 class="section-heading reveal-line">Awards &amp; Recognitions</h2>
         </div>
 
-        <div class="awards-grid">
+        <!-- Dynamic awards from Firestore -->
+        <div class="awards-grid" id="awardsGridDynamic" style="display:none;"></div>
+        <!-- Static awards (shown if no Firestore data) -->
+        <div class="awards-grid" id="awardsGridStatic">
 
           <!-- Award 1 — Coursera / Let's Move Haiti -->
           <article class="award-card reveal">
@@ -964,7 +981,7 @@
             <p class="award-desc"><!-- ✏️ Short description of the award and what it recognizes. --></p>
           </article>
 
-        </div>
+        </div><!-- /awardsGridStatic -->
       </div>
     </section>
 
@@ -1118,48 +1135,170 @@
   })();
   </script>
 
-  <!-- Dynamic publications from Firestore -->
+  <!-- Dynamic academic sections from Firestore -->
   <script>
   (function () {
-    var grid = document.getElementById('pubGridDynamic');
-    if (!grid) return;
+    if (typeof db === 'undefined') return;
+
+    var spinnerStyle = 'border:3px solid #f3f3f3;border-top:3px solid var(--gold,#c9a84c);border-radius:50%;width:32px;height:32px;animation:spin 1s linear infinite;margin:24px auto;';
 
     function esc(s) {
       return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 
-    function renderAcademic(docs) {
-      grid.innerHTML = '';
-      if (!docs.length) {
-        grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;font-family:\'Montserrat\',sans-serif;font-size:0.9rem;color:#8a8070;padding:40px 0;letter-spacing:0.04em;">No publications yet — check back soon.</p>';
-        return;
-      }
-      docs.forEach(function (doc) {
+    var arrowSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+
+    // ── 1. Publications & Papers (type == "paper") ──────────────────────
+    var pubGrid = document.getElementById('pubGridDynamic');
+    var pubSpinner = document.getElementById('pubGridSpinner');
+
+    function renderPapers(docs) {
+      var papers = docs.filter(function(d){ var t=(d.data().type||'').toLowerCase(); return t==='paper'||t==='policy brief'||t==='article'||t==='book'; });
+      if (pubSpinner) pubSpinner.style.display = 'none';
+      // Remove previously inserted dynamic cards
+      pubGrid.querySelectorAll('.pub-card-dynamic').forEach(function(el){ el.remove(); });
+      if (!papers.length) return; // Show static cards as fallback
+      papers.forEach(function (doc) {
         var d = doc.data();
         var btnHref = d.link || d.pdfUrl || '#';
         var card = document.createElement('article');
-        card.className = 'pub-card reveal';
+        card.className = 'pub-card pub-card-dynamic reveal';
         card.innerHTML =
           '<p class="pub-card-journal">' + esc((d.institution || '') + (d.type ? ' \u00b7 ' + d.type : '')) + '</p>' +
           '<h3 class="pub-card-title">' + esc(d.title || 'Untitled') + '</h3>' +
           '<p class="pub-card-date">' + esc(d.year || '') + '</p>' +
           (d.abstract ? '<p class="pub-card-abstract">' + esc(d.abstract) + '</p>' : '') +
           (btnHref !== '#'
-            ? '<a href="' + esc(btnHref) + '" target="_blank" rel="noopener" class="pub-card-btn">Read Paper <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>'
+            ? '<a href="' + esc(btnHref) + '" target="_blank" rel="noopener" class="pub-card-btn">Read Paper ' + arrowSvg + '</a>'
             : '');
-        grid.appendChild(card);
+        pubGrid.appendChild(card);
       });
     }
 
+    // ── 2. PhD Dissertation featured ───────────────────────────────────
+    var phdStatic  = document.getElementById('phdFeaturedStatic');
+    var phdDynamic = document.getElementById('phdFeaturedDynamic');
+
+    function renderDissertation(docs) {
+      var dissDocs = docs.filter(function(d){ return (d.data().type||'').toLowerCase()==='dissertation'; });
+      if (!dissDocs.length) { if(phdStatic) phdStatic.style.display=''; if(phdDynamic) phdDynamic.style.display='none'; return; }
+      var d = dissDocs[0].data();
+      if(phdStatic) phdStatic.style.display = 'none';
+      if(phdDynamic) phdDynamic.style.display = '';
+      var el = function(id){ return document.getElementById(id); };
+      if(el('dynPhdTitle'))       el('dynPhdTitle').textContent       = d.title || '';
+      if(el('dynPhdInstitution')) el('dynPhdInstitution').textContent = d.institution || '';
+      if(el('dynPhdDescription')) el('dynPhdDescription').textContent = d.abstract || d.description || '';
+      if(el('dynPhdBadge'))       el('dynPhdBadge').textContent       = 'PhD Dissertation' + (d.year ? ' — ' + d.year : '');
+      var linkEl = el('dynPhdLink');
+      if (linkEl) {
+        var href = d.link || d.pdfUrl;
+        linkEl.innerHTML = href
+          ? '<a href="' + esc(href) + '" target="_blank" rel="noopener" class="btn btn-gold">View Dissertation</a>'
+          : '<a href="mailto:me@juniorceranornelson.com?subject=Request%20for%20PhD%20Abstract" class="btn btn-gold">Request Abstract</a>';
+      }
+    }
+
+    // ── 3. Theses & Dissertations grid ─────────────────────────────────
+    var thesisDyn  = document.getElementById('thesisGridDynamic');
+    var thesisStat = document.getElementById('thesisGridStatic');
+
+    function renderTheses(docs) {
+      var thDocs = docs.filter(function(d){ var t=(d.data().type||'').toLowerCase(); return t==='thesis'||t==='dissertation'; });
+      if (!thDocs.length) { if(thesisDyn) thesisDyn.style.display='none'; if(thesisStat) thesisStat.style.display=''; return; }
+      if(thesisStat) thesisStat.style.display = 'none';
+      if(thesisDyn)  thesisDyn.style.display  = '';
+      thesisDyn.innerHTML = '';
+      thDocs.forEach(function(doc) {
+        var d = doc.data();
+        var btnHref = d.link || d.pdfUrl;
+        var card = document.createElement('article');
+        card.className = 'thesis-card reveal';
+        card.innerHTML =
+          '<span class="thesis-card-level">' + esc(d.type || 'Thesis') + '</span>' +
+          '<h3 class="thesis-card-title">' + esc(d.title || 'Untitled') + '</h3>' +
+          '<div class="thesis-card-meta">' +
+            (d.institution ? '<span>' + esc(d.institution) + '</span>' : '') +
+            (d.year ? '<span>' + esc(d.year) + '</span>' : '') +
+          '</div>' +
+          (btnHref
+            ? '<a href="' + esc(btnHref) + '" target="_blank" rel="noopener" class="thesis-card-btn">View Thesis ' + arrowSvg + '</a>'
+            : '');
+        thesisDyn.appendChild(card);
+      });
+    }
+
+    // ── 4. Academic Affiliations ────────────────────────────────────────
+    var affilDyn  = document.getElementById('affilListDynamic');
+    var affilStat = document.getElementById('affilListStatic');
+
+    db.collection('affiliations').orderBy('createdAt','desc').onSnapshot(function(snap) {
+      if (snap.empty) { if(affilDyn) affilDyn.style.display='none'; if(affilStat) affilStat.style.display=''; return; }
+      if(affilStat) affilStat.style.display = 'none';
+      if(affilDyn)  affilDyn.style.display  = '';
+      affilDyn.innerHTML = '';
+      snap.forEach(function(doc) {
+        var d = doc.data();
+        var row = document.createElement('div');
+        row.className = 'affil-row reveal';
+        row.innerHTML =
+          '<div class="affil-title">' + esc(d.title || '') + '</div>' +
+          '<div class="affil-institution">' + esc(d.institution || '') + '</div>' +
+          '<div class="affil-year">' + esc(d.year || '') + '</div>';
+        affilDyn.appendChild(row);
+      });
+    }, function() {
+      if(affilDyn) affilDyn.style.display='none';
+      if(affilStat) affilStat.style.display='';
+    });
+
+    // ── 5. Awards & Recognitions ────────────────────────────────────────
+    var awardsDyn  = document.getElementById('awardsGridDynamic');
+    var awardsStat = document.getElementById('awardsGridStatic');
+
+    var awardIconSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 15l-5 3 1.4-5.5L4 8.5l5.6-.5L12 3l2.4 5 5.6.5-4.4 4 1.4 5.5z"/></svg>';
+
+    db.collection('awards').orderBy('createdAt','desc').onSnapshot(function(snap) {
+      if (snap.empty) { if(awardsDyn) awardsDyn.style.display='none'; if(awardsStat) awardsStat.style.display=''; return; }
+      if(awardsStat) awardsStat.style.display = 'none';
+      if(awardsDyn)  awardsDyn.style.display  = '';
+      awardsDyn.innerHTML = '';
+      snap.forEach(function(doc) {
+        var d = doc.data();
+        var card = document.createElement('article');
+        card.className = 'award-card reveal';
+        card.innerHTML =
+          '<div class="award-icon">' + awardIconSvg + '</div>' +
+          '<h3 class="award-name">' + esc(d.title || '') + '</h3>' +
+          '<p class="award-from">' + esc(d.from || d.institution || '') + '</p>' +
+          '<p class="award-year">' + esc(d.year || '') + '</p>' +
+          (d.description ? '<p class="award-desc">' + esc(d.description) + '</p>' : '');
+        awardsDyn.appendChild(card);
+      });
+    }, function() {
+      if(awardsDyn) awardsDyn.style.display='none';
+      if(awardsStat) awardsStat.style.display='';
+    });
+
+    // ── Master query for academic collection (papers + dissertations + theses) ──
     db.collection('academic').orderBy('createdAt', 'desc').onSnapshot(
-      function (snap) { renderAcademic(snap.docs); },
+      function (snap) {
+        var docs = snap.docs;
+        renderPapers(docs);
+        renderDissertation(docs);
+        renderTheses(docs);
+      },
       function () {
-        // orderBy index not ready — fall back to unordered
         db.collection('academic').onSnapshot(
-          function (snap) { renderAcademic(snap.docs); },
+          function (snap) {
+            var docs = snap.docs;
+            renderPapers(docs);
+            renderDissertation(docs);
+            renderTheses(docs);
+          },
           function (err) {
             console.warn('Academic Firestore error:', err);
-            grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#c9a84c;padding:40px 0;font-family:Inter,sans-serif;">Could not load publications. Please try again later.</p>';
+            if (pubSpinner) pubSpinner.style.display = 'none';
           }
         );
       }

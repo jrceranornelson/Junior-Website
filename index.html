@@ -404,11 +404,27 @@
               <input type="email" id="sub-email" name="email" placeholder="your@email.com" autocomplete="email" required />
             </div>
             <div class="subscribe-field">
-              <label for="sub-phone">
+              <label for="sub-phone-number">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                Phone Number
+                Phone Number <span style="font-weight:400;font-size:0.85em;">(optional)</span>
               </label>
-              <input type="tel" id="sub-phone" name="phone" placeholder="+1 (000) 000-0000" autocomplete="tel" required />
+              <div style="display:flex;gap:8px;align-items:stretch;">
+                <select id="sub-phone-area" name="phone-area" style="flex:0 0 auto;padding:0 8px;border:1px solid currentColor;border-radius:inherit;background:transparent;font-family:inherit;font-size:0.88em;cursor:pointer;min-width:90px;">
+                  <option value="+1">+1 (USA/CA)</option>
+                  <option value="+509">+509 (Haiti)</option>
+                  <option value="+61">+61 (AU)</option>
+                  <option value="+33">+33 (France)</option>
+                  <option value="+44">+44 (UK)</option>
+                  <option value="+234">+234 (Nigeria)</option>
+                  <option value="+49">+49 (Germany)</option>
+                  <option value="+55">+55 (Brazil)</option>
+                  <option value="+7">+7 (Russia)</option>
+                  <option value="+86">+86 (China)</option>
+                  <option value="+91">+91 (India)</option>
+                  <option value="+52">+52 (Mexico)</option>
+                </select>
+                <input type="tel" id="sub-phone-number" name="phone" placeholder="000 000 0000" autocomplete="tel" style="flex:1;" />
+              </div>
             </div>
           </div>
 
@@ -740,8 +756,8 @@
             (d.tag ? '<span class="project-tag">' + esc(d.tag) + '</span>' : '') +
             '<h3 class="project-card-title">' + esc(d.title || 'Untitled') + '</h3>' +
             '<p class="project-card-desc">' + esc(d.description || '') + '</p>' +
-            (d.url
-              ? '<a href="' + esc(d.url) + '" target="_blank" rel="noopener" class="project-card-link">Visit <span class="arrow">→</span></a>'
+            ((d.url || d.link)
+              ? '<a href="' + esc(d.link || d.url) + '" target="_blank" rel="noopener" class="project-card-link">Visit <span class="arrow">→</span></a>'
               : '') +
           '</div>';
         dynGrid.appendChild(card);
@@ -808,7 +824,9 @@
       e.preventDefault();
       var name  = (document.getElementById('sub-name')  || {}).value  || '';
       var email = (document.getElementById('sub-email') || {}).value || '';
-      var phone = (document.getElementById('sub-phone') || {}).value || '';
+      var areaCode = (document.getElementById('sub-phone-area')   || {}).value || '+1';
+      var phoneNum = (document.getElementById('sub-phone-number') || {}).value || '';
+      var phone = phoneNum.trim() ? (areaCode + ' ' + phoneNum.trim()) : '';
       if (!name || !email) return;
       btn.disabled = true;
       var btnText = btn.querySelector('.subscribe-btn-text');

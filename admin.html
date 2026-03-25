@@ -390,6 +390,16 @@
       <div id="galleryAdminGrid" class="gallery-admin-grid">
         <div class="admin-spinner" style="grid-column:1/-1"><div class="spinner"></div></div>
       </div>
+      <!-- Albums subsection -->
+      <div class="section-header" style="margin-top:36px;">
+        <div>
+          <h2 class="section-title" style="font-size:1.1rem;">Albums</h2>
+          <p class="section-sub">Create photo albums that appear on the Gallery page.</p>
+        </div>
+        <button class="btn btn-gold" id="newAlbumBtn">+ New Album</button>
+      </div>
+      <div id="albumsAdminList"><div class="admin-spinner"><div class="spinner"></div></div></div>
+
       <!-- Live photo map -->
       <div class="map-wrap">
         <div class="map-wrap-title">
@@ -429,11 +439,31 @@
       <div class="section-header">
         <div>
           <h1 class="section-title">Academic</h1>
-          <p class="section-sub">Manage publications, papers, and dissertations.</p>
+          <p class="section-sub">Manage publications, papers, dissertations, affiliations, and awards.</p>
         </div>
         <button class="btn btn-primary" id="newPubBtn">+ New Publication</button>
       </div>
       <div id="academicList"><div class="admin-spinner"><div class="spinner"></div></div></div>
+
+      <!-- Affiliations subsection -->
+      <div class="section-header" style="margin-top:36px;">
+        <div>
+          <h2 class="section-title" style="font-size:1.1rem;">Academic Affiliations</h2>
+          <p class="section-sub">Roles, positions, and institutional affiliations.</p>
+        </div>
+        <button class="btn btn-gold" id="newAffilBtn">+ Add Affiliation</button>
+      </div>
+      <div id="affilAdminList"><div class="admin-spinner"><div class="spinner"></div></div></div>
+
+      <!-- Awards subsection -->
+      <div class="section-header" style="margin-top:36px;">
+        <div>
+          <h2 class="section-title" style="font-size:1.1rem;">Awards &amp; Recognitions</h2>
+          <p class="section-sub">Honors, awards, and recognitions received.</p>
+        </div>
+        <button class="btn btn-gold" id="newAwardBtn">+ Add Award</button>
+      </div>
+      <div id="awardsAdminList"><div class="admin-spinner"><div class="spinner"></div></div></div>
     </section>
 
     <!-- ════════════ MESSAGES ════════════ -->
@@ -520,6 +550,14 @@
           <div class="form-group form-full">
             <label for="aboutPhotoUrl">Profile Photo URL</label>
             <input type="url" id="aboutPhotoUrl" placeholder="https://…" />
+          </div>
+          <div class="form-group form-full">
+            <label for="aboutMission">Mission Statement</label>
+            <textarea id="aboutMission" rows="3" placeholder="Your personal mission or guiding philosophy…"></textarea>
+          </div>
+          <div class="form-group form-full">
+            <label for="aboutValues">Values</label>
+            <textarea id="aboutValues" rows="3" placeholder="Core values that guide your work…"></textarea>
           </div>
         </div>
         <div class="form-actions">
@@ -831,14 +869,113 @@
     <div class="form-grid">
       <div class="form-group form-full"><label for="pTitle">Project Name *</label><input type="text" id="pTitle" placeholder="Project name" /></div>
       <div class="form-group form-full"><label for="pDescription">Description</label><textarea id="pDescription" rows="4" placeholder="What this project does…"></textarea></div>
-      <div class="form-group form-full"><label for="pUrl">Project URL</label><input type="url" id="pUrl" placeholder="https://…" /></div>
-      <div class="form-group form-full"><label for="pLogoUrl">Logo URL</label><input type="url" id="pLogoUrl" placeholder="https://…" /></div>
+      <div class="form-group"><label for="pUrl">Project URL</label><input type="url" id="pUrl" placeholder="https://…" /></div>
+      <div class="form-group"><label for="pTag">Tag / Category</label><input type="text" id="pTag" placeholder="Education, Diplomacy…" /></div>
+      <div class="form-group"><label for="pOrder">Display Order</label><input type="number" id="pOrder" placeholder="0" min="0" /></div>
+      <div class="form-group"><label for="pLogoUrl">Logo URL</label><input type="url" id="pLogoUrl" placeholder="https://…" /></div>
     </div>
     <div class="form-actions" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
       <button class="btn btn-primary" id="saveProjectBtn">Save Project</button>
       <button class="btn btn-ghost" data-close="projectModal">Cancel</button>
     </div>
     <input type="hidden" id="pDocId" />
+  </div>
+</div>
+
+<!-- Album Modal -->
+<div class="modal-backdrop" id="albumModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="albumModalTitle">New Album</span>
+      <button class="modal-close" data-close="albumModal">&times;</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-group form-full"><label for="albName">Album Name *</label><input type="text" id="albName" placeholder="Bali 2024" /></div>
+      <div class="form-group form-full"><label for="albDescription">Description</label><textarea id="albDescription" rows="3" placeholder="Short description of this album…"></textarea></div>
+      <div class="form-group"><label for="albCoverUrl">Cover Photo URL</label><input type="url" id="albCoverUrl" placeholder="https://…" /></div>
+      <div class="form-group"><label for="albCategory">Category</label><input type="text" id="albCategory" placeholder="Travel, Work, Family…" /></div>
+      <div class="form-group form-full">
+        <label for="albPhotos">Photo URLs <span style="font-weight:400;color:var(--muted)">(one per line)</span></label>
+        <textarea id="albPhotos" rows="6" placeholder="https://example.com/photo1.jpg&#10;https://example.com/photo2.jpg"></textarea>
+      </div>
+    </div>
+    <div class="form-actions" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
+      <button class="btn btn-primary" id="saveAlbumBtn">Save Album</button>
+      <button class="btn btn-ghost" data-close="albumModal">Cancel</button>
+    </div>
+    <input type="hidden" id="albDocId" />
+  </div>
+</div>
+
+<!-- Affiliation Modal -->
+<div class="modal-backdrop" id="affilModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="affilModalTitle">Add Affiliation</span>
+      <button class="modal-close" data-close="affilModal">&times;</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-group form-full"><label for="afTitle">Title / Role *</label><input type="text" id="afTitle" placeholder="PhD Candidate — International Relations" /></div>
+      <div class="form-group form-full"><label for="afInstitution">Institution</label><input type="text" id="afInstitution" placeholder="Euclid University" /></div>
+      <div class="form-group form-full"><label for="afYear">Year / Period</label><input type="text" id="afYear" placeholder="2025 – Present" /></div>
+    </div>
+    <div class="form-actions" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
+      <button class="btn btn-primary" id="saveAffilBtn">Save Affiliation</button>
+      <button class="btn btn-ghost" data-close="affilModal">Cancel</button>
+    </div>
+    <input type="hidden" id="afDocId" />
+  </div>
+</div>
+
+<!-- Award Modal -->
+<div class="modal-backdrop" id="awardModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="awardModalTitle">Add Award</span>
+      <button class="modal-close" data-close="awardModal">&times;</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-group form-full"><label for="awTitle">Award Name *</label><input type="text" id="awTitle" placeholder="Leadership Recognition" /></div>
+      <div class="form-group form-full"><label for="awFrom">Awarded By</label><input type="text" id="awFrom" placeholder="HAFTH &amp; Coursera" /></div>
+      <div class="form-group form-full"><label for="awYear">Year</label><input type="text" id="awYear" placeholder="2020" /></div>
+      <div class="form-group form-full"><label for="awDescription">Description</label><textarea id="awDescription" rows="4" placeholder="Short description of the award…"></textarea></div>
+    </div>
+    <div class="form-actions" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
+      <button class="btn btn-primary" id="saveAwardBtn">Save Award</button>
+      <button class="btn btn-ghost" data-close="awardModal">Cancel</button>
+    </div>
+    <input type="hidden" id="awDocId" />
+  </div>
+</div>
+
+<!-- Message View Modal -->
+<div class="modal-backdrop" id="msgViewModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Message</span>
+      <button class="modal-close" data-close="msgViewModal">&times;</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div>
+        <div style="font-family:Montserrat,sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">From</div>
+        <div id="msgViewName" style="font-weight:700;color:var(--navy);font-size:1rem;"></div>
+      </div>
+      <div>
+        <div style="font-family:Montserrat,sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Email</div>
+        <a id="msgViewEmail" href="#" style="color:var(--navy);word-break:break-all;"></a>
+      </div>
+      <div>
+        <div style="font-family:Montserrat,sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Date</div>
+        <div id="msgViewDate" style="color:var(--black);"></div>
+      </div>
+      <div>
+        <div style="font-family:Montserrat,sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Message</div>
+        <div id="msgViewContent" style="font-size:0.95rem;line-height:1.75;color:var(--black);white-space:pre-wrap;background:var(--light);padding:16px;border-radius:2px;border:1px solid var(--border);"></div>
+      </div>
+    </div>
+    <div class="form-actions" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
+      <button class="btn btn-ghost" data-close="msgViewModal">Close</button>
+    </div>
   </div>
 </div>
 
@@ -992,9 +1129,12 @@ function initDashboard() {
   loadStats();
   loadBlog();
   loadGallery();
+  loadAlbums();
   loadVideos();
   loadMusic();
   loadAcademic();
+  loadAffiliations();
+  loadAwards();
   loadMessages();
   loadSubscribers();
   loadProjects();
@@ -1326,6 +1466,80 @@ document.getElementById('saveGalleryBtn').addEventListener('click', async () => 
 });
 
 /* ══════════════════════════════════════════════════
+   ALBUMS
+══════════════════════════════════════════════════ */
+function loadAlbums() {
+  const list = document.getElementById('albumsAdminList');
+  db.collection('albums').orderBy('createdAt','desc').onSnapshot(snap => {
+    list.innerHTML = '';
+    if (snap.empty) { list.innerHTML = '<div class="empty-state">No albums yet — click "+ New Album".</div>'; return; }
+    const ul = document.createElement('div'); ul.className = 'items-list';
+    snap.forEach(doc => {
+      const d = doc.data();
+      const photos = Array.isArray(d.photos) ? d.photos : [];
+      const card = document.createElement('div'); card.className = 'item-card';
+      card.innerHTML = `
+        ${d.coverUrl ? `<img class="item-card-img" src="${esc(d.coverUrl)}" alt="${esc(d.name||'')}" onerror="this.style.display='none'" />` : '<div class="item-card-img-ph"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/></svg></div>'}
+        <div class="item-card-body">
+          <div class="item-card-title">${esc(d.name||'Untitled')}<span class="item-badge badge-draft">${esc(d.category||'')}</span></div>
+          <div class="item-card-meta">${photos.length} photo${photos.length!==1?'s':''}</div>
+        </div>
+        <div class="item-card-actions">
+          <button class="btn btn-ghost btn-sm" onclick="editAlbum('${doc.id}')">Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteAlbum('${doc.id}')">Delete</button>
+        </div>`;
+      ul.appendChild(card);
+    });
+    list.appendChild(ul);
+  }, () => { list.innerHTML = '<div class="empty-state">Could not load albums.</div>'; });
+}
+
+document.getElementById('newAlbumBtn').addEventListener('click', () => {
+  document.getElementById('albumModalTitle').textContent = 'New Album';
+  ['albName','albDescription','albCoverUrl','albCategory','albPhotos'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('albDocId').value = '';
+  openModal('albumModal');
+});
+
+window.editAlbum = id => {
+  db.collection('albums').doc(id).get().then(doc => {
+    const d = doc.data();
+    document.getElementById('albumModalTitle').textContent = 'Edit Album';
+    document.getElementById('albName').value        = d.name        || '';
+    document.getElementById('albDescription').value = d.description || '';
+    document.getElementById('albCoverUrl').value    = d.coverUrl    || '';
+    document.getElementById('albCategory').value    = d.category    || '';
+    document.getElementById('albPhotos').value      = Array.isArray(d.photos) ? d.photos.join('\n') : '';
+    document.getElementById('albDocId').value       = id;
+    openModal('albumModal');
+  });
+};
+
+window.deleteAlbum = id => {
+  if (!confirm('Delete this album?')) return;
+  db.collection('albums').doc(id).delete().then(() => toast('Album deleted.','success')).catch(e => toast(e.message,'error'));
+};
+
+document.getElementById('saveAlbumBtn').addEventListener('click', async () => {
+  const id = document.getElementById('albDocId').value;
+  const photosRaw = document.getElementById('albPhotos').value.trim();
+  const photos = photosRaw ? photosRaw.split('\n').map(u => u.trim()).filter(u => u) : [];
+  const data = {
+    name:        document.getElementById('albName').value.trim(),
+    description: document.getElementById('albDescription').value.trim(),
+    coverUrl:    document.getElementById('albCoverUrl').value.trim(),
+    category:    document.getElementById('albCategory').value.trim(),
+    photos:      photos,
+  };
+  if (!data.name) { toast('Album name is required.','error'); return; }
+  try {
+    if (id) { await db.collection('albums').doc(id).update(data); toast('Album updated!','success'); }
+    else { data.createdAt = firebase.firestore.FieldValue.serverTimestamp(); await db.collection('albums').add(data); toast('Album saved!','success'); }
+    closeModal('albumModal');
+  } catch(e) { toast(e.message,'error'); }
+});
+
+/* ══════════════════════════════════════════════════
    VIDEOS
 ══════════════════════════════════════════════════ */
 /* One-time seed: add static videos that aren't yet in Firestore */
@@ -1366,9 +1580,11 @@ function getVideoThumb(url) {
 function loadVideos() {
   const list = document.getElementById('videosList');
   const render = docs => {
-    if (!docs.length) { list.innerHTML = '<div class="empty-state">No videos yet — click "+ Add Video".</div>'; return; }
+    // Always clear first to prevent stale/ghost items after deletion
     list.innerHTML = '';
+    if (!docs.length) { list.innerHTML = '<div class="empty-state">No videos yet — click "+ Add Video".</div>'; return; }
     docs.forEach(doc => {
+      const docId = doc.id; // capture doc.id immediately
       const d = doc.data();
       const t = d.thumbnailUrl || getVideoThumb(d.videoUrl || '');
       const item = document.createElement('div'); item.className = 'gallery-admin-item';
@@ -1382,9 +1598,12 @@ function loadVideos() {
           <div class="gallery-admin-item-date">${esc(d.place||'')}${d.date?' · '+esc(d.date):''}</div>
         </div>
         <div class="gallery-admin-item-actions">
-          <button class="btn btn-ghost btn-sm" onclick="editVideo('${doc.id}')">Edit</button>
-          <button class="btn btn-danger btn-sm" onclick="deleteVideo('${doc.id}')">Delete</button>
+          <button class="btn btn-ghost btn-sm" data-vid-edit="${esc(docId)}">Edit</button>
+          <button class="btn btn-danger btn-sm" data-vid-del="${esc(docId)}">Delete</button>
         </div>`;
+      // Use data attributes + event delegation to avoid stale closures
+      item.querySelector('[data-vid-edit]').addEventListener('click', () => editVideo(docId));
+      item.querySelector('[data-vid-del]').addEventListener('click', () => deleteVideo(docId));
       list.appendChild(item);
     });
   };
@@ -1604,32 +1823,186 @@ document.getElementById('saveAcademicBtn').addEventListener('click', async () =>
 });
 
 /* ══════════════════════════════════════════════════
+   ACADEMIC — AFFILIATIONS
+══════════════════════════════════════════════════ */
+function loadAffiliations() {
+  const list = document.getElementById('affilAdminList');
+  db.collection('affiliations').orderBy('createdAt','desc').onSnapshot(snap => {
+    list.innerHTML = '';
+    if (snap.empty) { list.innerHTML = '<div class="empty-state">No affiliations yet.</div>'; return; }
+    const ul = document.createElement('div'); ul.className = 'items-list';
+    snap.forEach(doc => {
+      const d = doc.data();
+      const card = document.createElement('div'); card.className = 'item-card';
+      card.innerHTML = `
+        <div class="item-card-body">
+          <div class="item-card-title">${esc(d.title||'Untitled')}</div>
+          <div class="item-card-meta">${esc(d.institution||'')}${d.year?' · '+esc(d.year):''}</div>
+        </div>
+        <div class="item-card-actions">
+          <button class="btn btn-ghost btn-sm" onclick="editAffil('${doc.id}')">Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteAffil('${doc.id}')">Delete</button>
+        </div>`;
+      ul.appendChild(card);
+    });
+    list.appendChild(ul);
+  }, () => { list.innerHTML = '<div class="empty-state">Could not load affiliations.</div>'; });
+}
+
+document.getElementById('newAffilBtn').addEventListener('click', () => {
+  document.getElementById('affilModalTitle').textContent = 'Add Affiliation';
+  ['afTitle','afInstitution','afYear'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('afDocId').value = '';
+  openModal('affilModal');
+});
+
+window.editAffil = id => {
+  db.collection('affiliations').doc(id).get().then(doc => {
+    const d = doc.data();
+    document.getElementById('affilModalTitle').textContent = 'Edit Affiliation';
+    document.getElementById('afTitle').value       = d.title       || '';
+    document.getElementById('afInstitution').value = d.institution || '';
+    document.getElementById('afYear').value        = d.year        || '';
+    document.getElementById('afDocId').value       = id;
+    openModal('affilModal');
+  });
+};
+
+window.deleteAffil = id => {
+  if (!confirm('Delete this affiliation?')) return;
+  db.collection('affiliations').doc(id).delete().then(() => toast('Affiliation deleted.','success')).catch(e => toast(e.message,'error'));
+};
+
+document.getElementById('saveAffilBtn').addEventListener('click', async () => {
+  const id = document.getElementById('afDocId').value;
+  const data = {
+    title:       document.getElementById('afTitle').value.trim(),
+    institution: document.getElementById('afInstitution').value.trim(),
+    year:        document.getElementById('afYear').value.trim(),
+  };
+  if (!data.title) { toast('Title is required.','error'); return; }
+  try {
+    if (id) { await db.collection('affiliations').doc(id).update(data); toast('Affiliation updated!','success'); }
+    else { data.createdAt = firebase.firestore.FieldValue.serverTimestamp(); await db.collection('affiliations').add(data); toast('Affiliation saved!','success'); }
+    closeModal('affilModal');
+  } catch(e) { toast(e.message,'error'); }
+});
+
+/* ══════════════════════════════════════════════════
+   ACADEMIC — AWARDS
+══════════════════════════════════════════════════ */
+function loadAwards() {
+  const list = document.getElementById('awardsAdminList');
+  db.collection('awards').orderBy('createdAt','desc').onSnapshot(snap => {
+    list.innerHTML = '';
+    if (snap.empty) { list.innerHTML = '<div class="empty-state">No awards yet.</div>'; return; }
+    const ul = document.createElement('div'); ul.className = 'items-list';
+    snap.forEach(doc => {
+      const d = doc.data();
+      const card = document.createElement('div'); card.className = 'item-card';
+      card.innerHTML = `
+        <div class="item-card-body">
+          <div class="item-card-title">${esc(d.title||'Untitled')}</div>
+          <div class="item-card-meta">${esc(d.from||d.institution||'')}${d.year?' · '+esc(d.year):''}</div>
+        </div>
+        <div class="item-card-actions">
+          <button class="btn btn-ghost btn-sm" onclick="editAward('${doc.id}')">Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteAward('${doc.id}')">Delete</button>
+        </div>`;
+      ul.appendChild(card);
+    });
+    list.appendChild(ul);
+  }, () => { list.innerHTML = '<div class="empty-state">Could not load awards.</div>'; });
+}
+
+document.getElementById('newAwardBtn').addEventListener('click', () => {
+  document.getElementById('awardModalTitle').textContent = 'Add Award';
+  ['awTitle','awFrom','awYear','awDescription'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('awDocId').value = '';
+  openModal('awardModal');
+});
+
+window.editAward = id => {
+  db.collection('awards').doc(id).get().then(doc => {
+    const d = doc.data();
+    document.getElementById('awardModalTitle').textContent = 'Edit Award';
+    document.getElementById('awTitle').value       = d.title       || '';
+    document.getElementById('awFrom').value        = d.from        || d.institution || '';
+    document.getElementById('awYear').value        = d.year        || '';
+    document.getElementById('awDescription').value = d.description || '';
+    document.getElementById('awDocId').value       = id;
+    openModal('awardModal');
+  });
+};
+
+window.deleteAward = id => {
+  if (!confirm('Delete this award?')) return;
+  db.collection('awards').doc(id).delete().then(() => toast('Award deleted.','success')).catch(e => toast(e.message,'error'));
+};
+
+document.getElementById('saveAwardBtn').addEventListener('click', async () => {
+  const id = document.getElementById('awDocId').value;
+  const data = {
+    title:       document.getElementById('awTitle').value.trim(),
+    from:        document.getElementById('awFrom').value.trim(),
+    year:        document.getElementById('awYear').value.trim(),
+    description: document.getElementById('awDescription').value.trim(),
+  };
+  if (!data.title) { toast('Award name is required.','error'); return; }
+  try {
+    if (id) { await db.collection('awards').doc(id).update(data); toast('Award updated!','success'); }
+    else { data.createdAt = firebase.firestore.FieldValue.serverTimestamp(); await db.collection('awards').add(data); toast('Award saved!','success'); }
+    closeModal('awardModal');
+  } catch(e) { toast(e.message,'error'); }
+});
+
+/* ══════════════════════════════════════════════════
    MESSAGES
 ══════════════════════════════════════════════════ */
 function loadMessages() {
   const tbody = document.getElementById('messagesBody');
   const render = docs => {
-    if (!docs.length) { tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No messages yet.</td></tr>'; return; }
     tbody.innerHTML = '';
+    if (!docs.length) { tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No messages yet.</td></tr>'; return; }
     docs.forEach(doc => {
+      const docId = doc.id;
       const d = doc.data();
       const preview = (d.message||'').slice(0,65)+((d.message||'').length>65?'…':'');
       const dateStr = d.date ? (d.date.toDate ? d.date.toDate().toLocaleDateString() : d.date) : '—';
       const row = document.createElement('tr');
+      row.style.cursor = 'pointer';
       row.innerHTML = `
         <td class="${!d.read?'unread':''}">${esc(d.name||'—')}</td>
-        <td><a href="mailto:${esc(d.email)}" style="color:var(--navy)">${esc(d.email||'—')}</a></td>
+        <td><a href="mailto:${esc(d.email)}" style="color:var(--navy)" onclick="event.stopPropagation()">${esc(d.email||'—')}</a></td>
         <td title="${esc(d.message||'')}">${esc(preview)}</td>
         <td>${esc(dateStr)}</td>
         <td><span style="font-family:Montserrat,sans-serif;font-size:0.62rem;font-weight:700;padding:3px 7px;border-radius:2px;background:${d.read?'rgba(22,163,74,0.1)':'rgba(220,38,38,0.1)'};color:${d.read?'var(--green)':'var(--red)'};">${d.read?'Read':'Unread'}</span></td>
         <td class="actions">
-          ${!d.read?`<button class="btn btn-ghost btn-sm" onclick="markRead('${doc.id}')">Mark Read</button>`:''}
-          <button class="btn btn-danger btn-sm" onclick="deleteMsg('${doc.id}')">Delete</button>
+          <button class="btn btn-ghost btn-sm" data-msg-view="${esc(docId)}" onclick="event.stopPropagation()">View</button>
+          ${!d.read?`<button class="btn btn-ghost btn-sm" data-msg-read="${esc(docId)}" onclick="event.stopPropagation()">Mark Read</button>`:''}
+          <button class="btn btn-danger btn-sm" data-msg-del="${esc(docId)}" onclick="event.stopPropagation()">Delete</button>
         </td>`;
+      // Row click = view message
+      row.addEventListener('click', () => openMessage(docId, d));
+      row.querySelector('[data-msg-view]').addEventListener('click', e => { e.stopPropagation(); openMessage(docId, d); });
+      if (!d.read) row.querySelector('[data-msg-read]').addEventListener('click', e => { e.stopPropagation(); markRead(docId); });
+      row.querySelector('[data-msg-del]').addEventListener('click', e => { e.stopPropagation(); deleteMsg(docId); });
       tbody.appendChild(row);
     });
   };
   db.collection('messages').orderBy('date','desc').onSnapshot(s => render(s.docs), () => db.collection('messages').onSnapshot(s => render(s.docs)));
+}
+
+function openMessage(id, d) {
+  // Mark as read automatically
+  if (!d.read) db.collection('messages').doc(id).update({ read: true }).catch(() => {});
+  const dateStr = d.date ? (d.date.toDate ? d.date.toDate().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}) : d.date) : '—';
+  document.getElementById('msgViewName').textContent    = d.name    || '—';
+  document.getElementById('msgViewEmail').textContent   = d.email   || '—';
+  document.getElementById('msgViewEmail').href          = 'mailto:' + (d.email || '');
+  document.getElementById('msgViewDate').textContent    = dateStr;
+  document.getElementById('msgViewContent').textContent = d.message || '—';
+  openModal('msgViewModal');
 }
 
 window.markRead = id => {
@@ -1728,7 +2101,8 @@ function loadProjects() {
 
 document.getElementById('newProjectBtn').addEventListener('click', () => {
   document.getElementById('projectModalTitle').textContent = 'New Project';
-  ['pTitle','pDescription','pUrl','pLogoUrl'].forEach(id => document.getElementById(id).value='');
+  ['pTitle','pDescription','pUrl','pTag','pLogoUrl'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('pOrder').value = '0';
   document.getElementById('pDocId').value = '';
   openModal('projectModal');
 });
@@ -1739,7 +2113,9 @@ window.editProject = id => {
     document.getElementById('projectModalTitle').textContent = 'Edit Project';
     document.getElementById('pTitle').value       = d.title       || '';
     document.getElementById('pDescription').value = d.description || '';
-    document.getElementById('pUrl').value         = d.url         || '';
+    document.getElementById('pUrl').value         = d.url || d.link || '';
+    document.getElementById('pTag').value         = d.tag         || '';
+    document.getElementById('pOrder').value       = d.order !== undefined ? d.order : 0;
     document.getElementById('pLogoUrl').value     = d.logoUrl     || '';
     document.getElementById('pDocId').value       = id;
     openModal('projectModal');
@@ -1753,10 +2129,15 @@ window.deleteProject = id => {
 
 document.getElementById('saveProjectBtn').addEventListener('click', async () => {
   const id = document.getElementById('pDocId').value;
+  const url = document.getElementById('pUrl').value.trim();
+  const orderVal = parseInt(document.getElementById('pOrder').value, 10);
   const data = {
     title:       document.getElementById('pTitle').value.trim(),
     description: document.getElementById('pDescription').value.trim(),
-    url:         document.getElementById('pUrl').value.trim(),
+    url:         url,
+    link:        url,
+    tag:         document.getElementById('pTag').value.trim(),
+    order:       isNaN(orderVal) ? 0 : orderVal,
     logoUrl:     document.getElementById('pLogoUrl').value.trim(),
   };
   if (!data.title) { toast('Project name is required.','error'); return; }
@@ -1778,6 +2159,8 @@ function loadAbout() {
       document.getElementById('aboutTagline').value  = d.tagline  || '';
       document.getElementById('aboutBio').value      = d.bio      || '';
       document.getElementById('aboutPhotoUrl').value = d.photoUrl || '';
+      document.getElementById('aboutMission').value  = d.mission  || '';
+      document.getElementById('aboutValues').value   = d.values   || '';
     }
   });
 }
@@ -1788,6 +2171,8 @@ document.getElementById('saveAboutBtn').addEventListener('click', async () => {
     tagline:   document.getElementById('aboutTagline').value.trim(),
     bio:       document.getElementById('aboutBio').value.trim(),
     photoUrl:  document.getElementById('aboutPhotoUrl').value.trim(),
+    mission:   document.getElementById('aboutMission').value.trim(),
+    values:    document.getElementById('aboutValues').value.trim(),
     updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
   };
   try {

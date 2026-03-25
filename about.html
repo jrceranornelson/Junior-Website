@@ -31,6 +31,11 @@
   <link rel="apple-touch-icon" href="/logo.png">
 <script src="/dark-mode.js"></script>
 <script src="/translations.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+  <script src="firebase-config.js"></script>
 </head>
 <body>
 
@@ -96,7 +101,8 @@
   <header class="about-hero">
     <div class="about-hero-inner">
       <p class="about-hero-label">Full Profile</p>
-      <h1 class="about-hero-title">About Me</h1>
+      <h1 class="about-hero-title" id="aboutHeroName">About Me</h1>
+      <p id="aboutHeroTagline" style="display:none;margin-top:8px;font-size:clamp(0.85rem,1.8vw,1rem);color:rgba(255,255,255,0.65);font-family:'Montserrat',sans-serif;letter-spacing:0.08em;"></p>
       <div class="about-hero-line"></div>
     </div>
   </header>
@@ -107,7 +113,7 @@
 
       <div class="block-reveal">
         <div class="block-overlay"></div>
-        <p class="about-lead">
+        <p class="about-lead" id="aboutLeadBio">
           Junior Ceranor Nelson is a Haitian entrepreneur, diplomat, international development professional, and humanitarian leader whose work stands at the intersection of diplomacy, education, ethical leadership, and institution-building. Born and raised in Haiti and active internationally between Haiti and Australia, he has built a multidisciplinary career defined by service, vision, and a strong commitment to national transformation through global cooperation.
         </p>
       </div>
@@ -196,6 +202,18 @@
         </p>
       </div>
 
+      <!-- Mission statement (dynamic from Firestore) -->
+      <div id="aboutMissionWrap" style="display:none;" class="block-reveal">
+        <div class="block-overlay"></div>
+        <p class="about-body" id="aboutMission" style="border-left:3px solid var(--gold,#c9a84c);padding-left:18px;font-style:italic;"></p>
+      </div>
+
+      <!-- Values (dynamic from Firestore) -->
+      <div id="aboutValuesWrap" style="display:none;" class="block-reveal">
+        <div class="block-overlay"></div>
+        <p class="about-body" id="aboutValues"></p>
+      </div>
+
       <div class="about-cta-wrap block-reveal">
         <div class="block-overlay"></div>
         <a href="/#contact" class="btn btn-dark">Get in Touch</a>
@@ -215,6 +233,47 @@
 
   <script src="preloader.js"></script>
   <script src="about.js"></script>
+  <script>
+  (function () {
+    // Connect about page to Firestore about/main document
+    // firebase-config.js already initialised Firebase and set window.db
+    if (typeof db === 'undefined') return;
+
+    document.body.classList.add('about-loading');
+
+    db.collection('about').doc('main').onSnapshot(function(doc) {
+      document.body.classList.remove('about-loading');
+      if (!doc.exists) return;
+      var d = doc.data();
+      if (d.name) {
+        var nameEl = document.getElementById('aboutHeroName');
+        if (nameEl) nameEl.textContent = d.name;
+      }
+      if (d.tagline) {
+        var tagEl = document.getElementById('aboutHeroTagline');
+        if (tagEl) { tagEl.textContent = d.tagline; tagEl.style.display = ''; }
+      }
+      if (d.bio) {
+        var bioEl = document.getElementById('aboutLeadBio');
+        if (bioEl) bioEl.textContent = d.bio;
+      }
+      if (d.mission) {
+        var mWrap = document.getElementById('aboutMissionWrap');
+        var mEl   = document.getElementById('aboutMission');
+        if (mEl)   mEl.textContent = d.mission;
+        if (mWrap) mWrap.style.display = '';
+      }
+      if (d.values) {
+        var vWrap = document.getElementById('aboutValuesWrap');
+        var vEl   = document.getElementById('aboutValues');
+        if (vEl)   vEl.textContent = d.values;
+        if (vWrap) vWrap.style.display = '';
+      }
+    }, function() {
+      document.body.classList.remove('about-loading');
+    });
+  })();
+  </script>
 <script src="live-button.js"></script>
 <script>
 if ('serviceWorker' in navigator) {
