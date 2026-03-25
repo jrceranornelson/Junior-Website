@@ -55,6 +55,14 @@
   gap: 8px;
   margin-left: 12px;
 }
+
+/* ── nav-right: lang + dark + hamburger grouped on right ── */
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 12px;
+}
 #darkToggle {
   width: 34px; height: 34px;
   border-radius: 50%;
@@ -1580,14 +1588,15 @@ body.preloading { overflow: hidden; }
   .nav-toggle { display: flex; }
   .nav-cta    { display: none; }
 
-  /* Move controls into the drawer on mobile */
+  /* nav-right stays in the navbar on mobile — lang | dark | hamburger */
+  .nav-right {
+    margin-left: auto;
+    gap: 6px;
+  }
+
+  /* Hide old nav-controls if any remain */
   .nav-controls {
-    order: 99;
-    width: 100%;
-    padding: 16px 0 0;
-    border-top: 1px solid var(--border);
-    margin-top: 12px;
-    justify-content: flex-start;
+    display: none;
   }
 
   .nav-links {
