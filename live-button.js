@@ -38,7 +38,7 @@
       '@keyframes livePulse{0%,100%{box-shadow:0 0 0 0 rgba(255,0,0,0.55)}60%{box-shadow:0 0 0 14px rgba(255,0,0,0)}}',
       '@keyframes liveDot{0%,100%{opacity:1}50%{opacity:0.35}}',
       '#__live_float_btn{',
-        'position:fixed;bottom:28px;right:28px;z-index:99999;',
+        'position:fixed;bottom:28px;left:28px;z-index:99999;',
         'display:none;align-items:center;gap:9px;',
         'padding:11px 18px 11px 14px;',
         'border-radius:50px;border:none;cursor:pointer;',
