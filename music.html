@@ -1,10 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <title>Music — Ceranor | Junior Ceranor Nelson</title>
+  <meta name="description" content="Explore music by Ceranor — Junior Ceranor Nelson's musical project blending culture, identity, and creativity." />
+  <meta name="keywords" content="Ceranor, Junior Ceranor Nelson, music, Haiti, artist" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Music — Ceranor" />
+  <meta property="og:description" content="Music blending culture, identity, and creativity." />
+  <meta property="og:image" content="https://www.juniorceranornelson.com/photo.jpg" />
+  <meta property="og:url" content="https://www.juniorceranornelson.com/music" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Ceranor — Music" />
+  <meta name="twitter:description" content="Music by Junior Ceranor Nelson." />
+  <meta name="twitter:image" content="https://www.juniorceranornelson.com/photo.jpg" />
+  <link rel="canonical" href="https://www.juniorceranornelson.com/music" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Music — Ceranor | Junior Ceranor Nelson</title>
-  <meta name="description" content="Ceranor — the musical identity of Junior Ceranor Nelson. Haitian artist from Port-au-Prince. Listen on Spotify and Apple Music." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
@@ -12,9 +23,14 @@
   <link rel="apple-touch-icon" sizes="180x180" href="favicon-180.png" />
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="music-page.css" />
-  <link rel="canonical" href="https://www.juniorceranornelson.com/music" />
-  <meta property="og:url" content="https://www.juniorceranornelson.com/music" />
-  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#1a2a4a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="JCN">
+  <link rel="apple-touch-icon" href="/logo.png">
+<script src="/dark-mode.js"></script>
+<script src="/translations.js"></script>
 </head>
 <body>
 
@@ -46,17 +62,25 @@
         <span></span><span></span><span></span>
       </button>
       <ul class="nav-links" id="navLinks">
-        <li><a href="/" class="nav-link">Home</a></li>
-        <li><a href="https://www.juniorceranornelson.com/about" class="nav-link">About Me</a></li>
-        <li><a href="/projects" class="nav-link">Projects</a></li>
-        <li><a href="/gallery" class="nav-link">Gallery</a></li>
-        <li><a href="/music" class="nav-link nav-link--active">Music</a></li>
-        <li><a href="/academic" class="nav-link">Academic</a></li>
-        <li><a href="/#blog" class="nav-link">Blog &amp; Library</a></li>
-        <li class="nav-cta-drawer-li"><a href="/#contact" class="nav-cta-drawer">Contact</a></li>
+        <li><a href="/" class="nav-link" data-i18n="nav-home">Home</a></li>
+        <li><a href="https://www.juniorceranornelson.com/about" class="nav-link" data-i18n="nav-about">About Me</a></li>
+        <li><a href="/projects" class="nav-link" data-i18n="nav-projects">Projects</a></li>
+        <li><a href="/gallery" class="nav-link" data-i18n="nav-gallery">Gallery</a></li>
+        <li><a href="/music" class="nav-link nav-link--active" data-i18n="nav-music">Music</a></li>
+        <li><a href="/academic" class="nav-link" data-i18n="nav-academic">Academic</a></li>
+        <li><a href="/#blog" class="nav-link" data-i18n="nav-blog">Blog &amp; Library</a></li>
+        <li class="nav-cta-drawer-li"><a href="/#contact" class="nav-cta-drawer" data-i18n="nav-cta" data-i18n="nav-cta">Contact</a></li>
       </ul>
-      <a href="/#contact" class="nav-cta">Contact</a>
+      <a href="/#contact" class="nav-cta" data-i18n="nav-cta">Contact</a>
     </div>
+  <div class="nav-controls">
+        <button id="darkToggle" aria-label="Switch to dark mode">🌙</button>
+        <div class="lang-switcher">
+          <button class="lang-btn lang-btn--active" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="fr">FR</button>
+          <button class="lang-btn" data-lang="ht">HT</button>
+        </div>
+      </div>
   </nav>
 
   <!-- ═══════════════════════════════════════════
@@ -371,5 +395,12 @@
   })();
   </script>
 <script src="live-button.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(){});
+  });
+}
+</script>
 </body>
 </html>

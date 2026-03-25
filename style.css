@@ -26,6 +26,84 @@
   --transition-fast: 0.22s ease;
 }
 
+/* ── Dark mode variables ── */
+.dark-mode {
+  --black:  #f0f0f0;
+  --white:  #0d0d0d;
+  --light:  #111111;
+  --muted:  #a0a0a0;
+  --border: #2a2a2a;
+  --navy:   #C9A84C;
+  --shadow-sm: 0 2px 12px rgba(0,0,0,0.4);
+  --shadow-md: 0 8px 32px rgba(0,0,0,0.5);
+}
+.dark-mode body  { background: #0d0d0d; color: #f0f0f0; }
+.dark-mode #navbar { background: #111111 !important; }
+.dark-mode .blog-card,
+.dark-mode .album-card,
+.dark-mode .project-card,
+.dark-mode .music-card { background: #1a1a1a; border-color: #2a2a2a; }
+.dark-mode .footer { background: #111111; }
+.dark-mode input,
+.dark-mode textarea,
+.dark-mode select { background: #1a1a1a; color: #f0f0f0; border-color: #2a2a2a; }
+
+/* ── Dark/lang navbar controls ── */
+.nav-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 12px;
+}
+#darkToggle {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(201,168,76,0.4);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex; align-items: center; justify-content: center;
+  transition: border-color 0.2s, background 0.2s;
+  flex-shrink: 0;
+}
+#darkToggle:hover { border-color: #C9A84C; background: rgba(201,168,76,0.1); }
+.lang-switcher {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  border: 1.5px solid rgba(201,168,76,0.4);
+  border-radius: 20px;
+  padding: 2px 4px;
+  flex-shrink: 0;
+}
+.lang-btn {
+  background: none;
+  border: none;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--muted, #5a5a5a);
+  cursor: pointer;
+  padding: 3px 6px;
+  border-radius: 14px;
+  transition: color 0.15s, background 0.15s;
+}
+.lang-btn:hover { color: #C9A84C; }
+.lang-btn--active { color: #C9A84C; background: rgba(201,168,76,0.12); }
+
+/* Reading progress bar */
+#readingProgress {
+  position: fixed;
+  top: 0; left: 0;
+  width: 0%;
+  height: 3px;
+  background: #C9A84C;
+  z-index: 9999;
+  transition: width 0.1s linear;
+}
+
 html {
   scroll-behavior: smooth;
   font-size: 16px;

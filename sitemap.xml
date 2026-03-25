@@ -1,17 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://www.juniorceranornelson.com/</loc><priority>1.0</priority><changefreq>weekly</changefreq></url>
-  <url><loc>https://www.juniorceranornelson.com/about</loc><priority>0.9</priority><changefreq>monthly</changefreq></url>
-  <url><loc>https://www.juniorceranornelson.com/blog</loc><priority>0.9</priority><changefreq>weekly</changefreq></url>
-  <url><loc>https://www.juniorceranornelson.com/gallery</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
-  <url><loc>https://www.juniorceranornelson.com/videos</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
-  <url><loc>https://www.juniorceranornelson.com/projects</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
-  <url><loc>https://www.juniorceranornelson.com/music</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
-  <url><loc>https://www.juniorceranornelson.com/academic</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
-  <url><loc>https://www.juniorceranornelson.com/contact</loc><priority>0.7</priority><changefreq>yearly</changefreq></url>
-  <url><loc>https://www.juniorceranornelson.com/blog-haitian-diplomacy</loc><priority>0.7</priority><changefreq>yearly</changefreq></url>
-  <url><loc>https://www.juniorceranornelson.com/blog-exclusion-kenya</loc><priority>0.7</priority><changefreq>yearly</changefreq></url>
-  <url><loc>https://www.juniorceranornelson.com/blog-gardez-le-silence</loc><priority>0.7</priority><changefreq>yearly</changefreq></url>
-  <url><loc>https://www.juniorceranornelson.com/blog-education-infrastructure</loc><priority>0.7</priority><changefreq>yearly</changefreq></url>
-  <url><loc>https://www.juniorceranornelson.com/blog-nouvelle-diplomatie</loc><priority>0.7</priority><changefreq>yearly</changefreq></url>
+  <url><loc>https://www.juniorceranornelson.com/</loc><priority>1.0</priority></url>
+  <url><loc>https://www.juniorceranornelson.com/about</loc><priority>0.9</priority></url>
+  <url><loc>https://www.juniorceranornelson.com/blog</loc><priority>0.8</priority></url>
+  <url><loc>https://www.juniorceranornelson.com/gallery</loc><priority>0.8</priority></url>
+  <url><loc>https://www.juniorceranornelson.com/music</loc><priority>0.8</priority></url>
+  <url><loc>https://www.juniorceranornelson.com/academic</loc><priority>0.8</priority></url>
+  <url><loc>https://www.juniorceranornelson.com/videos</loc><priority>0.7</priority></url>
+  <url><loc>https://www.juniorceranornelson.com/contact</loc><priority>0.7</priority></url>
 </urlset>

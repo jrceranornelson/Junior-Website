@@ -39,7 +39,17 @@
       "Bash(xargs perl:*)",
       "Bash(grep:*)",
       "Bash(paste URL\" fallback below:*)",
-      "Bash(ffmpeg -version)"
+      "Bash(ffmpeg -version)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" https://jrceranornelson.netlify.app/gallery)",
+      "Bash(for f:*)",
+      "Bash(if grep:*)",
+      "Bash(then)",
+      "Bash(echo \"SKIP \\(already has it\\): $f\")",
+      "Bash(elif grep:*)",
+      "Bash(xargs sed:*)",
+      "Bash(python3 _patch.py)",
+      "Bash(head -15 echo \"---\" grep -n \"darkToggle\\\\|readingProgress\\\\|manifest\\\\|serviceWorker\" ~/junior-website/blog-post.html)",
+      "Bash(head -10 echo \"---\" grep -n \"noindex\\\\|darkToggle\" ~/junior-website/admin.html)"
     ]
   }
 }

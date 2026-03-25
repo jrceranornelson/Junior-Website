@@ -1,19 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <title>Junior Ceranor Nelson — Diplomat, Entrepreneur, Institution Builder</title>
+  <meta name="description" content="Junior Ceranor Nelson is a Haitian-born diplomat, entrepreneur, and institution builder dedicated to transforming Haiti through education, diplomacy, and ethical leadership." />
+  <meta name="keywords" content="Junior Ceranor Nelson, Haiti, diplomacy, UNHDIP, OMNEDU, entrepreneur, international cooperation" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Junior Ceranor Nelson — Diplomat, Entrepreneur, Institution Builder" />
+  <meta property="og:description" content="Haitian-born diplomat, entrepreneur, and institution builder dedicated to transforming Haiti." />
+  <meta property="og:image" content="https://www.juniorceranornelson.com/photo.jpg" />
+  <meta property="og:url" content="https://www.juniorceranornelson.com/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Junior Ceranor Nelson" />
+  <meta name="twitter:description" content="Diplomat, Entrepreneur, Institution Builder" />
+  <meta name="twitter:image" content="https://www.juniorceranornelson.com/photo.jpg" />
+  <link rel="canonical" href="https://www.juniorceranornelson.com/" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Junior Ceranor Nelson — Diplomat, Educator, Institution Builder</title>
-  <meta name="description" content="Junior Ceranor Nelson — Haitian international professional at the intersection of diplomacy, education, and entrepreneurship." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="favicon-180.png" />
   <link rel="stylesheet" href="style.css" />
-  <link rel="canonical" href="https://www.juniorceranornelson.com/" />
-  <meta property="og:url" content="https://www.juniorceranornelson.com/" />
-  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#1a2a4a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="JCN">
+  <link rel="apple-touch-icon" href="/logo.png">
+<script src="/dark-mode.js"></script>
+<script src="/translations.js"></script>
 </head>
 <body>
 
@@ -45,17 +61,25 @@
         <span></span><span></span><span></span>
       </button>
       <ul class="nav-links" id="navLinks">
-        <li><a href="#home" class="nav-link">Home</a></li>
-        <li><a href="https://www.juniorceranornelson.com/about" class="nav-link">About Me</a></li>
-        <li><a href="/projects" class="nav-link">Projects</a></li>
-        <li><a href="/gallery" class="nav-link">Gallery</a></li>
-        <li><a href="/music" class="nav-link">Music</a></li>
-        <li><a href="/academic" class="nav-link">Academic</a></li>
-        <li><a href="/blog" class="nav-link">Blog &amp; Library</a></li>
-        <li class="nav-cta-drawer-li"><a href="#contact" class="nav-cta-drawer">Contact</a></li>
+        <li><a href="#home" class="nav-link" data-i18n="nav-home">Home</a></li>
+        <li><a href="https://www.juniorceranornelson.com/about" class="nav-link" data-i18n="nav-about" data-i18n="about-title">About Me</a></li>
+        <li><a href="/projects" class="nav-link" data-i18n="nav-projects">Projects</a></li>
+        <li><a href="/gallery" class="nav-link" data-i18n="nav-gallery">Gallery</a></li>
+        <li><a href="/music" class="nav-link" data-i18n="nav-music">Music</a></li>
+        <li><a href="/academic" class="nav-link" data-i18n="nav-academic">Academic</a></li>
+        <li><a href="/blog" class="nav-link" data-i18n="nav-blog">Blog &amp; Library</a></li>
+        <li class="nav-cta-drawer-li"><a href="#contact" class="nav-cta-drawer" data-i18n="nav-cta" data-i18n="nav-cta">Contact</a></li>
       </ul>
-      <a href="#contact" class="nav-cta">Contact</a>
+      <a href="#contact" class="nav-cta" data-i18n="nav-cta">Contact</a>
     </div>
+  <div class="nav-controls">
+        <button id="darkToggle" aria-label="Switch to dark mode">🌙</button>
+        <div class="lang-switcher">
+          <button class="lang-btn lang-btn--active" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="fr">FR</button>
+          <button class="lang-btn" data-lang="ht">HT</button>
+        </div>
+      </div>
   </nav>
 
   <!-- ═══════════════════════════════════════════
@@ -77,7 +101,7 @@
         <span class="hero-last" id="heroLast">Nelson</span>
       </div>
       <p class="hero-tagline" id="heroTagline">
-        Transforming Haiti through education, diplomacy, and ethical leadership.
+        data-i18n="tagline">Transforming Haiti through education, diplomacy, and ethical leadership.
       </p>
       <a href="#about" class="btn btn-outline hero-cta" id="heroCta">About Me</a>
     </div>
@@ -104,7 +128,7 @@
           <p>
             Junior Ceranor Nelson is a Haitian entrepreneur, diplomat, and international development professional dedicated to advancing diplomacy, education, and humanitarian progress. As Founder of UNHDIP, Doredu, Omnedu, and Bòkatedral, International Cooperation Officer at Quisqueya University, and Co-founder of Haiti Stole My Heart Foundation, he leads initiatives that promote ethical leadership, expand opportunity, and strengthen international collaboration. Anchored in a bold vision for Haiti's future, he works to build lasting impact through innovation, service, and strategic partnership.
           </p>
-          <a href="/about" class="btn btn-dark">Learn more</a>
+          <a href="/about" class="btn btn-dark" data-i18n="learn-more">Learn more</a>
         </div>
       </div>
     </div>
@@ -396,7 +420,7 @@
               Your information is private and will never be shared.
             </p>
             <button type="submit" class="subscribe-btn" id="subscribeBtn">
-              <span class="subscribe-btn-text">Subscribe</span>
+              <span class="subscribe-btn-text" data-i18n="subscribe">Subscribe</span>
               <svg class="subscribe-btn-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </button>
           </div>
@@ -421,7 +445,7 @@
     <div class="container">
       <div class="contact-inner">
         <div class="contact-left reveal">
-          <h2 class="section-heading">Get in Touch</h2>
+          <h2 class="section-heading" data-i18n="get-in-touch">Get in Touch</h2>
           <p class="contact-invite">
             Whether you are looking to collaborate on a project, explore a partnership, or simply connect — I'd love to hear from you.
           </p>
@@ -457,7 +481,7 @@
             <label for="message">Message</label>
             <textarea id="message" name="message" rows="5" placeholder="Tell me about your project or idea…" required></textarea>
           </div>
-          <button type="submit" class="btn btn-dark btn-full">Send Message</button>
+          <button type="submit" class="btn btn-dark btn-full" data-i18n="send-message">Send Message</button>
         </form>
       </div>
     </div>
@@ -809,5 +833,12 @@
   })();
   </script>
 <script src="live-button.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(){});
+  });
+}
+</script>
 </body>
 </html>
