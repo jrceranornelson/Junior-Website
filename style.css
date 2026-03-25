@@ -59,6 +59,8 @@
 /* ── nav-right: lang + dark + hamburger grouped on right ── */
 .nav-right {
   display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
   align-items: center;
   gap: 8px;
   margin-left: 12px;
@@ -1590,6 +1592,9 @@ body.preloading { overflow: hidden; }
 
   /* nav-right stays in the navbar on mobile — lang | dark | hamburger */
   .nav-right {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
     margin-left: auto;
     gap: 6px;
   }

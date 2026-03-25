@@ -994,8 +994,9 @@
           <h2 class="section-heading reveal-line">Research Areas</h2>
         </div>
 
-        <!-- ✏️ EDIT HERE: add or remove tags as needed -->
-        <div class="research-tags reveal">
+        <!-- Dynamic research tags from Firestore (falls back to static if empty) -->
+        <div class="research-tags reveal" id="dynamicResearchTags" style="display:none;"></div>
+        <div class="research-tags reveal" id="staticResearchTags">
           <span class="research-tag">UN Peace &amp; Security Negotiations</span>
           <span class="research-tag">Agenda Control</span>
           <span class="research-tag">Diplomatic Network Analysis</span>
@@ -1278,6 +1279,34 @@
     }, function() {
       if(awardsDyn) awardsDyn.style.display='none';
       if(awardsStat) awardsStat.style.display='';
+    });
+
+    // ── Research Areas ──
+    var dynTags   = document.getElementById('dynamicResearchTags');
+    var staticTags = document.getElementById('staticResearchTags');
+    db.collection('research_areas').orderBy('createdAt', 'asc').onSnapshot(function(snap) {
+      if (snap.empty) {
+        if (dynTags)   dynTags.style.display   = 'none';
+        if (staticTags) staticTags.style.display = '';
+      } else {
+        if (staticTags) staticTags.style.display = 'none';
+        if (dynTags) {
+          dynTags.innerHTML = '';
+          snap.forEach(function(doc) {
+            var name = doc.data().name || '';
+            if (name) {
+              var tag = document.createElement('span');
+              tag.className = 'research-tag';
+              tag.textContent = name;
+              dynTags.appendChild(tag);
+            }
+          });
+          dynTags.style.display = '';
+        }
+      }
+    }, function() {
+      if (dynTags)    dynTags.style.display    = 'none';
+      if (staticTags) staticTags.style.display = '';
     });
 
     // ── Master query for academic collection (papers + dissertations + theses) ──

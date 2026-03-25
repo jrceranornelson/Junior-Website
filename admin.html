@@ -464,6 +464,16 @@
         <button class="btn btn-gold" id="newAwardBtn">+ Add Award</button>
       </div>
       <div id="awardsAdminList"><div class="admin-spinner"><div class="spinner"></div></div></div>
+
+      <!-- Research Areas subsection -->
+      <div class="section-header" style="margin-top:36px;">
+        <div>
+          <h2 class="section-title" style="font-size:1.1rem;">Research Areas</h2>
+          <p class="section-sub">Keywords and research topics shown on the Academic page.</p>
+        </div>
+        <button class="btn btn-gold" id="newResearchTagBtn">+ Add Tag</button>
+      </div>
+      <div id="researchTagsAdminList"><div class="admin-spinner"><div class="spinner"></div></div></div>
     </section>
 
     <!-- ════════════ MESSAGES ════════════ -->
@@ -948,6 +958,24 @@
   </div>
 </div>
 
+<!-- Research Tag Modal -->
+<div class="modal-backdrop" id="researchTagModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="researchTagModalTitle">Add Research Tag</span>
+      <button class="modal-close" data-close="researchTagModal">&times;</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-group form-full"><label for="rtName">Tag Name *</label><input type="text" id="rtName" placeholder="e.g. Diplomatic Network Analysis" /></div>
+    </div>
+    <div class="form-actions" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
+      <button class="btn btn-primary" id="saveResearchTagBtn">Save Tag</button>
+      <button class="btn btn-ghost" data-close="researchTagModal">Cancel</button>
+    </div>
+    <input type="hidden" id="rtDocId" />
+  </div>
+</div>
+
 <!-- Message View Modal -->
 <div class="modal-backdrop" id="msgViewModal">
   <div class="modal">
@@ -1135,6 +1163,7 @@ function initDashboard() {
   loadAcademic();
   loadAffiliations();
   loadAwards();
+  loadResearchTags();
   loadMessages();
   loadSubscribers();
   loadProjects();
@@ -1953,6 +1982,70 @@ document.getElementById('saveAwardBtn').addEventListener('click', async () => {
     if (id) { await db.collection('awards').doc(id).update(data); toast('Award updated!','success'); }
     else { data.createdAt = firebase.firestore.FieldValue.serverTimestamp(); await db.collection('awards').add(data); toast('Award saved!','success'); }
     closeModal('awardModal');
+  } catch(e) { toast(e.message,'error'); }
+});
+
+/* ══════════════════════════════════════════════════
+   ACADEMIC — RESEARCH AREAS
+══════════════════════════════════════════════════ */
+function loadResearchTags() {
+  const list = document.getElementById('researchTagsAdminList');
+  db.collection('research_areas').orderBy('createdAt','asc').onSnapshot(snap => {
+    list.innerHTML = '';
+    if (snap.empty) { list.innerHTML = '<div class="empty-state">No research tags yet. Tags from the static page will show until you add some here.</div>'; return; }
+    const ul = document.createElement('div'); ul.className = 'items-list';
+    snap.forEach(doc => {
+      const d = doc.data();
+      const card = document.createElement('div'); card.className = 'item-card';
+      card.innerHTML = `
+        <div class="item-card-body">
+          <div class="item-card-title">${esc(d.name||'Unnamed tag')}</div>
+        </div>
+        <div class="item-card-actions">
+          <button class="btn btn-ghost btn-sm" onclick="editResearchTag('${doc.id}')">Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteResearchTag('${doc.id}')">Delete</button>
+        </div>`;
+      ul.appendChild(card);
+    });
+    list.appendChild(ul);
+  }, () => { list.innerHTML = '<div class="empty-state">Could not load research tags.</div>'; });
+}
+
+document.getElementById('newResearchTagBtn').addEventListener('click', () => {
+  document.getElementById('researchTagModalTitle').textContent = 'Add Research Tag';
+  document.getElementById('rtName').value = '';
+  document.getElementById('rtDocId').value = '';
+  openModal('researchTagModal');
+});
+
+window.editResearchTag = id => {
+  db.collection('research_areas').doc(id).get().then(doc => {
+    const d = doc.data();
+    document.getElementById('researchTagModalTitle').textContent = 'Edit Research Tag';
+    document.getElementById('rtName').value  = d.name || '';
+    document.getElementById('rtDocId').value = id;
+    openModal('researchTagModal');
+  });
+};
+
+window.deleteResearchTag = id => {
+  if (!confirm('Delete this research tag?')) return;
+  db.collection('research_areas').doc(id).delete().then(() => toast('Tag deleted.','success')).catch(e => toast(e.message,'error'));
+};
+
+document.getElementById('saveResearchTagBtn').addEventListener('click', async () => {
+  const id   = document.getElementById('rtDocId').value;
+  const name = document.getElementById('rtName').value.trim();
+  if (!name) { toast('Tag name is required.','error'); return; }
+  try {
+    if (id) {
+      await db.collection('research_areas').doc(id).update({ name });
+      toast('Tag updated!','success');
+    } else {
+      await db.collection('research_areas').add({ name, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+      toast('Tag added!','success');
+    }
+    closeModal('researchTagModal');
   } catch(e) { toast(e.message,'error'); }
 });
 
