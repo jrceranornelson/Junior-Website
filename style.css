@@ -1580,6 +1580,16 @@ body.preloading { overflow: hidden; }
   .nav-toggle { display: flex; }
   .nav-cta    { display: none; }
 
+  /* Move controls into the drawer on mobile */
+  .nav-controls {
+    order: 99;
+    width: 100%;
+    padding: 16px 0 0;
+    border-top: 1px solid var(--border);
+    margin-top: 12px;
+    justify-content: flex-start;
+  }
+
   .nav-links {
     position: fixed;
     top: 0;
