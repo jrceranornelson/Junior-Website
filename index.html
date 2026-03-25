@@ -581,28 +581,22 @@
     // Static articles with unix timestamps for sorting (newest first)
     var staticFallbacks = [
       {
-        sortTs: 1772323200, // March 2026
-        img: 'gallery/haitian-diplomacy.png',
-        category: 'Diplomacy',
-        date: 'March 2026',
+        id: 'haitian-diplomacy', sortTs: 1772323200,
+        img: 'gallery/haitian-diplomacy.png', category: 'Diplomacy', date: 'March 2026',
         title: 'Reimagining Haitian Diplomacy in the 21st Century',
         excerpt: 'To help reintegrate Haiti into the world map of diplomacy, we must first understand that diplomacy in the 21st century is no longer built only through formal meetings.',
         href: 'blog-haitian-diplomacy.html'
       },
       {
-        sortTs: 1752883200, // 19 July 2025
-        img: 'gallery/haiti-kenya.png',
-        category: 'Analyse',
-        date: '19 Juillet 2025',
+        id: 'exclusion-kenya', sortTs: 1752883200,
+        img: 'gallery/haiti-kenya.png', category: 'Analyse', date: '19 Juillet 2025',
         title: "L'exclusion d'Haïti de la politique de visa exempté du Kenya",
         excerpt: "Une analyse diplomatique de l'exclusion d'Haïti de la mesure d'exemption de visa annoncée par le Kenya.",
         href: 'blog-exclusion-kenya.html'
       },
       {
-        sortTs: 1752710400, // 17 July 2025
-        img: 'gallery/gardez-le-silence.png',
-        category: 'Politique',
-        date: '17 Juillet 2025',
+        id: 'gardez-silence', sortTs: 1752710400,
+        img: 'gallery/gardez-le-silence.png', category: 'Politique', date: '17 Juillet 2025',
         title: "À ceux qui ont trahi l'espérance du peuple haïtien ; gardez le silence !",
         excerpt: "Une alerte à la jeunesse haïtienne face aux figures politiques qui, après avoir trahi la patrie, reprennent la parole pour appeler à l'unité.",
         href: 'blog-gardez-le-silence.html'
@@ -624,18 +618,46 @@
       return card;
     }
 
-    function render(docs) {
-      // Build a unified pool: Firestore published posts + static fallbacks
-      var published = docs.filter(function(d) { return d.data().status === 'published'; });
+    function parseDateStr(str) {
+      if (!str) return 0;
+      var months = {
+        january:1,february:2,march:3,april:4,may:5,june:6,
+        july:7,august:8,september:9,october:10,november:11,december:12,
+        janvier:1,février:2,fevrier:2,mars:3,avril:4,mai:5,juin:6,
+        juillet:7,août:8,aout:8,septembre:9,octobre:10,novembre:11,décembre:12,decembre:12
+      };
+      var s = str.toLowerCase().replace(/[,]/g, '');
+      var parts = s.split(/\s+/);
+      var day = 1, month = 0, year = 0;
+      parts.forEach(function(p) {
+        var n = parseInt(p, 10);
+        if (!isNaN(n)) {
+          if (n > 31) year = n; else if (n >= 1 && n <= 31 && day === 1 && month === 0) day = n;
+        } else if (months[p]) { month = months[p]; }
+      });
+      if (!year) return 0;
+      return new Date(year, (month || 1) - 1, day).getTime();
+    }
 
-      // Tag each Firestore doc with a sort timestamp
+    function render(docs) {
+      // Exclude only explicit drafts
+      var published = docs.filter(function(d) { return d.data().status !== 'draft'; });
+      var fsIds = published.map(function(d) { return d.id; });
+
+      // Tag each Firestore doc — sort by article date field, fall back to createdAt
       var pool = published.map(function(doc) {
-        var ts = (doc.data().createdAt || {}).seconds || 0;
+        var d = doc.data();
+        var ts = parseDateStr(d.date) ||
+                 (d.createdAt ? (d.createdAt.toMillis ? d.createdAt.toMillis() : (d.createdAt.seconds || 0) * 1000) : 0);
         return { sortTs: ts, type: 'firestore', doc: doc };
       });
 
-      // Add static fallbacks not already covered by Firestore (pad to at least 3 total)
-      staticFallbacks.forEach(function(s) { pool.push({ sortTs: s.sortTs, type: 'static', data: s }); });
+      // Add static fallbacks not already in Firestore
+      staticFallbacks.forEach(function(s) {
+        if (fsIds.indexOf(s.id || '') === -1) {
+          pool.push({ sortTs: s.sortTs, type: 'static', data: s });
+        }
+      });
 
       // Sort newest first, take top 3
       pool.sort(function(a, b) { return b.sortTs - a.sortTs; });
@@ -651,26 +673,10 @@
       });
     }
 
-    function sortDesc(docs) {
-      return docs.slice().sort(function(a, b) {
-        var as = (a.data().createdAt || {}).seconds || 0;
-        var bs = (b.data().createdAt || {}).seconds || 0;
-        return bs - as;
-      });
-    }
-
-    db.collection('blog').orderBy('createdAt', 'desc').limit(10).onSnapshot(
+    // Read without orderBy — sort client-side to avoid Firestore index errors
+    db.collection('blog').onSnapshot(
       function(snap) { render(snap.docs); },
-      function() {
-        db.collection('blog').onSnapshot(
-          function(snap) { render(sortDesc(snap.docs)); },
-          function() {
-            db.collection('blog').get()
-              .then(function(snap) { render(sortDesc(snap.docs)); })
-              .catch(function() { grid.innerHTML = ''; });
-          }
-        );
-      }
+      function() { grid.innerHTML = ''; }
     );
   })();
   </script>
