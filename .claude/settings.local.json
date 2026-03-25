@@ -49,7 +49,20 @@
       "Bash(xargs sed:*)",
       "Bash(python3 _patch.py)",
       "Bash(head -15 echo \"---\" grep -n \"darkToggle\\\\|readingProgress\\\\|manifest\\\\|serviceWorker\" ~/junior-website/blog-post.html)",
-      "Bash(head -10 echo \"---\" grep -n \"noindex\\\\|darkToggle\" ~/junior-website/admin.html)"
+      "Bash(head -10 echo \"---\" grep -n \"noindex\\\\|darkToggle\" ~/junior-website/admin.html)",
+      "Bash(python3:*)",
+      "Bash(head -20 grep -n \"nav-right\\\\|lang-switcher\\\\|darkToggle\\\\|nav-toggle\" /Users/jrceranornelson/junior-website/music.html)",
+      "Bash(head -20 grep -n \"nav-right\\\\|lang-switcher\\\\|darkToggle\\\\|nav-toggle\" /Users/jrceranornelson/junior-website/academic.html)",
+      "Bash(head -20 grep -n \"nav-right\\\\|nav-inner\\\\|flex-wrap\\\\|flex-direction\" /Users/jrceranornelson/junior-website/projects-page.css)",
+      "Bash(head -20 grep -n \"nav-right\\\\|nav-inner\\\\|flex-wrap\\\\|flex-direction\" /Users/jrceranornelson/junior-website/music-page.css)",
+      "Bash(head -20 grep -n \"nav-right\\\\|nav-inner\\\\|\\\\.nav \" /Users/jrceranornelson/junior-website/projects-page.css)",
+      "Bash(head -20 grep -n \"nav-right\\\\|nav-inner\\\\|#navbar\\\\|\\\\.nav\" /Users/jrceranornelson/junior-website/about.css)",
+      "Bash(head -20 grep -n \"button\\\\|#darkToggle\\\\|lang\\\\|nav-right\\\\|nav-inner\" /Users/jrceranornelson/junior-website/gallery-page.css)",
+      "Bash(head -15 grep -n \"darkToggle\\\\|nav-right\\\\|lang-switcher\\\\|lang-btn\" /Users/jrceranornelson/junior-website/music.html)",
+      "Bash(head -15 grep -n \"darkToggle\\\\|nav-right\\\\|lang-switcher\\\\|lang-btn\" /Users/jrceranornelson/junior-website/projects.html)",
+      "Bash(head -15 grep -n \"darkToggle\\\\|nav-right\\\\|lang-switcher\" /Users/jrceranornelson/junior-website/contact.html)",
+      "mcp__claude_ai_Netlify__netlify-project-services-reader",
+      "mcp__claude_ai_Netlify__netlify-deploy-services-reader"
     ]
   }
 }
