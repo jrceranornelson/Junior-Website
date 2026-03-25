@@ -191,7 +191,13 @@
     /* Responsive */
     @media(max-width:1024px) { .stats-grid { grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); } }
     @media(max-width:860px)  { .sidebar { width:200px; } .main-content { margin-left:200px; } .admin-section { padding:24px; } .form-grid { grid-template-columns:1fr; } .form-grid--3 { grid-template-columns:1fr; } }
-    @media(max-width:680px)  { .sidebar { position:fixed; transform:translateX(-100%); transition:transform .3s; } .sidebar.open { transform:translateX(0); } .main-content { margin-left:0; } }
+    @media(max-width:768px)  { .sidebar { position:fixed; transform:translateX(-100%); transition:transform .3s ease; z-index:200; } .sidebar.open { transform:translateX(0); } .main-content { margin-left:0; } }
+    /* Hamburger button — mobile only */
+    .mob-hamburger { display:none; position:fixed; top:12px; left:12px; z-index:300; width:40px; height:40px; align-items:center; justify-content:center; background:var(--navy); border:none; border-radius:4px; cursor:pointer; color:var(--white); font-size:1.35rem; line-height:1; }
+    @media(max-width:768px) { .mob-hamburger { display:flex; } }
+    /* Sidebar overlay — mobile only */
+    #sidebarOverlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:150; }
+    #sidebarOverlay.show { display:block; }
   </style>
 </head>
 <body>
@@ -223,6 +229,12 @@
      DASHBOARD
 ═══════════════════════════════════════════════ -->
 <div id="dashboard" style="display:none">
+
+  <!-- ── MOBILE HAMBURGER ── -->
+  <button class="mob-hamburger" id="mobHamburger" aria-label="Open navigation">&#9776;</button>
+
+  <!-- ── SIDEBAR OVERLAY ── -->
+  <div id="sidebarOverlay"></div>
 
   <!-- ── SIDEBAR ── -->
   <aside class="sidebar" id="sidebar">
@@ -912,8 +924,22 @@ function showSection(name) {
 }
 
 document.querySelectorAll('.sidebar-link[data-section]').forEach(a => {
-  a.addEventListener('click', () => showSection(a.dataset.section));
+  a.addEventListener('click', () => {
+    showSection(a.dataset.section);
+    closeMobileSidebar();
+  });
 });
+
+/* ── Mobile sidebar toggle ── */
+const sidebar        = document.getElementById('sidebar');
+const sidebarOverlay = document.getElementById('sidebarOverlay');
+const mobHamburger   = document.getElementById('mobHamburger');
+
+function openMobileSidebar()  { sidebar.classList.add('open'); sidebarOverlay.classList.add('show'); }
+function closeMobileSidebar() { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('show'); }
+
+mobHamburger.addEventListener('click', openMobileSidebar);
+sidebarOverlay.addEventListener('click', closeMobileSidebar);
 
 /* ══════════════════════════════════════════════════
    AUTH
