@@ -363,7 +363,9 @@
 
       fsDocs.forEach(function(doc) {
         var d = doc.data();
-        var ts = d.createdAt ? (d.createdAt.toMillis ? d.createdAt.toMillis() : (d.createdAt.seconds || 0) * 1000) : parseDateStr(d.date);
+        // Prefer the human-readable date field; fall back to createdAt timestamp
+        var ts = parseDateStr(d.date) ||
+                 (d.createdAt ? (d.createdAt.toMillis ? d.createdAt.toMillis() : (d.createdAt.seconds || 0) * 1000) : 0);
         items.push({ ts: ts, el: buildCard(doc.id, d) });
       });
 
