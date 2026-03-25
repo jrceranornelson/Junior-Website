@@ -1114,43 +1114,129 @@ body.preloading { overflow: hidden; }
   margin-bottom: 60px;
 }
 
+/* ── Newspaper grid ── */
 .blog-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 36px;
+  gap: 0;
+  border-top: 3px solid var(--black);
 }
-
-/* Cards 4 & 5 sit centered in the second row */
-.blog-grid .blog-card:nth-child(4) { grid-column: 1; }
-.blog-grid .blog-card:nth-child(5) { grid-column: 3; }
 
 .blog-card {
   overflow: hidden;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  transition: box-shadow var(--transition), transform var(--transition);
+  border: none;
+  border-radius: 0;
+  border-bottom: 1px solid var(--border);
+  transition: background var(--transition);
+  background: #fff;
 }
 
-.blog-card:hover {
-  transform: translateY(-6px);
-  box-shadow: var(--shadow-md);
+/* Vertical column dividers for cards in position 2, 3 of each row */
+.blog-grid .blog-card:not(:first-child):nth-child(3n+2),
+.blog-grid .blog-card:not(:first-child):nth-child(3n+0) {
+  border-left: 1px solid var(--border);
 }
 
+.blog-card:hover { background: #faf9f6; }
+
+/* ── Hero card (first) — full width, landscape ── */
+.blog-grid .blog-card:first-child {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: row;
+  border-bottom: 2px solid var(--black);
+  min-height: 360px;
+}
+
+.blog-grid .blog-card:first-child .blog-card-img {
+  width: 52%;
+  height: auto;
+  flex-shrink: 0;
+}
+
+.blog-grid .blog-card:first-child .blog-card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.blog-grid .blog-card:first-child .blog-card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 48px 52px;
+}
+
+.blog-grid .blog-card:first-child .blog-title {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.18;
+  margin-bottom: 18px;
+}
+
+.blog-grid .blog-card:first-child .blog-excerpt {
+  font-size: 1rem;
+  line-height: 1.7;
+  -webkit-line-clamp: unset;
+}
+
+.blog-grid .blog-card:first-child .blog-link {
+  margin-top: auto;
+  padding-top: 20px;
+}
+
+/* ── Lead stories (cards 2–4) ── */
+.blog-grid .blog-card:nth-child(2),
+.blog-grid .blog-card:nth-child(3),
+.blog-grid .blog-card:nth-child(4) {
+  border-top: none;
+}
+
+.blog-grid .blog-card:nth-child(2) { border-left: none; }
+.blog-grid .blog-card:nth-child(4) { border-right: none; }
+
+/* ── Standard card image ── */
 .blog-card-img {
-  height: 200px;
+  height: 210px;
   overflow: hidden;
 }
 
 .blog-card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .blog-card:hover .blog-card-img img {
-  transform: scale(1.05);
+  transform: scale(1.04);
 }
 
 .blog-card-body {
-  padding: 28px;
+  padding: 24px 26px 28px;
+}
+
+/* ── Compact cards (5th onward) — no image, headline only ── */
+.blog-grid .blog-card:nth-child(n+5) .blog-card-img {
+  height: 150px;
+}
+
+.blog-grid .blog-card:nth-child(n+5) .blog-card-body {
+  padding: 18px 22px 22px;
+}
+
+.blog-grid .blog-card:nth-child(n+5) .blog-title {
+  font-size: 0.93rem;
+  margin-bottom: 8px;
+}
+
+.blog-grid .blog-card:nth-child(n+5) .blog-excerpt {
+  font-size: 0.83rem;
+  -webkit-line-clamp: 2;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 14px;
 }
 
 .blog-date {
@@ -1472,17 +1558,18 @@ body.preloading { overflow: hidden; }
   .projects-grid { grid-template-columns: repeat(2, 1fr); }
   .projects-desc-inner { gap: 48px; }
 
-  /* BLOG */
+  /* BLOG — tablet: hero stacks vertically, 2-col below */
   .blog-section .section-heading { margin-bottom: 44px; }
-  .blog-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 28px;
-  }
-  /* Reset desktop orphan overrides — in 2-col they create a broken implicit column */
-  .blog-grid .blog-card:nth-child(4) { grid-column: auto; }
+  .blog-grid { grid-template-columns: repeat(2, 1fr); gap: 0; }
+  .blog-grid .blog-card:first-child { flex-direction: column; min-height: auto; }
+  .blog-grid .blog-card:first-child .blog-card-img { width: 100%; height: 260px; }
+  .blog-grid .blog-card:first-child .blog-card-body { padding: 28px; }
+  .blog-grid .blog-card:first-child .blog-title { font-size: 1.5rem; }
+  .blog-grid .blog-card:nth-child(2) { border-left: 1px solid var(--border); }
+  .blog-grid .blog-card:nth-child(4) { grid-column: auto; border-right: none; }
   .blog-grid .blog-card:nth-child(5) { grid-column: auto; max-width: none; }
-  .blog-card-img { height: 210px; }
-  .blog-card-body { padding: 24px; }
+  .blog-card-img { height: 180px; }
+  .blog-card-body { padding: 20px; }
   .blog-title { font-size: 1rem; }
 
   /* CONTACT */
@@ -1559,18 +1646,23 @@ body.preloading { overflow: hidden; }
   }
   .gallery-item { height: 180px; }
 
-  /* BLOG */
+  /* BLOG — mobile: single column, hero stacks vertically */
   .blog-section .section-heading { margin-bottom: 32px; }
-  .blog-grid {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-  /* Reset all column overrides for single-col layout */
-  .blog-grid .blog-card:nth-child(4) { grid-column: auto; }
+  .blog-grid { grid-template-columns: 1fr; gap: 0; }
+  .blog-grid .blog-card:first-child { flex-direction: column; min-height: auto; }
+  .blog-grid .blog-card:first-child .blog-card-img { width: 100%; height: 220px; }
+  .blog-grid .blog-card:first-child .blog-card-body { padding: 24px; }
+  .blog-grid .blog-card:first-child .blog-title { font-size: 1.3rem; }
+  .blog-grid .blog-card:not(:first-child):nth-child(3n+2),
+  .blog-grid .blog-card:not(:first-child):nth-child(3n+0) { border-left: none; }
+  .blog-grid .blog-card:nth-child(2) { border-left: none; }
+  .blog-grid .blog-card:nth-child(4) { grid-column: auto; border-right: none; }
   .blog-grid .blog-card:nth-child(5) { grid-column: auto; max-width: none; justify-self: stretch; }
-  .blog-card-img { height: 220px; }
-  .blog-card-body { padding: 22px; }
-  .blog-title { font-size: 1.05rem; line-height: 1.4; }
+  .blog-grid .blog-card:nth-child(n+5) .blog-card-img { height: 180px; }
+  .blog-grid .blog-card:nth-child(n+5) .blog-excerpt { display: block; -webkit-line-clamp: unset; overflow: visible; }
+  .blog-card-img { height: 200px; }
+  .blog-card-body { padding: 20px; }
+  .blog-title { font-size: 1rem; line-height: 1.4; }
   .blog-excerpt { font-size: 0.87rem; margin-bottom: 18px; }
 
   /* CONTACT */
