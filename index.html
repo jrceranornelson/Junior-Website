@@ -721,58 +721,7 @@
   })();
   </script>
 
-  <!-- Dynamic projects from Firestore -->
-  <script>
-  (function () {
-    var dynGrid = document.getElementById('projectsGridDynamic');
-    var statGrid = document.getElementById('projectsGridStatic');
-    if (!dynGrid || typeof db === 'undefined') return;
 
-    function esc(s) {
-      return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    }
-
-    db.collection('projects').onSnapshot(function (snap) {
-      if (snap.empty) {
-        dynGrid.style.display = 'none';
-        if (statGrid) statGrid.style.display = '';
-        return;
-      }
-      // Sort newest-first client-side so all projects show regardless of fields
-      var docs = snap.docs.slice().sort(function(a,b){
-        var at = a.data().createdAt, bt = b.data().createdAt;
-        if (!at && !bt) return 0; if (!at) return 1; if (!bt) return -1;
-        return (bt.toMillis ? bt.toMillis() : bt) - (at.toMillis ? at.toMillis() : at);
-      });
-      snap = { docs: docs, empty: docs.length === 0 };
-      if (snap.empty) { dynGrid.style.display='none'; if(statGrid) statGrid.style.display=''; return; }
-      dynGrid.innerHTML = '';
-      if (statGrid) statGrid.style.display = 'none';
-      docs.forEach(function (doc) {
-        var d = doc.data();
-        var imgSrc = d.logoUrl || 'https://placehold.co/600x380/0b1d3a/c9a84c?text=' + encodeURIComponent(d.title || 'Project');
-        var card = document.createElement('div');
-        card.className = 'project-card';
-        card.innerHTML =
-          '<div class="project-card-img">' +
-            '<img src="' + esc(imgSrc) + '" alt="' + esc(d.title || '') + '" loading="lazy" />' +
-            (d.tag ? '<span class="project-tag">' + esc(d.tag) + '</span>' : '') +
-          '</div>' +
-          '<div class="project-card-body">' +
-            '<h3 class="project-card-title">' + esc(d.title || 'Untitled') + '</h3>' +
-            '<p class="project-card-desc">' + esc(d.description || '') + '</p>' +
-            ((d.url || d.link)
-              ? '<a href="' + esc(d.url || d.link) + '" target="_blank" rel="noopener" class="project-card-link">Visit <span class="arrow">→</span></a>'
-              : '') +
-          '</div>';
-        dynGrid.appendChild(card);
-      });
-      dynGrid.style.display = '';
-    }, function (err) {
-      console.warn('Projects Firestore error:', err);
-    });
-  })();
-  </script>
 
   <!-- Page view tracker -->
   <script>
