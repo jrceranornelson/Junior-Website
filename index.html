@@ -748,11 +748,10 @@
       snap = { docs: docs, empty: docs.length === 0 };
       if (snap.empty) { dynGrid.style.display='none'; if(statGrid) statGrid.style.display=''; return; }
       dynGrid.innerHTML = '';
+      if (statGrid) statGrid.style.display = 'none';
       docs.forEach(function (doc) {
         var d = doc.data();
-        var imgSrc = d.logoUrl
-          ? 'https://placehold.co/600x380/0b1d3a/c9a84c?text=' + encodeURIComponent(d.title || 'Project')
-          : 'https://placehold.co/600x380/0b1d3a/c9a84c?text=' + encodeURIComponent(d.title || 'Project');
+        var imgSrc = d.logoUrl || 'https://placehold.co/600x380/0b1d3a/c9a84c?text=' + encodeURIComponent(d.title || 'Project');
         var card = document.createElement('div');
         card.className = 'project-card reveal';
         card.innerHTML =
@@ -771,7 +770,6 @@
         dynGrid.appendChild(card);
       });
       dynGrid.style.display = '';
-      if (statGrid) statGrid.style.display = 'none';
     }, function (err) {
       console.warn('Projects Firestore error:', err);
     });
