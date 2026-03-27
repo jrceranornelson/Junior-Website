@@ -421,15 +421,17 @@
 
   <!-- Dynamic Firestore projects -->
   <script>
-  (function () {
+  function initProjectsGrid() {
     var dynGrid  = document.getElementById('ppGridDynamic');
     var statGrid = document.getElementById('ppGridStatic');
     var spinner  = document.getElementById('ppSpinnerStatic');
 
-    // Remove spinner once we attempt to load
     if (spinner) spinner.remove();
 
-    if (!dynGrid || typeof db === 'undefined') return;
+    if (!dynGrid) { console.warn('[Projects] ppGridDynamic not found'); return; }
+    if (typeof db === 'undefined') { console.warn('[Projects] db not defined'); return; }
+
+    console.log('[Projects] Starting Firestore onSnapshot...');
 
     function esc(s) {
       return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -440,15 +442,20 @@
     }
 
     db.collection('projects').onSnapshot(function (snap) {
+      console.log('[Projects] onSnapshot fired — docs:', snap.size, '| empty:', snap.empty);
+
       if (snap.empty) {
+        console.log('[Projects] No data — showing static fallback');
         dynGrid.style.display = 'none';
         if (statGrid) statGrid.style.display = '';
         return;
       }
 
+      console.log('[Projects] Data received — rendering', snap.size, 'project(s)');
       dynGrid.style.display = '';
       if (statGrid) statGrid.style.display = 'none';
       dynGrid.innerHTML = '';
+
       snap.forEach(function (doc) {
         var d = doc.data();
         var imgSrc = d.coverUrl || d.logoUrl || 'https://placehold.co/800x480/0b1d3a/c9a84c?text=' + encodeURIComponent(d.title || 'Project');
@@ -490,12 +497,17 @@
         });
       }
 
-      // Trigger reveal animations on new cards
       if (typeof observeReveal === 'function') observeReveal();
     }, function (err) {
-      console.warn('Projects Firestore error:', err);
+      console.error('[Projects] Firestore error:', err);
     });
-  })();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initProjectsGrid);
+  } else {
+    initProjectsGrid();
+  }
   </script>
 
 <script src="live-button.js"></script>
