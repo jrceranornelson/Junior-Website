@@ -330,24 +330,37 @@ function initWorldMap() {
       .finally(() => setTimeout(_drainGeoQueue, 1100));
   }
 
-  /* Listen to gallery collection — add a dot for every new place */
+  /* Listen to gallery collection — add a dot for every new place.
+     Prefers lat/lng stored on the doc (same as admin map); falls back
+     to Nominatim geocoding when no coordinates are saved. */
   if (typeof firebase !== 'undefined' && firebase.apps.length) {
     const firestoreDb = window.db || firebase.firestore();
     firestoreDb.collection('gallery').onSnapshot(snapshot => {
-      /* Group images by place */
+      /* Group by place; capture first available lat/lng per place */
       const byPlace = {};
       snapshot.forEach(doc => {
         const d = doc.data();
         if (!d.place || !d.imageUrl) return;
-        (byPlace[d.place] = byPlace[d.place] || []).push(d.imageUrl);
+        if (!byPlace[d.place]) byPlace[d.place] = { photos: [], lat: null, lng: null };
+        byPlace[d.place].photos.push(d.imageUrl);
+        if (!byPlace[d.place].lat && d.lat != null && d.lng != null) {
+          byPlace[d.place].lat = parseFloat(d.lat);
+          byPlace[d.place].lng = parseFloat(d.lng);
+        }
       });
 
-      Object.entries(byPlace).forEach(([place, photos]) => {
+      Object.entries(byPlace).forEach(([place, data]) => {
         const key = place.trim().toLowerCase();
         if (_markers.has(key)) return; // already on the map
-        geocode(place).then(coords => {
-          if (coords) placeMarker(place, coords, photos);
-        });
+        if (data.lat !== null && data.lng !== null) {
+          /* Instant — use stored coordinates, just like the admin map */
+          placeMarker(place, [data.lat, data.lng], data.photos);
+        } else {
+          /* Fall back to geocoding if no coordinates were saved */
+          geocode(place).then(coords => {
+            if (coords) placeMarker(place, coords, data.photos);
+          });
+        }
       });
     });
   }

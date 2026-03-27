@@ -769,6 +769,7 @@
       <div class="form-group form-full"><label for="gImageUrl">Or paste image URL directly</label><input type="url" id="gImageUrl" placeholder="https://… (optional if uploading file above)" /></div>
       <div class="form-group"><label for="gLat">Latitude (for map pin)</label><input type="number" id="gLat" placeholder="18.5944" step="any" /></div>
       <div class="form-group"><label for="gLng">Longitude (for map pin)</label><input type="number" id="gLng" placeholder="-72.3074" step="any" /></div>
+      <div class="form-group form-full"><label for="gAlbum">Add to Album</label><select id="gAlbum" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:6px;font-family:inherit;font-size:0.9rem;"><option value="">— No album —</option></select></div>
     </div>
     <div class="form-actions" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
       <button class="btn btn-primary" id="saveGalleryBtn">Save Photo</button>
@@ -1451,6 +1452,8 @@ document.getElementById('uploadPhotoBtn').addEventListener('click', () => {
   document.getElementById('gDocId').value = '';
   document.getElementById('galleryPreview').innerHTML = '';
   document.getElementById('uploadProgress').style.display = 'none';
+  document.getElementById('gAlbum').value = '';
+  loadAlbumDropdown();
   openModal('galleryModal');
 });
 
@@ -1467,6 +1470,17 @@ window.editGallery = id => {
     document.getElementById('gDocId').value    = id;
     galleryUploadUrl = d.imageUrl || '';
     if (d.imageUrl) document.getElementById('galleryPreview').innerHTML = `<img src="${esc(d.imageUrl)}" style="max-height:110px;border-radius:2px;margin-top:8px;" />`;
+    // Find which album contains this photo URL and pre-select it
+    document.getElementById('gAlbum').value = '';
+    const imgUrl = d.imageUrl || '';
+    db.collection('albums').get().then(snap => {
+      let found = '';
+      snap.forEach(albumDoc => {
+        const photos = Array.isArray(albumDoc.data().photos) ? albumDoc.data().photos : [];
+        if (photos.includes(imgUrl)) found = albumDoc.id;
+      });
+      loadAlbumDropdown(found);
+    }).catch(() => loadAlbumDropdown());
     openModal('galleryModal');
   });
 };
@@ -1523,12 +1537,35 @@ document.getElementById('saveGalleryBtn').addEventListener('click', async () => 
     ...((!isNaN(latVal) && document.getElementById('gLat').value) ? { lat: latVal } : {}),
     ...((!isNaN(lngVal) && document.getElementById('gLng').value) ? { lng: lngVal } : {}),
   };
+  const selectedAlbum = document.getElementById('gAlbum').value;
   try {
     if (id) { await db.collection('gallery').doc(id).update(data); toast('Photo updated!','success'); }
     else { data.createdAt = firebase.firestore.FieldValue.serverTimestamp(); await db.collection('gallery').add(data); toast('Photo saved!','success'); }
+    // Add photo to selected album
+    if (selectedAlbum && imageUrl) {
+      await db.collection('albums').doc(selectedAlbum).update({
+        photos: firebase.firestore.FieldValue.arrayUnion(imageUrl)
+      }).catch(() => {});
+    }
     closeModal('galleryModal'); galleryUploadUrl = '';
   } catch(e) { toast(e.message,'error'); }
 });
+
+/* Populate the "Add to Album" dropdown in the photo modal */
+function loadAlbumDropdown(preselect) {
+  const sel = document.getElementById('gAlbum');
+  if (!sel) return;
+  db.collection('albums').orderBy('createdAt','desc').get().then(snap => {
+    while (sel.options.length > 1) sel.remove(1);
+    snap.forEach(doc => {
+      const opt = document.createElement('option');
+      opt.value = doc.id;
+      opt.textContent = doc.data().name || 'Unnamed Album';
+      sel.appendChild(opt);
+    });
+    if (preselect) sel.value = preselect;
+  }).catch(() => {});
+}
 
 /* ══════════════════════════════════════════════════
    ALBUMS
