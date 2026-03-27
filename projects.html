@@ -446,9 +446,12 @@
         return;
       }
 
+      dynGrid.style.display = '';
+      if (statGrid) statGrid.style.display = 'none';
       dynGrid.innerHTML = '';
       snap.forEach(function (doc) {
         var d = doc.data();
+        var imgSrc = d.coverUrl || d.logoUrl || 'https://placehold.co/800x480/0b1d3a/c9a84c?text=' + encodeURIComponent(d.title || 'Project');
         var features = Array.isArray(d.features) ? d.features : [];
         var featuresHtml = features.length
           ? '<div class="pp-card-highlights"><span class="pp-card-highlights-label">Key Highlights</span><ul class="pp-card-features">' +
@@ -461,7 +464,7 @@
         card.setAttribute('data-tag', esc(d.tag || ''));
         card.innerHTML =
           '<div class="pp-card-img">' +
-            '<img src="' + esc(d.coverUrl || ('https://placehold.co/800x480/0b1d3a/c9a84c?text=' + encodeURIComponent(d.title || 'Project'))) + '" alt="' + esc(d.title || '') + '" loading="lazy" />' +
+            '<img src="' + esc(imgSrc) + '" alt="' + esc(d.title || '') + '" loading="lazy" />' +
             (d.tag ? '<span class="pp-card-badge">' + esc(d.tag) + '</span>' : '') +
           '</div>' +
           '<div class="pp-card-body">' +
@@ -477,9 +480,6 @@
           '</div>';
         dynGrid.appendChild(card);
       });
-
-      dynGrid.style.display = '';
-      if (statGrid) statGrid.style.display = 'none';
 
       // Re-apply active filter to new dynamic cards
       var activeBtn = document.querySelector('.pp-filter-btn.active');
