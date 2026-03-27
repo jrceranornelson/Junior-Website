@@ -1626,6 +1626,19 @@ function loadAlbumDropdown(preselect) {
 ══════════════════════════════════════════════════ */
 let _albPhotos = []; // each entry: { url, caption, place, date, details }
 
+function _albAutoSetCover(url) {
+  /* If no cover is set yet, use this photo as the cover automatically */
+  const coverInput = document.getElementById('albCoverUrl');
+  if (!coverInput || coverInput.value.trim()) return;
+  coverInput.value = url;
+  /* Switch to URL mode and show the preview */
+  document.getElementById('albCoverUrlInput').value = url;
+  const previewUrlImg = document.getElementById('albCoverPreviewUrlImg');
+  previewUrlImg.src = url;
+  document.getElementById('albCoverPreviewUrl').style.display = '';
+  albCoverSetMode('url');
+}
+
 function albRenderPhotos() {
   const list = document.getElementById('albPhotosList');
   if (!list) return;
@@ -1756,6 +1769,7 @@ document.getElementById('albPhotoFile').addEventListener('change', async functio
       await ref.put(file);
       const url = await ref.getDownloadURL();
       _albPhotos.push({ url, caption:'', place:'', date:'', details:'' });
+      _albAutoSetCover(url);
       albRenderPhotos();
       done++;
       status.textContent = done < files.length ? 'Uploading ' + done + ' / ' + files.length + '…' : 'Uploaded ' + done + ' photo' + (done !== 1 ? 's' : '') + ' ✓';
@@ -1770,6 +1784,7 @@ function _albAddPhotoUrl() {
   const url = input.value.trim();
   if (!url) return;
   _albPhotos.push({ url, caption:'', place:'', date:'', details:'' });
+  _albAutoSetCover(url);
   albRenderPhotos();
   input.value = '';
   input.focus();
