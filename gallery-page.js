@@ -274,6 +274,16 @@ function initWorldMap() {
       name: 'Washington D.C., USA',
       coords: [38.9072, -77.0369],
       photos: ['https://placehold.co/220x145/0b1d3a/c9a84c?text=Washington+D.C.']
+    },
+    {
+      name: 'Singapore',
+      coords: [1.3521, 103.8198],
+      photos: ['gallery/photo-ifly-singapore-2017.jpg']
+    },
+    {
+      name: 'iFly Singapore, Singapore',
+      coords: [1.2644, 103.8229],
+      photos: ['gallery/photo-ifly-singapore-2017.jpg']
     }
   ];
 
@@ -306,28 +316,52 @@ function initWorldMap() {
     });
   }
 
+  function _nominatimFetch(query) {
+    return fetch(
+      'https://nominatim.openstreetmap.org/search?q=' +
+      encodeURIComponent(query) + '&format=json&limit=1',
+      { headers: { 'Accept-Language': 'en' } }
+    ).then(r => r.json()).catch(() => []);
+  }
+
   function _drainGeoQueue() {
     if (!_geoQueue.length) { _geoRunning = false; return; }
     _geoRunning = true;
     const { place, key, resolve } = _geoQueue.shift();
-    fetch(
-      'https://nominatim.openstreetmap.org/search?q=' +
-      encodeURIComponent(place) + '&format=json&limit=1',
-      { headers: { 'Accept-Language': 'en' } }
-    )
-      .then(r => r.json())
-      .then(data => {
-        if (data && data[0]) {
-          const coords = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
-          _geoCache[key] = coords;
-          saveGeoCache();
-          resolve(coords);
-        } else {
+
+    /* Try full place name first; if no result, retry with last
+       comma-separated part (e.g. "iFly Singapore, Singapore" → "Singapore") */
+    _nominatimFetch(place).then(data => {
+      if (data && data[0]) {
+        const coords = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+        _geoCache[key] = coords;
+        saveGeoCache();
+        resolve(coords);
+        setTimeout(_drainGeoQueue, 1100);
+      } else {
+        /* Fallback: strip everything before the last comma */
+        const fallback = place.includes(',')
+          ? place.split(',').pop().trim()
+          : null;
+        if (!fallback || fallback.toLowerCase() === key) {
           resolve(null);
+          setTimeout(_drainGeoQueue, 1100);
+          return;
         }
-      })
-      .catch(() => resolve(null))
-      .finally(() => setTimeout(_drainGeoQueue, 1100));
+        setTimeout(() => {
+          _nominatimFetch(fallback).then(data2 => {
+            if (data2 && data2[0]) {
+              const coords = [parseFloat(data2[0].lat), parseFloat(data2[0].lon)];
+              _geoCache[key] = coords;
+              saveGeoCache();
+              resolve(coords);
+            } else {
+              resolve(null);
+            }
+          }).finally(() => setTimeout(_drainGeoQueue, 1100));
+        }, 1100);
+      }
+    });
   }
 
   /* Listen to gallery collection — add a dot for every new place.
