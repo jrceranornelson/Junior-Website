@@ -1991,32 +1991,35 @@ function getVideoThumb(url) {
 function loadVideos() {
   const list = document.getElementById('videosList');
   const render = docs => {
-    // Always clear first to prevent stale/ghost items after deletion
     list.innerHTML = '';
     if (!docs.length) { list.innerHTML = '<div class="empty-state">No videos yet — click "+ Add Video".</div>'; return; }
+    const ul = document.createElement('div'); ul.className = 'items-list';
     docs.forEach(doc => {
-      const docId = doc.id; // capture doc.id immediately
+      const docId = doc.id;
       const d = doc.data();
-      const t = d.thumbnailUrl || getVideoThumb(d.videoUrl || '');
-      const item = document.createElement('div'); item.className = 'gallery-admin-item';
-      item.innerHTML = `
-        <div style="position:relative;background:#0b1d3a;">
-          ${t ? `<img src="${esc(t)}" style="width:100%;height:130px;object-fit:cover;" onerror="this.style.display='none'" />` : '<div style="width:100%;height:130px;display:flex;align-items:center;justify-content:center;"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>'}
-          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;"><svg width="32" height="32" viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="rgba(0,0,0,0.45)"/><polygon points="10 8 16 12 10 16 10 8" fill="white"/></svg></div>
+      const thumb = d.thumbnailUrl || getVideoThumb(d.videoUrl || '');
+      const typeLabel = { youtube:'YouTube', vimeo:'Vimeo', tiktok:'TikTok', direct:'Direct Upload', other:'Other' }[d.type] || (d.type || '');
+      const card = document.createElement('div'); card.className = 'item-card';
+      card.innerHTML = `
+        <div class="item-card-img-ph" style="position:relative;background:#0b1d3a;overflow:hidden;">
+          ${thumb ? `<img src="${esc(thumb)}" style="width:78px;height:58px;object-fit:cover;display:block;" onerror="this.style.display='none'" />` : '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>'}
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;">
+            <svg width="22" height="22" viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="rgba(0,0,0,0.5)"/><polygon points="10 8 16 12 10 16 10 8" fill="white"/></svg>
+          </div>
         </div>
-        <div class="gallery-admin-item-body">
-          <div class="gallery-admin-item-place">${esc(d.title||'—')}</div>
-          <div class="gallery-admin-item-date">${esc(d.place||'')}${d.date?' · '+esc(d.date):''}</div>
+        <div class="item-card-body">
+          <div class="item-card-title">${esc(d.title||'Untitled')}${typeLabel?`<span class="item-badge badge-draft">${esc(typeLabel)}</span>`:''}</div>
+          <div class="item-card-meta">${esc(d.place||'')}${d.date?' · '+esc(d.date):''}${d.description?' · '+esc(d.description.slice(0,60))+'…':''}</div>
         </div>
-        <div class="gallery-admin-item-actions">
-          <button class="btn btn-ghost btn-sm" data-vid-edit="${esc(docId)}">Edit</button>
-          <button class="btn btn-danger btn-sm" data-vid-del="${esc(docId)}">Delete</button>
+        <div class="item-card-actions">
+          <button class="btn btn-ghost btn-sm">Edit</button>
+          <button class="btn btn-danger btn-sm">Delete</button>
         </div>`;
-      // Use data attributes + event delegation to avoid stale closures
-      item.querySelector('[data-vid-edit]').addEventListener('click', () => editVideo(docId));
-      item.querySelector('[data-vid-del]').addEventListener('click', () => deleteVideo(docId));
-      list.appendChild(item);
+      card.querySelector('.btn-ghost').addEventListener('click', () => editVideo(docId));
+      card.querySelector('.btn-danger').addEventListener('click', () => deleteVideo(docId));
+      ul.appendChild(card);
     });
+    list.appendChild(ul);
   };
   db.collection('gallery_videos').orderBy('createdAt','desc').onSnapshot(
     s => render(s.docs),
