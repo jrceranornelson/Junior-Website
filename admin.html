@@ -1745,11 +1745,12 @@ function loadAlbums() {
       const d = doc.data();
       const photos = Array.isArray(d.photos) ? d.photos : [];
       const card = document.createElement('div'); card.className = 'item-card';
+      const thumb = d.coverUrl || (photos[0] || '');
       card.innerHTML = `
-        ${d.coverUrl ? `<img class="item-card-img" src="${esc(d.coverUrl)}" alt="${esc(d.name||'')}" onerror="this.style.display='none'" />` : '<div class="item-card-img-ph"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/></svg></div>'}
+        ${thumb ? `<img class="item-card-img" src="${esc(thumb)}" alt="${esc(d.name||'')}" onerror="this.style.display='none'" />` : '<div class="item-card-img-ph"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/></svg></div>'}
         <div class="item-card-body">
           <div class="item-card-title">${esc(d.name||'Untitled')}<span class="item-badge badge-draft">${esc(d.category||'')}</span></div>
-          <div class="item-card-meta">${photos.length} photo${photos.length!==1?'s':''}</div>
+          <div class="item-card-meta">${photos.length} photo${photos.length!==1?'s':''} ${d.location ? '· ' + esc(d.location) : ''}</div>
         </div>
         <div class="item-card-actions">
           <button class="btn btn-ghost btn-sm" onclick="editAlbum('${doc.id}')">Edit</button>
