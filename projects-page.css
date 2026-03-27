@@ -148,83 +148,90 @@
 }
 .pp-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 32px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
 }
 
-/* ─── PROJECT CARD (extended) ─── */
+/* ─── PROJECT CARD ─── */
 .pp-card {
-  background: var(--white);
+  background: #fff;
   border: 1px solid var(--border);
+  border-radius: 12px;
   overflow: hidden;
   transition: transform var(--transition), box-shadow var(--transition);
   display: flex;
   flex-direction: column;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
 .pp-card:hover {
   transform: translateY(-6px);
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.13);
   z-index: 2;
 }
 .pp-card-img {
-  height: 240px;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
   overflow: hidden;
   flex-shrink: 0;
-  position: relative;
+  border-radius: 12px 12px 0 0;
 }
 .pp-card-img img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
   transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 .pp-card:hover .pp-card-img img { transform: scale(1.05); }
 
 .pp-card-badge {
   position: absolute;
-  top: 16px;
-  left: 16px;
-  background: rgba(11,29,58,0.85);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(201,168,76,0.3);
-  padding: 6px 14px;
+  top: 12px;
+  left: 12px;
+  background: #c9a84c;
+  color: #1a2a4a;
+  padding: 4px 12px;
   font-family: 'Montserrat', sans-serif;
   font-size: 0.6rem;
   font-weight: 700;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--gold);
-  border-radius: 2px;
+  border-radius: 4px;
 }
 
 .pp-card-body {
-  padding: 32px;
+  padding: 20px 24px 24px;
   display: flex;
   flex-direction: column;
   flex: 1;
 }
 .pp-card-logo {
-  height: 40px;
+  height: 36px;
   width: auto;
-  max-width: 130px;
+  max-width: 120px;
   object-fit: contain;
   display: block;
-  margin-bottom: 20px;
+  margin-bottom: 14px;
 }
 .pp-card-title {
   font-family: 'Montserrat', sans-serif;
-  font-size: 1.35rem;
-  font-weight: 800;
-  color: var(--black);
-  margin-bottom: 14px;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1a2a4a;
+  margin-bottom: 10px;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
 }
 .pp-card-desc {
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   color: var(--muted);
-  line-height: 1.8;
-  margin-bottom: 24px;
+  line-height: 1.7;
+  margin-bottom: 20px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 /* ─── KEY HIGHLIGHTS ─── */
@@ -322,13 +329,18 @@
 }
 
 /* ─── RESPONSIVE ─── */
-@media (max-width: 900px) {
-  .pp-grid { grid-template-columns: 1fr; gap: 24px; }
+@media (max-width: 1024px) {
+  .pp-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
   .pp-hero { padding: 130px 0 80px; }
   .pp-section { padding: 72px 0; }
-  .pp-card-img { height: 200px; }
   .pp-hero-count { gap: 20px; }
   .pp-hero-sub { font-size: 1rem; }
+}
+
+@media (max-width: 600px) {
+  .pp-grid { grid-template-columns: 1fr; gap: 16px; }
+  .pp-hero { padding: 110px 0 64px; }
+  .pp-section { padding: 56px 0; }
 }
 
 /* ─── Tablet/mobile nav fix:
@@ -343,25 +355,8 @@
   .pp-hero   { padding: 110px 0 64px; }
   .pp-section { padding: 64px 0; }
   .pp-hero-sub { font-size: 0.95rem; }
-  .pp-card-title { font-size: 1.2rem; }
-  .pp-card-body  { padding: 24px; }
-}
-
-@media (max-width: 600px) {
-  .pp-hero { padding: 100px 0 56px; }
-  .pp-hero-count { flex-wrap: wrap; justify-content: center; gap: 16px; }
-  .pp-hero-divider { display: none; }
-  .pp-hero-sub { font-size: 0.9rem; max-width: 90%; }
-  .pp-card-body { padding: 20px; }
-  .pp-card-title { font-size: 1.1rem; }
-  .pp-card-desc  { font-size: 0.88rem; margin-bottom: 18px; }
-  .pp-card-features li { font-size: 0.84rem; }
-  .pp-card-highlights { margin-bottom: 20px; }
-  .pp-filters { position: static; padding: 14px 0; }
-  .pp-filter-list { gap: 6px; }
-  .pp-filter-btn { padding: 7px 14px; font-size: 0.62rem; min-height: 36px; }
-  .pp-section { padding: 52px 0; }
-  .pp-card-img { height: 180px; }
+  .pp-card-title { font-size: 1rem; }
+  .pp-card-body  { padding: 16px 18px 20px; }
 }
 
 @media (max-width: 480px) {
@@ -369,17 +364,22 @@
   .pp-hero-title { font-size: clamp(2rem, 10vw, 3rem); }
   .pp-hero-sub { font-size: 0.88rem; }
   .pp-hero-stat-num { font-size: 1.6rem; }
-  .pp-card-body  { padding: 18px; }
-  .pp-card-title { font-size: 1rem; }
-  .pp-card-footer { padding-top: 18px; }
+  .pp-hero-count { flex-wrap: wrap; justify-content: center; gap: 16px; }
+  .pp-hero-divider { display: none; }
+  .pp-hero-sub { max-width: 90%; }
+  .pp-card-body  { padding: 14px 16px 18px; }
+  .pp-card-title { font-size: 0.95rem; }
+  .pp-card-footer { padding-top: 14px; }
   .pp-section { padding: 44px 0; }
-  .pp-filter-btn { padding: 6px 12px; font-size: 0.6rem; }
-  .pp-card-img { height: 160px; }
+  .pp-filters { position: static; padding: 14px 0; }
+  .pp-filter-list { gap: 6px; }
+  .pp-filter-btn { padding: 6px 12px; font-size: 0.6rem; min-height: 36px; }
+
 }
 
 @media (max-width: 360px) {
   .pp-hero { padding: 86px 0 40px; }
-  .pp-card-body  { padding: 14px; }
-  .pp-card-title { font-size: 0.95rem; }
+  .pp-card-body  { padding: 12px 14px 16px; }
+  .pp-card-title { font-size: 0.9rem; }
   .pp-section { padding: 36px 0; }
 }

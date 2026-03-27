@@ -757,14 +757,13 @@
         card.innerHTML =
           '<div class="project-card-img">' +
             '<img src="' + esc(imgSrc) + '" alt="' + esc(d.title || '') + '" loading="lazy" />' +
+            (d.tag ? '<span class="project-tag">' + esc(d.tag) + '</span>' : '') +
           '</div>' +
           '<div class="project-card-body">' +
-            (d.logoUrl ? '<img src="' + esc(d.logoUrl) + '" alt="' + esc(d.title || '') + ' logo" class="project-logo" />' : '') +
-            (d.tag ? '<span class="project-tag">' + esc(d.tag) + '</span>' : '') +
             '<h3 class="project-card-title">' + esc(d.title || 'Untitled') + '</h3>' +
             '<p class="project-card-desc">' + esc(d.description || '') + '</p>' +
             ((d.url || d.link)
-              ? '<a href="' + esc(d.link || d.url) + '" target="_blank" rel="noopener" class="project-card-link">Visit <span class="arrow">→</span></a>'
+              ? '<a href="' + esc(d.url || d.link) + '" target="_blank" rel="noopener" class="project-card-link">Visit <span class="arrow">→</span></a>'
               : '') +
           '</div>';
         dynGrid.appendChild(card);

@@ -445,13 +445,16 @@
             var imgSrc = d.logoUrl || d.coverUrl || 'https://placehold.co/600x380/0b1d3a/c9a84c?text=' + encodeURIComponent(d.title || 'Project');
             var card = document.createElement('div');
             card.className = 'pp-card';
-            card.setAttribute('data-category', d.category || 'all');
+            card.setAttribute('data-tag', d.tag || '');
             card.innerHTML =
-              '<div class="pp-card-img"><img src="' + imgSrc + '" alt="' + (d.title || '') + '" loading="lazy" /></div>' +
+              '<div class="pp-card-img">' +
+                '<img src="' + imgSrc + '" alt="' + (d.title || '') + '" loading="lazy" />' +
+                (d.tag ? '<span class="pp-card-badge">' + d.tag + '</span>' : '') +
+              '</div>' +
               '<div class="pp-card-body">' +
-              '<h3 class="pp-card-title">' + (d.title || '') + '</h3>' +
-              '<p class="pp-card-desc">' + (d.description || '') + '</p>' +
-              (d.url ? '<a href="' + d.url + '" target="_blank" class="pp-card-link">Visit →</a>' : '') +
+                '<h3 class="pp-card-title">' + (d.title || '') + '</h3>' +
+                '<p class="pp-card-desc">' + (d.description || '') + '</p>' +
+                (d.url ? '<div class="pp-card-footer"><a href="' + d.url + '" target="_blank" rel="noopener" class="pp-card-link">Visit →</a></div>' : '') +
               '</div>';
             dynGrid.appendChild(card);
           });
