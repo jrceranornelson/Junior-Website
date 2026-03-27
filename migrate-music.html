@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Migrate Music → Firestore</title>
+  <style>
+    body { font-family: monospace; background: #0b1d3a; color: #c9a84c; padding: 40px; max-width: 700px; margin: 0 auto; }
+    h1 { color: #fff; margin-bottom: 8px; }
+    p  { color: rgba(255,255,255,0.6); margin-bottom: 24px; }
+    button { background: #c9a84c; color: #0b1d3a; border: none; padding: 14px 32px; font-size: 1rem; font-weight: 700; border-radius: 8px; cursor: pointer; }
+    button:disabled { opacity: 0.4; cursor: not-allowed; }
+    #log { margin-top: 32px; line-height: 2; font-size: 0.85rem; }
+    .ok   { color: #4caf50; }
+    .skip { color: #aaa; }
+    .err  { color: #f44336; }
+  </style>
+</head>
+<body>
+  <h1>Music Migration</h1>
+  <p>Adds Ceranor's releases to Firestore. Safe to run multiple times — skips any that already exist by title.</p>
+  <button id="runBtn" onclick="runMigration()">Run Migration</button>
+  <div id="log"></div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script>
+  var RELEASES = [
+    {
+      title:          'Bondye Fè Tout Bagay',
+      type:           'Single',
+      year:           2024,
+      spotifyLink:    'https://open.spotify.com/artist/6QbETmrW5S1SlH6kyNmud2',
+      appleMusicLink: 'https://music.apple.com/us/artist/ceranor/1827116452',
+      coverImageUrl:  '',
+      createdAt:      new Date('2024-06-01T00:00:00Z')
+    },
+    {
+      title:          'Pou Ayiti',
+      type:           'Single',
+      year:           2024,
+      spotifyLink:    'https://open.spotify.com/artist/6QbETmrW5S1SlH6kyNmud2',
+      appleMusicLink: 'https://music.apple.com/us/artist/ceranor/1827116452',
+      coverImageUrl:  '',
+      createdAt:      new Date('2024-03-01T00:00:00Z')
+    }
+  ];
+
+  function log(msg, cls) {
+    var div  = document.getElementById('log');
+    var line = document.createElement('div');
+    line.className   = cls || '';
+    line.textContent = msg;
+    div.appendChild(line);
+  }
+
+  async function runMigration() {
+    var btn = document.getElementById('runBtn');
+    btn.disabled = true;
+    log('Starting migration…');
+
+    var added = 0, skipped = 0, errors = 0;
+
+    for (var i = 0; i < RELEASES.length; i++) {
+      var r = RELEASES[i];
+      try {
+        var existing = await db.collection('music')
+          .where('title', '==', r.title)
+          .limit(1)
+          .get();
+
+        if (!existing.empty) {
+          log('  SKIP  ' + r.title, 'skip');
+          skipped++;
+        } else {
+          await db.collection('music').add({
+            title:          r.title,
+            type:           r.type,
+            year:           r.year,
+            spotifyLink:    r.spotifyLink,
+            appleMusicLink: r.appleMusicLink,
+            coverImageUrl:  r.coverImageUrl,
+            createdAt:      firebase.firestore.Timestamp.fromDate(r.createdAt)
+          });
+          log('  ADDED ' + r.title, 'ok');
+          added++;
+        }
+      } catch (err) {
+        log('  ERROR ' + r.title + ' — ' + err.message, 'err');
+        errors++;
+      }
+    }
+
+    log('');
+    log('Done — added: ' + added + '  skipped: ' + skipped + '  errors: ' + errors,
+        errors ? 'err' : 'ok');
+    btn.textContent = 'Migration complete';
+  }
+  </script>
+</body>
+</html>

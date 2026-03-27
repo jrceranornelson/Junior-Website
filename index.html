@@ -405,7 +405,7 @@
             <div class="subscribe-field">
               <label for="sub-phone-number">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                Phone Number <span style="font-weight:400;font-size:0.85em;">(optional)</span>
+                Phone Number
               </label>
               <div style="display:flex;gap:8px;align-items:stretch;">
                 <select id="sub-phone-area" name="phone-area" style="flex:0 0 auto;padding:0 8px;border:1px solid currentColor;border-radius:inherit;background:transparent;font-family:inherit;font-size:0.88em;cursor:pointer;min-width:90px;">
@@ -422,7 +422,7 @@
                   <option value="+91">+91 (India)</option>
                   <option value="+52">+52 (Mexico)</option>
                 </select>
-                <input type="tel" id="sub-phone-number" name="phone" placeholder="000 000 0000" autocomplete="tel" style="flex:1;" />
+                <input type="tel" id="sub-phone-number" name="phone" placeholder="000 000 0000" autocomplete="tel" style="flex:1;" required />
               </div>
             </div>
           </div>
@@ -529,7 +529,6 @@
         </div>
         <div class="footer-legal">
           <a href="/privacy-policy">Privacy Policy</a>
-          <a href="#">Terms</a>
         </div>
       </div>
       <div class="footer-copy">
@@ -780,7 +779,7 @@
       var areaCode = (document.getElementById('sub-phone-area')   || {}).value || '+1';
       var phoneNum = (document.getElementById('sub-phone-number') || {}).value || '';
       var phone = phoneNum.trim() ? (areaCode + ' ' + phoneNum.trim()) : '';
-      if (!name || !email) return;
+      if (!name || !email || !phoneNum.trim()) return;
       btn.disabled = true;
       var btnText = btn.querySelector('.subscribe-btn-text');
       if (btnText) btnText.textContent = 'Subscribing…';
