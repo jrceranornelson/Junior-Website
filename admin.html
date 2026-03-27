@@ -2046,6 +2046,11 @@ window.editVideo = id => {
     document.getElementById('vDescription').value  = d.description  || '';
     document.getElementById('vThumbnailUrl').value = d.thumbnailUrl || '';
     document.getElementById('vDocId').value        = id;
+    /* Reset upload UI */
+    document.getElementById('videoUploadProgress').style.display = 'none';
+    document.getElementById('videoUploadPreview').textContent = d.videoUrl ? '(existing video — upload a new file to replace)' : '';
+    const thumb = d.thumbnailUrl || getVideoThumb(d.videoUrl || '');
+    document.getElementById('vThumbPreview').innerHTML = thumb ? '<img src="' + esc(thumb) + '" style="max-height:80px;border-radius:4px;margin-top:6px;" />' : '';
     openModal('videoModal');
   });
 };
@@ -2057,12 +2062,92 @@ window.deleteVideo = id => {
     .catch(e => toast(e.message,'error'));
 };
 
+/* ── Video file upload ── */
+(function() {
+  const zone      = document.getElementById('videoUploadZone');
+  const fileInput = document.getElementById('videoFileInput');
+  const progress  = document.getElementById('videoUploadProgress');
+  const bar       = document.getElementById('videoUploadProgressBar');
+  const preview   = document.getElementById('videoUploadPreview');
+
+  /* Click zone → open file picker */
+  zone.addEventListener('click', () => fileInput.click());
+
+  /* Drag & drop */
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.style.borderColor = 'var(--gold)'; });
+  zone.addEventListener('dragleave', () => { zone.style.borderColor = ''; });
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.style.borderColor = '';
+    const file = e.dataTransfer.files[0];
+    if (file) handleVideoFile(file);
+  });
+
+  /* File selected */
+  fileInput.addEventListener('change', function() {
+    if (this.files[0]) handleVideoFile(this.files[0]);
+  });
+
+  async function handleVideoFile(file) {
+    if (!file.type.startsWith('video/')) { toast('Please select a video file.', 'error'); return; }
+    progress.style.display = 'block'; bar.style.width = '0%';
+    preview.textContent = 'Uploading ' + file.name + '…';
+    const ref = storage.ref('videos/' + Date.now() + '_' + file.name.replace(/[^a-z0-9._-]/gi, '_'));
+    const task = ref.put(file);
+    task.on('state_changed',
+      snap => { bar.style.width = Math.round(snap.bytesTransferred / snap.totalBytes * 100) + '%'; },
+      err  => { toast('Upload failed: ' + err.message, 'error'); progress.style.display = 'none'; preview.textContent = ''; },
+      async () => {
+        const url = await ref.getDownloadURL();
+        document.getElementById('vVideoUrl').value = url;
+        document.getElementById('vType').value = 'direct';
+        progress.style.display = 'none';
+        preview.innerHTML = '<span style="color:var(--green,#38a169);">✓ Uploaded: </span>' + esc(file.name);
+        toast('Video uploaded!', 'success');
+      }
+    );
+  }
+
+  /* Thumbnail upload */
+  const thumbZone  = document.getElementById('vThumbUploadZone');
+  const thumbInput = document.getElementById('vThumbFileInput');
+  const thumbPrev  = document.getElementById('vThumbPreview');
+
+  thumbZone.addEventListener('click', () => thumbInput.click());
+  thumbInput.addEventListener('change', async function() {
+    const file = this.files[0];
+    if (!file) return;
+    thumbZone.querySelector('.upload-zone-label').textContent = 'Uploading…';
+    try {
+      const ref = storage.ref('videos/thumbs/' + Date.now() + '_' + file.name.replace(/[^a-z0-9._-]/gi, '_'));
+      await ref.put(file);
+      const url = await ref.getDownloadURL();
+      document.getElementById('vThumbnailUrl').value = url;
+      thumbPrev.innerHTML = '<img src="' + esc(url) + '" style="max-height:80px;border-radius:4px;margin-top:6px;" />';
+      thumbZone.querySelector('.upload-zone-label').textContent = 'Thumbnail uploaded ✓';
+    } catch(e) {
+      toast('Thumbnail upload failed: ' + e.message, 'error');
+      thumbZone.querySelector('.upload-zone-label').textContent = 'Click to upload thumbnail image';
+    }
+  });
+})();
+
+/* Reset upload state when opening New Video modal */
+document.getElementById('addVideoBtn').addEventListener('click', () => {
+  document.getElementById('videoUploadProgress').style.display = 'none';
+  document.getElementById('videoUploadProgressBar').style.width = '0%';
+  document.getElementById('videoUploadPreview').textContent = '';
+  document.getElementById('vThumbPreview').innerHTML = '';
+  const lbl = document.querySelector('#vThumbUploadZone .upload-zone-label');
+  if (lbl) lbl.textContent = 'Click to upload thumbnail image';
+}, true); /* useCapture=true so this runs before the existing addVideoBtn listener */
+
 document.getElementById('saveVideoBtn').addEventListener('click', async () => {
   const id       = document.getElementById('vDocId').value;
   const title    = document.getElementById('vTitle').value.trim();
   const videoUrl = document.getElementById('vVideoUrl').value.trim();
   if (!title)    { toast('Please enter a title.','error'); return; }
-  if (!videoUrl) { toast('Please enter a video URL.','error'); return; }
+  if (!videoUrl) { toast('Please add a video — upload a file or paste a URL.','error'); return; }
   const data = {
     title:        title,
     type:         document.getElementById('vType').value,
