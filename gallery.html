@@ -805,61 +805,59 @@
     var statGrid  = document.getElementById('albumsStatGrid');
 
     db.collection('albums').onSnapshot(function(snap) {
-      if (snap.empty) {
-        if (dynGrid)  dynGrid.style.display  = 'none';
-        if (statGrid) statGrid.style.display = '';
-        return;
-      }
-      if (statGrid) statGrid.style.display = 'none';
-      if (dynGrid)  dynGrid.style.display  = '';
-      dynGrid.innerHTML  = '';
-      dynPanels.innerHTML = '';
-
+      if (snap.empty) return;
+      var statGrid = document.getElementById('albumsStatGrid');
+      if (!statGrid) return;
+      var existingNames = Array.from(statGrid.querySelectorAll('.album-name')).map(function(el){ return el.textContent.trim().toLowerCase(); });
       snap.forEach(function(doc) {
-        var d    = doc.data();
-        var id   = 'dyn-' + doc.id;
+        var d = doc.data();
+        if (!d.name) return;
+        if (existingNames.indexOf(d.name.trim().toLowerCase()) !== -1) return;
+        var id = 'dyn-' + doc.id;
         var photos = Array.isArray(d.photos) ? d.photos : [];
-        var cover  = d.coverUrl || (photos[0] || '');
-
-        // Album card
+        var cover = d.coverUrl || (photos[0] || '');
         var card = document.createElement('article');
         card.className = 'album-card';
         card.setAttribute('data-album-id', id);
         card.innerHTML =
           '<div class="album-stack-wrap">' +
-            (cover ? '<img src="' + escAttr(cover) + '" class="stack-img stack-1" alt="" aria-hidden="true" onerror="this.style.display=\'none\'" />' : '<div class="album-placeholder-img placeholder-1"></div>') +
+            (cover ? '<img src="' + cover + '" class="stack-img stack-1" alt="" aria-hidden="true" onerror="this.style.display='none'" />' : '<div class="album-placeholder-img placeholder-1"></div>') +
             '<span class="album-count-badge">' + photos.length + ' photo' + (photos.length !== 1 ? 's' : '') + '</span>' +
           '</div>' +
           '<div class="album-info">' +
-            '<h3 class="album-name">' + escAttr(d.name || 'Album') + '</h3>' +
+            '<h3 class="album-name">' + (d.name||'Album') + '</h3>' +
             '<div class="album-meta">' +
-              (d.category ? '<span class="album-meta-item"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>' + escAttr(d.category) + '</span>' : '') +
+              (d.category ? '<span class="album-meta-item">' + d.category + '</span>' : '') +
+              (d.location ? '<span class="album-meta-item">' + d.location + '</span>' : '') +
             '</div>' +
             '<button class="album-open-btn" data-album-id="' + id + '" aria-expanded="false">View Album <svg class="album-btn-arrow" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>' +
           '</div>';
-        dynGrid.appendChild(card);
+        statGrid.appendChild(card);
 
-        // Expanded panel
-        var panel = document.createElement('div');
-        panel.className  = 'album-expanded';
-        panel.id         = 'album-panel-' + id;
-        panel.setAttribute('aria-hidden','true');
-        var photosHtml = photos.length
-          ? photos.map(function(url){
-              return '<div class="gallery-item" data-caption="' + escAttr(d.name||'') + '" data-place="' + escAttr(d.category||'') + '" data-date="" data-details="' + escAttr(d.description||'') + '">' +
-                '<img src="' + escAttr(url) + '" alt="' + escAttr(d.name||'') + '" loading="lazy" />' +
-                '<button class="gallery-info-btn" aria-label="Photo details">i</button>' +
-              '</div>';
-            }).join('')
-          : '<p style="text-align:center;padding:40px;color:#888;">No photos in this album yet.</p>';
-        panel.innerHTML =
-          '<div class="album-expanded-header">' +
-            '<div><p class="album-expanded-label">Album</p><h3 class="album-expanded-title">' + escAttr(d.name||'Album') + '</h3></div>' +
-            '<button class="album-close-btn" data-album-id="' + id + '" aria-label="Close album"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>' +
-          '</div>' +
-          '<div class="gp-grid">' + photosHtml + '</div>';
-        dynPanels.appendChild(panel);
+        var dynPanels = document.getElementById('albumsDynPanels');
+        if (dynPanels) {
+          var photosHtml = photos.length
+            ? photos.map(function(url){ return '<div class="gallery-item"><img src="' + url + '" alt="' + (d.name||'') + '" loading="lazy" /><button class="gallery-info-btn" aria-label="Photo details">i</button></div>'; }).join('')
+            : '<p style="text-align:center;padding:40px;color:#888;">No photos yet.</p>';
+          var panel = document.createElement('div');
+          panel.className = 'album-expanded';
+          panel.id = 'album-panel-' + id;
+          panel.setAttribute('aria-hidden','true');
+          panel.innerHTML =
+            '<div class="album-expanded-header">' +
+              '<div><p class="album-expanded-label">Album</p><h3 class="album-expanded-title">' + (d.name||'Album') + '</h3></div>' +
+              '<button class="album-close-btn" data-album-id="' + id + '" aria-label="Close album"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>' +
+            '</div>' +
+            '<div class="gp-grid">' + photosHtml + '</div>';
+          dynPanels.appendChild(panel);
+        }
+
+        card.querySelector('.album-open-btn').addEventListener('click', function() {
+          var panel = document.getElementById('album-panel-' + id);
+          if (panel) { panel.style.display = panel.style.display === 'block' ? 'none' : 'block'; }
+        });
       });
+    });
 
       // Re-attach open/close event handlers for dynamic albums
       dynGrid.querySelectorAll('.album-open-btn').forEach(function(btn) {
