@@ -13,28 +13,31 @@ function initHeroAnimation() {
   const heroTagline = document.getElementById('heroTagline');
   const heroCta    = document.getElementById('heroCta');
 
+  if (!heroFirst && !heroLast && !heroPhoto && !heroTagline && !heroCta) return;
+
   // Slight delay so the page feels intentional
   setTimeout(() => {
-    heroFirst.classList.add('loaded');
-    heroLast.classList.add('loaded');
+    if (heroFirst) heroFirst.classList.add('loaded');
+    if (heroLast)  heroLast.classList.add('loaded');
   }, 180);
 
   setTimeout(() => {
-    heroPhoto.classList.add('loaded');
+    if (heroPhoto) heroPhoto.classList.add('loaded');
   }, 340);
 
   setTimeout(() => {
-    heroTagline.classList.add('loaded');
+    if (heroTagline) heroTagline.classList.add('loaded');
   }, 700);
 
   setTimeout(() => {
-    heroCta.classList.add('loaded');
+    if (heroCta) heroCta.classList.add('loaded');
   }, 900);
 }
 
 /* ─── 2. STICKY NAVBAR ─────────────────────────────────────── */
 function initNavbar() {
   const navbar = document.getElementById('navbar');
+  if (!navbar) return;
 
   function onScroll() {
     if (window.scrollY > 60) {
@@ -52,6 +55,7 @@ function initNavbar() {
 function initMobileNav() {
   const toggle   = document.getElementById('navToggle');
   const navLinks = document.getElementById('navLinks');
+  if (!toggle || !navLinks) return;
 
   toggle.addEventListener('click', () => {
     navLinks.classList.toggle('open');
@@ -151,7 +155,8 @@ function initSmoothScroll() {
       const target = document.querySelector(anchor.getAttribute('href'));
       if (!target) return;
       e.preventDefault();
-      const navHeight = document.getElementById('navbar').offsetHeight;
+      const navEl = document.getElementById('navbar');
+      const navHeight = navEl ? navEl.offsetHeight : 0;
       const targetY   = target.getBoundingClientRect().top + window.scrollY - navHeight;
       window.scrollTo({ top: targetY, behavior: 'smooth' });
     });
