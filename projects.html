@@ -425,3 +425,38 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+  <!-- Append Firestore projects to static grid -->
+  <script>
+  window.addEventListener('load', function() {
+    var tries = 0;
+    function waitForDb() {
+      if (typeof firebase !== 'undefined' && firebase.apps.length) {
+        var db = firebase.firestore();
+        var grid = document.getElementById('ppGridStatic');
+        if (!grid) return;
+        var staticTitles = Array.from(grid.querySelectorAll('.pp-card-title')).map(function(el){ return el.textContent.trim(); });
+        db.collection('projects').get().then(function(snap) {
+          snap.forEach(function(doc) {
+            var d = doc.data();
+            if (staticTitles.indexOf((d.title||'').trim()) !== -1) return;
+            function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+            var imgSrc = d.coverUrl || d.logoUrl || 'https://placehold.co/800x480/0b1d3a/c9a84c?text='+encodeURIComponent(d.title||'Project');
+            var card = document.createElement('article');
+            card.className = 'pp-card';
+            card.setAttribute('data-tag', d.tag || d.category || '');
+            card.innerHTML =
+              '<div class="pp-card-img"><img src="'+esc(imgSrc)+'" alt="'+esc(d.title||'')+'" loading="lazy"/><span class="pp-card-badge">'+esc(d.tag||d.category||'')+'</span></div>' +
+              '<div class="pp-card-body">' +
+                (d.logoUrl?'<img src="'+esc(d.logoUrl)+'" alt="'+esc(d.title||'')+' logo" class="pp-card-logo"/>':'') +
+                '<h2 class="pp-card-title">'+esc(d.title||'')+'</h2>' +
+                '<p class="pp-card-desc">'+esc(d.description||'')+'</p>' +
+                '<div class="pp-card-footer">'+(d.url?'<a href="'+esc(d.url)+'" target="_blank" rel="noopener" class="pp-card-link">Visit '+esc(d.url.replace(/https?:\/\//,''))+' <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>':'')+'</div>' +
+              '</div>';
+            grid.appendChild(card);
+          });
+        });
+      } else { tries++; if(tries<20) setTimeout(waitForDb,300); }
+    }
+    waitForDb();
+  });
+  </script>
