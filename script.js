@@ -13,7 +13,8 @@ function initHeroAnimation() {
   const heroTagline = document.getElementById('heroTagline');
   const heroCta    = document.getElementById('heroCta');
 
-  if (!heroFirst && !heroLast && !heroPhoto && !heroTagline && !heroCta) return;
+  if (!heroFirst || !heroLast || !heroPhoto || !heroTagline || !heroCta) return;
+  // Individual null guards already in setTimeout blocks below
 
   // Slight delay so the page feels intentional
   setTimeout(() => {
