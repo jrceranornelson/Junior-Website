@@ -800,97 +800,105 @@
   (function() {
     function escAttr(s) { return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-    var dynGrid   = document.getElementById('albumsDynGrid');
-    var dynPanels = document.getElementById('albumsDynPanels');
     var statGrid  = document.getElementById('albumsStatGrid');
+    var dynPanels = document.getElementById('albumsDynPanels');
 
     db.collection('albums').onSnapshot(function(snap) {
+      if (!statGrid || !dynPanels) return;
+
+      /* Remove previously injected dynamic cards/panels before re-rendering */
+      statGrid.querySelectorAll('.album-card[data-dyn]').forEach(function(el){ el.remove(); });
+      dynPanels.innerHTML = '';
+
       if (snap.empty) return;
-      var statGrid = document.getElementById('albumsStatGrid');
-      if (!statGrid) return;
-      var existingNames = Array.from(statGrid.querySelectorAll('.album-name')).map(function(el){ return el.textContent.trim().toLowerCase(); });
+
+      /* Collect names already in static grid to avoid duplicates */
+      var existingNames = Array.from(statGrid.querySelectorAll('.album-name'))
+        .map(function(el){ return el.textContent.trim().toLowerCase(); });
+
       snap.forEach(function(doc) {
         var d = doc.data();
         if (!d.name) return;
         if (existingNames.indexOf(d.name.trim().toLowerCase()) !== -1) return;
-        var id = 'dyn-' + doc.id;
+
+        var id     = 'dyn-' + doc.id;
         var photos = Array.isArray(d.photos) ? d.photos : [];
-        var cover = d.coverUrl || (photos[0] || '');
+        var cover  = d.coverUrl || (photos[0] || '');
+
+        /* ── Card ── */
         var card = document.createElement('article');
         card.className = 'album-card';
         card.setAttribute('data-album-id', id);
+        card.setAttribute('data-dyn', '1');
         card.innerHTML =
           '<div class="album-stack-wrap">' +
-            (cover ? '<img src="' + cover + '" class="stack-img stack-1" alt="" aria-hidden="true" onerror="this.style.display='none'" />' : '<div class="album-placeholder-img placeholder-1"></div>') +
+            (cover
+              ? '<img src="' + escAttr(cover) + '" class="stack-img stack-1" alt="" aria-hidden="true" onerror="this.style.display=\'none\'" />'
+              : '<div class="album-placeholder-img placeholder-1"></div>') +
             '<span class="album-count-badge">' + photos.length + ' photo' + (photos.length !== 1 ? 's' : '') + '</span>' +
           '</div>' +
           '<div class="album-info">' +
-            '<h3 class="album-name">' + (d.name||'Album') + '</h3>' +
+            '<h3 class="album-name">' + escAttr(d.name || 'Album') + '</h3>' +
             '<div class="album-meta">' +
-              (d.category ? '<span class="album-meta-item">' + d.category + '</span>' : '') +
-              (d.location ? '<span class="album-meta-item">' + d.location + '</span>' : '') +
+              (d.category ? '<span class="album-meta-item">' + escAttr(d.category) + '</span>' : '') +
+              (d.location ? '<span class="album-meta-item">' + escAttr(d.location) + '</span>' : '') +
             '</div>' +
             '<button class="album-open-btn" data-album-id="' + id + '" aria-expanded="false">View Album <svg class="album-btn-arrow" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>' +
           '</div>';
-        statGrid.appendChild(card);
 
-        var dynPanels = document.getElementById('albumsDynPanels');
-        if (dynPanels) {
-          var photosHtml = photos.length
-            ? photos.map(function(url){ return '<div class="gallery-item"><img src="' + url + '" alt="' + (d.name||'') + '" loading="lazy" /><button class="gallery-info-btn" aria-label="Photo details">i</button></div>'; }).join('')
-            : '<p style="text-align:center;padding:40px;color:#888;">No photos yet.</p>';
-          var panel = document.createElement('div');
-          panel.className = 'album-expanded';
-          panel.id = 'album-panel-' + id;
-          panel.setAttribute('aria-hidden','true');
-          panel.innerHTML =
-            '<div class="album-expanded-header">' +
-              '<div><p class="album-expanded-label">Album</p><h3 class="album-expanded-title">' + (d.name||'Album') + '</h3></div>' +
-              '<button class="album-close-btn" data-album-id="' + id + '" aria-label="Close album"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>' +
-            '</div>' +
-            '<div class="gp-grid">' + photosHtml + '</div>';
-          dynPanels.appendChild(panel);
-        }
+        /* Insert before the Videos card so Videos stays last */
+        var videosCard = statGrid.querySelector('.album-card[onclick]');
+        statGrid.insertBefore(card, videosCard || null);
 
+        /* ── Expanded panel ── */
+        var photosHtml = photos.length
+          ? photos.map(function(url){
+              return '<div class="gallery-item" data-caption="' + escAttr(d.name||'') + '" data-place="' + escAttr(d.location||d.category||'') + '" data-date="" data-details="' + escAttr(d.description||'') + '">' +
+                '<img src="' + escAttr(url) + '" alt="' + escAttr(d.name||'') + '" loading="lazy" />' +
+                '<button class="gallery-info-btn" aria-label="Photo details">i</button>' +
+              '</div>';
+            }).join('')
+          : '<p style="text-align:center;padding:40px;color:#888;">No photos in this album yet.</p>';
+
+        var panel = document.createElement('div');
+        panel.className = 'album-expanded';
+        panel.id = 'album-panel-' + id;
+        panel.setAttribute('aria-hidden', 'true');
+        panel.innerHTML =
+          '<div class="album-expanded-header">' +
+            '<div><p class="album-expanded-label">Album</p><h3 class="album-expanded-title">' + escAttr(d.name||'Album') + '</h3></div>' +
+            '<button class="album-close-btn" data-album-id="' + id + '" aria-label="Close album"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>' +
+          '</div>' +
+          '<div class="gp-grid">' + photosHtml + '</div>';
+        dynPanels.appendChild(panel);
+
+        /* ── Open button ── */
         card.querySelector('.album-open-btn').addEventListener('click', function() {
-          var panel = document.getElementById('album-panel-' + id);
-          if (panel) { panel.style.display = panel.style.display === 'block' ? 'none' : 'block'; }
-        });
-      });
-    });
-
-      // Re-attach open/close event handlers for dynamic albums
-      dynGrid.querySelectorAll('.album-open-btn').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-          var aId = btn.getAttribute('data-album-id');
-          var panel = document.getElementById('album-panel-' + aId);
-          if (!panel) return;
           var isOpen = panel.classList.contains('open');
-          // Close all
-          dynPanels.querySelectorAll('.album-expanded').forEach(function(p){ p.classList.remove('open'); p.setAttribute('aria-hidden','true'); });
-          dynGrid.querySelectorAll('.album-open-btn').forEach(function(b){ b.setAttribute('aria-expanded','false'); b.firstChild.nodeValue = 'View Album '; });
+          /* Close all dynamic panels */
+          dynPanels.querySelectorAll('.album-expanded').forEach(function(p){
+            p.classList.remove('open'); p.setAttribute('aria-hidden','true');
+          });
+          statGrid.querySelectorAll('.album-open-btn[data-dyn]').forEach(function(b){
+            b.setAttribute('aria-expanded','false'); b.firstChild.nodeValue = 'View Album ';
+          });
           if (!isOpen) {
             panel.classList.add('open');
             panel.setAttribute('aria-hidden','false');
-            btn.setAttribute('aria-expanded','true');
-            btn.firstChild.nodeValue = 'Close Album ';
+            this.setAttribute('aria-expanded','true');
+            this.firstChild.nodeValue = 'Close Album ';
             setTimeout(function(){ panel.scrollIntoView({behavior:'smooth',block:'start'}); }, 60);
           }
         });
-      });
-      dynPanels.querySelectorAll('.album-close-btn').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-          var aId = btn.getAttribute('data-album-id');
-          var panel = document.getElementById('album-panel-' + aId);
-          if (panel) { panel.classList.remove('open'); panel.setAttribute('aria-hidden','true'); }
-          dynGrid.querySelectorAll('.album-open-btn[data-album-id="' + aId + '"]').forEach(function(b){ b.setAttribute('aria-expanded','false'); b.firstChild.nodeValue = 'View Album '; });
+
+        /* ── Close button ── */
+        panel.querySelector('.album-close-btn').addEventListener('click', function() {
+          panel.classList.remove('open');
+          panel.setAttribute('aria-hidden','true');
+          var openBtn = card.querySelector('.album-open-btn');
+          if (openBtn) { openBtn.setAttribute('aria-expanded','false'); openBtn.firstChild.nodeValue = 'View Album '; }
         });
       });
-
-    }, function() {
-      // Firestore error — show static
-      if (dynGrid)  dynGrid.style.display  = 'none';
-      if (statGrid) statGrid.style.display = '';
     });
   })();
   </script>
