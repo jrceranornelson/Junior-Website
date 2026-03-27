@@ -141,13 +141,8 @@
       <!-- Static fallback — shown while loading or when Firestore is empty -->
       <div class="pp-grid" id="ppGridStatic">
 
-        <!-- Loading spinner (replaced by cards once JS runs) -->
-        <div class="pp-spinner-wrap" id="ppSpinnerStatic">
-          <div class="pp-spinner"></div>
-        </div>
-
         <!-- ─── UNHDIP ─── -->
-        <article class="pp-card reveal" data-tag="Diplomacy &amp; Development">
+        <article class="pp-card" data-tag="Diplomacy &amp; Development">
           <div class="pp-card-img">
             <img src="https://placehold.co/800x480/0b1d3a/c9a84c?text=UNHDIP" alt="UNHDIP" loading="eager" />
             <span class="pp-card-badge">Diplomacy &amp; Development</span>
@@ -177,7 +172,7 @@
         </article>
 
         <!-- ─── OMNEDU ─── -->
-        <article class="pp-card reveal" data-tag="Education">
+        <article class="pp-card" data-tag="Education">
           <div class="pp-card-img">
             <img src="https://placehold.co/800x480/122654/c9a84c?text=OMNEDU" alt="OMNEDU" loading="lazy" />
             <span class="pp-card-badge">Education</span>
@@ -207,7 +202,7 @@
         </article>
 
         <!-- ─── Bòkatedral ─── -->
-        <article class="pp-card reveal" data-tag="Culture &amp; Identity">
+        <article class="pp-card" data-tag="Culture &amp; Identity">
           <div class="pp-card-img">
             <img src="https://placehold.co/800x480/0b1d3a/c9a84c?text=B%C3%B2katedral" alt="Bòkatedral" loading="lazy" />
             <span class="pp-card-badge">Culture &amp; Identity</span>
@@ -237,7 +232,7 @@
         </article>
 
         <!-- ─── Haiti Stole My Heart ─── -->
-        <article class="pp-card reveal" data-tag="Foundation">
+        <article class="pp-card" data-tag="Foundation">
           <div class="pp-card-img">
             <img src="https://placehold.co/800x480/0b1d3a/c9a84c?text=Haiti+Stole+My+Heart" alt="Haiti Stole My Heart Foundation" loading="lazy" />
             <span class="pp-card-badge">Foundation</span>
@@ -267,7 +262,7 @@
         </article>
 
         <!-- ─── Sprint Agility ─── -->
-        <article class="pp-card reveal" data-tag="Business &amp; Australia">
+        <article class="pp-card" data-tag="Business &amp; Australia">
           <div class="pp-card-img">
             <img src="https://placehold.co/800x480/122654/c9a84c?text=Sprint+Agility" alt="Sprint Agility" loading="lazy" />
             <span class="pp-card-badge">Business &amp; Australia</span>
@@ -297,7 +292,7 @@
         </article>
 
         <!-- ─── DOREDU ─── -->
-        <article class="pp-card reveal" data-tag="Education &amp; Social Impact">
+        <article class="pp-card" data-tag="Education &amp; Social Impact">
           <div class="pp-card-img">
             <img src="https://placehold.co/800x480/0b1d3a/c9a84c?text=DOREDU" alt="DOREDU" loading="lazy" />
             <span class="pp-card-badge">Education &amp; Social Impact</span>
@@ -430,10 +425,8 @@
         var dynGrid = document.getElementById('ppGridDynamic');
         var statGrid = document.getElementById('ppGridStatic');
         if (!dynGrid) return;
-        var spinner = document.getElementById('ppSpinnerStatic');
         db.collection('projects').onSnapshot(function(snap) {
           console.log('[Projects] snapshot received, docs:', snap.size);
-          if (spinner) { spinner.remove(); spinner = null; }
           if (snap.empty) {
             dynGrid.style.display = 'none';
             if (statGrid) statGrid.style.display = '';
