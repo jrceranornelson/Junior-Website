@@ -753,7 +753,7 @@
         var d = doc.data();
         var imgSrc = d.logoUrl || 'https://placehold.co/600x380/0b1d3a/c9a84c?text=' + encodeURIComponent(d.title || 'Project');
         var card = document.createElement('div');
-        card.className = 'project-card reveal';
+        card.className = 'project-card';
         card.innerHTML =
           '<div class="project-card-img">' +
             '<img src="' + esc(imgSrc) + '" alt="' + esc(d.title || '') + '" loading="lazy" />' +
