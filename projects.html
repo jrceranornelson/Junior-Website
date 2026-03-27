@@ -136,7 +136,6 @@
     <div class="container">
 
       <!-- Dynamic (Firestore) — shown when data exists -->
-      <div class="pp-grid" id="ppGridDynamic" style="display:none;"></div>
 
       <!-- Static fallback — shown while loading or when Firestore is empty -->
       <div class="pp-grid" id="ppGridStatic">
@@ -414,60 +413,7 @@
   })();
   </script>
 
-  <!-- Dynamic Firestore projects -->
-  <script>
-  // Projects — Firebase connection
-  window.addEventListener('load', function() {
-    var tries = 0;
-    function waitForDb() {
-      if (typeof firebase !== 'undefined' && firebase.apps.length) {
-        var db = firebase.firestore();
-        var dynGrid = document.getElementById('ppGridDynamic');
-        var statGrid = document.getElementById('ppGridStatic');
-        if (!dynGrid) return;
-        db.collection('projects').onSnapshot(function(snap) {
-          console.log('[Projects] snapshot received, docs:', snap.size);
-          if (snap.empty) {
-            dynGrid.style.display = 'none';
-            if (statGrid) statGrid.style.display = '';
-            return;
-          }
-          if (statGrid) statGrid.style.display = 'none';
-          dynGrid.style.display = '';
-          dynGrid.innerHTML = '';
-          function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-          snap.forEach(function(doc) {
-            var d = doc.data();
-            var imgSrc = d.logoUrl || d.coverUrl || 'https://placehold.co/800x480/0b1d3a/c9a84c?text=' + encodeURIComponent(d.title || 'Project');
-            var card = document.createElement('article');
-            card.className = 'pp-card';
-            card.setAttribute('data-tag', d.tag || '');
-            card.innerHTML =
-              '<div class="pp-card-img">' +
-                '<img src="' + esc(imgSrc) + '" alt="' + esc(d.title || '') + '" loading="lazy" />' +
-                '<span class="pp-card-badge">' + esc(d.tag || '') + '</span>' +
-              '</div>' +
-              '<div class="pp-card-body">' +
-                (d.logoUrl ? '<img src="' + esc(d.logoUrl) + '" alt="' + esc(d.title || '') + ' logo" class="pp-card-logo" />' : '') +
-                '<h2 class="pp-card-title">' + esc(d.title || '') + '</h2>' +
-                '<p class="pp-card-desc">' + esc(d.description || '') + '</p>' +
-                '<div class="pp-card-footer">' +
-                  (d.url ? '<a href="' + esc(d.url) + '" target="_blank" rel="noopener" class="pp-card-link">Visit ' + esc(d.url.replace(/https?:\/\//, '')) + ' <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>' : '') +
-                '</div>' +
-              '</div>';
-            dynGrid.appendChild(card);
-          });
-        }, function(err) {
-          console.error('[Projects] Firestore error:', err);
-        });
-      } else {
-        tries++;
-        if (tries < 20) setTimeout(waitForDb, 300);
-      }
-    }
-    waitForDb();
-  });
-  </script>
+
 
 <script src="live-button.js"></script>
 <script>
