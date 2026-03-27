@@ -883,7 +883,6 @@
       <div class="form-group"><label for="pTag">Tag / Category</label><input type="text" id="pTag" placeholder="Education, Diplomacy…" /></div>
       <div class="form-group"><label for="pOrder">Display Order</label><input type="number" id="pOrder" placeholder="0" min="0" /></div>
       <div class="form-group form-full"><label for="pHighlights">Key Highlights (one per line)</label><textarea id="pHighlights" rows="4" placeholder="Global network uniting diplomats&#10;Promotes international cooperation&#10;Strategic engagement programs"></textarea></div>
-      <div class="form-group form-full"><label for="pHighlights">Key Highlights (one per line)</label><textarea id="pHighlights" rows="4" placeholder="Global network uniting diplomats&#10;Promotes international cooperation&#10;Strategic engagement programs"></textarea></div>
       <div class="form-group form-full" id="pLogoGroup">
         <label>Logo Image</label>
         <div style="display:flex;gap:8px;margin-bottom:10px;">
@@ -2266,7 +2265,7 @@ document.getElementById('pLogoUrlInput').addEventListener('input', function() {
 
 document.getElementById('newProjectBtn').addEventListener('click', () => {
   document.getElementById('projectModalTitle').textContent = 'New Project';
-  ['pTitle','pDescription','pUrl','pTag','pLogoUrl','pLogoUrlInput'].forEach(id => { var el = document.getElementById(id); if (el) el.value = ''; });
+  ['pTitle','pDescription','pUrl','pTag','pLogoUrl','pLogoUrlInput','pHighlights'].forEach(id => { var el = document.getElementById(id); if (el) el.value = ''; });
   document.getElementById('pOrder').value = '0';
   document.getElementById('pDocId').value = '';
   document.getElementById('pLogoFile').value = '';
@@ -2285,6 +2284,7 @@ window.editProject = id => {
     document.getElementById('pUrl').value         = d.url || d.link || '';
     document.getElementById('pTag').value         = d.tag         || '';
     document.getElementById('pOrder').value       = d.order !== undefined ? d.order : 0;
+    document.getElementById('pHighlights').value  = (d.highlights || []).join('\n');
     document.getElementById('pLogoUrl').value      = d.logoUrl || '';
     document.getElementById('pLogoUrlInput').value = d.logoUrl || '';
     document.getElementById('pLogoFile').value     = '';
@@ -2313,6 +2313,7 @@ document.getElementById('saveProjectBtn').addEventListener('click', async () => 
     tag:         document.getElementById('pTag').value.trim(),
     order:       isNaN(orderVal) ? 0 : orderVal,
     logoUrl:     document.getElementById('pLogoUrl').value.trim(),
+    highlights:  document.getElementById('pHighlights').value.split('\n').map(s => s.trim()).filter(Boolean),
   };
   if (!data.title) { toast('Project name is required.','error'); return; }
   try {
