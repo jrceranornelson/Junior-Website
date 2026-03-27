@@ -430,14 +430,16 @@
         var dynGrid = document.getElementById('ppGridDynamic');
         var statGrid = document.getElementById('ppGridStatic');
         if (!dynGrid) return;
+        var spinner = document.getElementById('ppSpinnerStatic');
         db.collection('projects').onSnapshot(function(snap) {
           console.log('[Projects] snapshot received, docs:', snap.size);
+          if (spinner) { spinner.remove(); spinner = null; }
           if (snap.empty) {
             dynGrid.style.display = 'none';
             if (statGrid) statGrid.style.display = '';
             return;
           }
-          
+          if (statGrid) statGrid.style.display = 'none';
           dynGrid.style.display = '';
           dynGrid.innerHTML = '';
           function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
