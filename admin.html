@@ -883,6 +883,24 @@
       <div class="form-group"><label for="pTag">Tag / Category</label><input type="text" id="pTag" placeholder="Education, Diplomacy…" /></div>
       <div class="form-group"><label for="pOrder">Display Order</label><input type="number" id="pOrder" placeholder="0" min="0" /></div>
       <div class="form-group form-full"><label for="pHighlights">Key Highlights (one per line)</label><textarea id="pHighlights" rows="4" placeholder="Global network uniting diplomats&#10;Promotes international cooperation&#10;Strategic engagement programs"></textarea></div>
+      <div class="form-group form-full" id="pCoverGroup">
+        <label>Cover Image (top of card)</label>
+        <div style="display:flex;gap:8px;margin-bottom:10px;">
+          <button type="button" id="pCoverModeUpload" onclick="pCoverSetMode('upload')" style="font-size:12px;padding:5px 14px;border:1px solid var(--border);border-radius:6px;background:var(--accent,#c9a84c);color:#fff;cursor:pointer;">⬆ Upload file</button>
+          <button type="button" id="pCoverModeUrl" onclick="pCoverSetMode('url')" style="font-size:12px;padding:5px 14px;border:1px solid var(--border);border-radius:6px;background:transparent;cursor:pointer;">🔗 Paste URL</button>
+        </div>
+        <div id="pCoverUploadArea">
+          <input type="file" id="pCoverFile" accept="image/*" style="width:100%;" />
+          <div id="pCoverPreview" style="display:none;margin-top:8px;">
+            <img id="pCoverPreviewImg" src="" alt="Preview" style="max-height:120px;width:100%;border-radius:6px;object-fit:cover;border:1px solid var(--border);" />
+          </div>
+          <div id="pCoverUploadStatus" style="font-size:12px;color:var(--muted);margin-top:6px;"></div>
+        </div>
+        <div id="pCoverUrlArea" style="display:none;">
+          <input type="url" id="pCoverUrlInput" placeholder="https://…" style="width:100%;" />
+        </div>
+        <input type="hidden" id="pCoverUrl" />
+      </div>
       <div class="form-group form-full" id="pLogoGroup">
         <label>Logo Image</label>
         <div style="display:flex;gap:8px;margin-bottom:10px;">
@@ -2263,15 +2281,70 @@ document.getElementById('pLogoUrlInput').addEventListener('input', function() {
   document.getElementById('pLogoUrl').value = this.value.trim();
 });
 
+// Cover image field toggle & upload
+function pCoverSetMode(mode) {
+  var uploadArea = document.getElementById('pCoverUploadArea');
+  var urlArea    = document.getElementById('pCoverUrlArea');
+  var btnUpload  = document.getElementById('pCoverModeUpload');
+  var btnUrl     = document.getElementById('pCoverModeUrl');
+  if (!uploadArea) return;
+  if (mode === 'upload') {
+    uploadArea.style.display   = '';
+    urlArea.style.display      = 'none';
+    btnUpload.style.background = 'var(--accent,#c9a84c)';
+    btnUpload.style.color      = '#fff';
+    btnUrl.style.background    = 'transparent';
+    btnUrl.style.color         = '';
+  } else {
+    uploadArea.style.display   = 'none';
+    urlArea.style.display      = '';
+    btnUrl.style.background    = 'var(--accent,#c9a84c)';
+    btnUrl.style.color         = '#fff';
+    btnUpload.style.background = 'transparent';
+    btnUpload.style.color      = '';
+  }
+}
+
+document.getElementById('pCoverFile').addEventListener('change', function() {
+  var file = this.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    document.getElementById('pCoverPreviewImg').src = e.target.result;
+    document.getElementById('pCoverPreview').style.display = '';
+  };
+  reader.readAsDataURL(file);
+  var status = document.getElementById('pCoverUploadStatus');
+  status.textContent = 'Uploading…';
+  document.getElementById('pCoverUrl').value = '';
+  var ref = firebase.storage().ref('projects/covers/' + file.name);
+  ref.put(file).then(function(snap) {
+    return snap.ref.getDownloadURL();
+  }).then(function(url) {
+    document.getElementById('pCoverUrl').value = url;
+    status.textContent = 'Uploaded ✓';
+  }).catch(function(err) {
+    status.textContent = 'Upload failed: ' + err.message;
+  });
+});
+
+document.getElementById('pCoverUrlInput').addEventListener('input', function() {
+  document.getElementById('pCoverUrl').value = this.value.trim();
+});
+
 document.getElementById('newProjectBtn').addEventListener('click', () => {
   document.getElementById('projectModalTitle').textContent = 'New Project';
-  ['pTitle','pDescription','pUrl','pTag','pLogoUrl','pLogoUrlInput','pHighlights'].forEach(id => { var el = document.getElementById(id); if (el) el.value = ''; });
+  ['pTitle','pDescription','pUrl','pTag','pLogoUrl','pLogoUrlInput','pHighlights','pCoverUrl','pCoverUrlInput'].forEach(id => { var el = document.getElementById(id); if (el) el.value = ''; });
   document.getElementById('pOrder').value = '0';
   document.getElementById('pDocId').value = '';
   document.getElementById('pLogoFile').value = '';
   document.getElementById('pLogoPreview').style.display = 'none';
   document.getElementById('pLogoUploadStatus').textContent = '';
+  document.getElementById('pCoverFile').value = '';
+  document.getElementById('pCoverPreview').style.display = 'none';
+  document.getElementById('pCoverUploadStatus').textContent = '';
   pLogoSetMode('upload');
+  pCoverSetMode('upload');
   openModal('projectModal');
 });
 
@@ -2285,6 +2358,13 @@ window.editProject = id => {
     document.getElementById('pTag').value         = d.tag         || '';
     document.getElementById('pOrder').value       = d.order !== undefined ? d.order : 0;
     document.getElementById('pHighlights').value  = (d.highlights || []).join('\n');
+    document.getElementById('pCoverUrl').value      = d.coverUrl || '';
+    document.getElementById('pCoverUrlInput').value = d.coverUrl || '';
+    document.getElementById('pCoverFile').value     = '';
+    document.getElementById('pCoverPreview').style.display = d.coverUrl ? '' : 'none';
+    if (d.coverUrl) document.getElementById('pCoverPreviewImg').src = d.coverUrl;
+    document.getElementById('pCoverUploadStatus').textContent = '';
+    pCoverSetMode(d.coverUrl ? 'url' : 'upload');
     document.getElementById('pLogoUrl').value      = d.logoUrl || '';
     document.getElementById('pLogoUrlInput').value = d.logoUrl || '';
     document.getElementById('pLogoFile').value     = '';
@@ -2313,6 +2393,7 @@ document.getElementById('saveProjectBtn').addEventListener('click', async () => 
     tag:         document.getElementById('pTag').value.trim(),
     order:       isNaN(orderVal) ? 0 : orderVal,
     logoUrl:     document.getElementById('pLogoUrl').value.trim(),
+    coverUrl:    document.getElementById('pCoverUrl').value.trim(),
     highlights:  document.getElementById('pHighlights').value.split('\n').map(s => s.trim()).filter(Boolean),
   };
   if (!data.title) { toast('Project name is required.','error'); return; }
