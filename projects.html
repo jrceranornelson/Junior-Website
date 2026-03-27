@@ -421,93 +421,50 @@
 
   <!-- Dynamic Firestore projects -->
   <script>
-  function initProjectsGrid() {
-    var dynGrid  = document.getElementById('ppGridDynamic');
-    var statGrid = document.getElementById('ppGridStatic');
-    var spinner  = document.getElementById('ppSpinnerStatic');
-
-    if (spinner) spinner.remove();
-
-    if (!dynGrid) { console.warn('[Projects] ppGridDynamic not found'); return; }
-    if (typeof db === 'undefined') { console.warn('[Projects] db not defined'); return; }
-
-    console.log('[Projects] Starting Firestore onSnapshot...');
-
-    function esc(s) {
-      return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    }
-
-    function featureItem(text) {
-      return '<li>' + esc(text) + '</li>';
-    }
-
-    db.collection('projects').onSnapshot(function (snap) {
-      console.log('[Projects] onSnapshot fired — docs:', snap.size, '| empty:', snap.empty);
-
-      if (snap.empty) {
-        console.log('[Projects] No data — showing static fallback');
-        dynGrid.style.display = 'none';
-        if (statGrid) statGrid.style.display = '';
-        return;
-      }
-
-      console.log('[Projects] Data received — rendering', snap.size, 'project(s)');
-      dynGrid.style.display = '';
-      if (statGrid) statGrid.style.display = 'none';
-      dynGrid.innerHTML = '';
-
-      snap.forEach(function (doc) {
-        var d = doc.data();
-        var imgSrc = d.coverUrl || d.logoUrl || 'https://placehold.co/800x480/0b1d3a/c9a84c?text=' + encodeURIComponent(d.title || 'Project');
-        var features = Array.isArray(d.features) ? d.features : [];
-        var featuresHtml = features.length
-          ? '<div class="pp-card-highlights"><span class="pp-card-highlights-label">Key Highlights</span><ul class="pp-card-features">' +
-              features.map(featureItem).join('') +
-            '</ul></div>'
-          : '';
-
-        var card = document.createElement('article');
-        card.className = 'pp-card reveal';
-        card.setAttribute('data-tag', esc(d.tag || ''));
-        card.innerHTML =
-          '<div class="pp-card-img">' +
-            '<img src="' + esc(imgSrc) + '" alt="' + esc(d.title || '') + '" loading="lazy" />' +
-            (d.tag ? '<span class="pp-card-badge">' + esc(d.tag) + '</span>' : '') +
-          '</div>' +
-          '<div class="pp-card-body">' +
-            (d.logoUrl ? '<img src="' + esc(d.logoUrl) + '" alt="' + esc(d.title || '') + ' logo" class="pp-card-logo" />' : '') +
-            '<h2 class="pp-card-title">' + esc(d.title || 'Untitled') + '</h2>' +
-            '<p class="pp-card-desc">' + esc(d.description || '') + '</p>' +
-            featuresHtml +
-            '<div class="pp-card-footer">' +
-              (d.link || d.url
-                ? '<a href="' + esc(d.link || d.url) + '" target="_blank" rel="noopener" class="pp-card-link">Visit website <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>'
-                : '') +
-            '</div>' +
-          '</div>';
-        dynGrid.appendChild(card);
-      });
-
-      // Re-apply active filter to new dynamic cards
-      var activeBtn = document.querySelector('.pp-filter-btn.active');
-      if (activeBtn) {
-        var f = activeBtn.getAttribute('data-filter');
-        document.querySelectorAll('.pp-card').forEach(function (c) {
-          c.style.display = (f === 'all' || c.getAttribute('data-tag') === f) ? '' : 'none';
+  // Projects — Firebase connection
+  window.addEventListener('load', function() {
+    var tries = 0;
+    function waitForDb() {
+      if (typeof firebase !== 'undefined' && firebase.apps.length) {
+        var db = firebase.firestore();
+        var dynGrid = document.getElementById('ppGridDynamic');
+        var statGrid = document.getElementById('ppGridStatic');
+        if (!dynGrid) return;
+        db.collection('projects').onSnapshot(function(snap) {
+          console.log('[Projects] snapshot received, docs:', snap.size);
+          if (snap.empty) {
+            dynGrid.style.display = 'none';
+            if (statGrid) statGrid.style.display = '';
+            return;
+          }
+          if (statGrid) statGrid.style.display = 'none';
+          dynGrid.style.display = '';
+          dynGrid.innerHTML = '';
+          snap.forEach(function(doc) {
+            var d = doc.data();
+            var imgSrc = d.logoUrl || d.coverUrl || 'https://placehold.co/600x380/0b1d3a/c9a84c?text=' + encodeURIComponent(d.title || 'Project');
+            var card = document.createElement('div');
+            card.className = 'pp-card';
+            card.setAttribute('data-category', d.category || 'all');
+            card.innerHTML =
+              '<div class="pp-card-img"><img src="' + imgSrc + '" alt="' + (d.title || '') + '" loading="lazy" /></div>' +
+              '<div class="pp-card-body">' +
+              '<h3 class="pp-card-title">' + (d.title || '') + '</h3>' +
+              '<p class="pp-card-desc">' + (d.description || '') + '</p>' +
+              (d.url ? '<a href="' + d.url + '" target="_blank" class="pp-card-link">Visit →</a>' : '') +
+              '</div>';
+            dynGrid.appendChild(card);
+          });
+        }, function(err) {
+          console.error('[Projects] Firestore error:', err);
         });
+      } else {
+        tries++;
+        if (tries < 20) setTimeout(waitForDb, 300);
       }
-
-      if (typeof observeReveal === 'function') observeReveal();
-    }, function (err) {
-      console.error('[Projects] Firestore error:', err);
-    });
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initProjectsGrid);
-  } else {
-    initProjectsGrid();
-  }
+    }
+    waitForDb();
+  });
   </script>
 
 <script src="live-button.js"></script>
