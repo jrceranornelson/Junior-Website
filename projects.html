@@ -447,7 +447,7 @@
             var d = doc.data();
             var imgSrc = d.logoUrl || d.coverUrl || 'https://placehold.co/800x480/0b1d3a/c9a84c?text=' + encodeURIComponent(d.title || 'Project');
             var card = document.createElement('article');
-            card.className = 'pp-card reveal';
+            card.className = 'pp-card';
             card.setAttribute('data-tag', d.tag || '');
             card.innerHTML =
               '<div class="pp-card-img">' +
