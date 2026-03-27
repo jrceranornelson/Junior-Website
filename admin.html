@@ -980,6 +980,24 @@
           </div>
         </div>
         <input type="hidden" id="albPhotos" />
+
+        <!-- Per-photo info editor (hidden until a photo's ℹ button is clicked) -->
+        <div id="albPhotoInfoPanel" style="display:none;margin-top:12px;padding:14px;border:1px solid var(--accent,#c9a84c);border-radius:8px;background:rgba(201,168,76,0.06);">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+            <img id="albPhotoInfoPreview" src="" alt="" style="width:60px;height:54px;object-fit:cover;border-radius:4px;border:1px solid var(--border);" />
+            <strong style="font-size:0.85rem;">Photo Info</strong>
+          </div>
+          <div class="form-grid" style="gap:10px;">
+            <div class="form-group"><label style="font-size:0.78rem;">Caption</label><input type="text" id="albPhotoInfoCaption" placeholder="Short caption…" /></div>
+            <div class="form-group"><label style="font-size:0.78rem;">Place</label><input type="text" id="albPhotoInfoPlace" placeholder="Port-au-Prince, Haiti" /></div>
+            <div class="form-group"><label style="font-size:0.78rem;">Date</label><input type="text" id="albPhotoInfoDate" placeholder="January 2026" /></div>
+            <div class="form-group form-full"><label style="font-size:0.78rem;">Details</label><textarea id="albPhotoInfoDetails" rows="2" placeholder="Describe this photo…"></textarea></div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:10px;">
+            <button type="button" onclick="albSavePhotoInfo()" style="padding:7px 18px;background:var(--accent,#c9a84c);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;">Save</button>
+            <button type="button" onclick="albClosePhotoInfo()" style="padding:7px 14px;border:1px solid var(--border);border-radius:6px;cursor:pointer;background:transparent;font-size:13px;">Cancel</button>
+          </div>
+        </div>
       </div>
     </div>
     <div class="form-actions" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
@@ -1606,24 +1624,53 @@ function loadAlbumDropdown(preselect) {
 /* ══════════════════════════════════════════════════
    ALBUM MODAL HELPERS
 ══════════════════════════════════════════════════ */
-let _albPhotos = [];
+let _albPhotos = []; // each entry: { url, caption, place, date, details }
 
 function albRenderPhotos() {
   const list = document.getElementById('albPhotosList');
   if (!list) return;
   list.innerHTML = '';
-  _albPhotos.forEach(function(url, i) {
+  _albPhotos.forEach(function(p, i) {
     const item = document.createElement('div');
-    item.style.cssText = 'position:relative;width:72px;height:72px;flex-shrink:0;';
+    item.style.cssText = 'position:relative;width:80px;flex-shrink:0;text-align:center;';
+    const hasInfo = p.caption || p.place || p.date || p.details;
     item.innerHTML =
-      '<img src="' + esc(url) + '" style="width:72px;height:72px;object-fit:cover;border-radius:4px;border:1px solid var(--border);" onerror="this.style.background=\'#333\'" />' +
-      '<button type="button" onclick="albRemovePhoto(' + i + ')" style="position:absolute;top:-6px;right:-6px;background:#e53e3e;color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:11px;cursor:pointer;line-height:18px;padding:0;">×</button>';
+      '<img src="' + esc(p.url) + '" style="width:80px;height:72px;object-fit:cover;border-radius:4px;border:1px solid var(--border);" onerror="this.style.background=\'#333\'" />' +
+      '<button type="button" onclick="albRemovePhoto(' + i + ')" title="Remove" style="position:absolute;top:-6px;right:-6px;background:#e53e3e;color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:11px;cursor:pointer;line-height:18px;padding:0;">×</button>' +
+      '<button type="button" onclick="albOpenPhotoInfo(' + i + ')" title="Edit info" style="margin-top:4px;width:100%;font-size:10px;padding:2px 0;border:1px solid var(--border);border-radius:4px;cursor:pointer;background:' + (hasInfo ? 'var(--accent,#c9a84c)' : 'transparent') + ';color:' + (hasInfo ? '#fff' : 'var(--muted)') + ';">ℹ info</button>';
     list.appendChild(item);
   });
   const h = document.getElementById('albPhotos');
-  if (h) h.value = _albPhotos.join('\n');
+  if (h) h.value = JSON.stringify(_albPhotos);
 }
 window.albRemovePhoto = function(i) { _albPhotos.splice(i, 1); albRenderPhotos(); };
+
+/* ── Per-photo info editor ── */
+let _albEditingIdx = -1;
+window.albOpenPhotoInfo = function(i) {
+  _albEditingIdx = i;
+  const p = _albPhotos[i];
+  document.getElementById('albPhotoInfoCaption').value = p.caption || '';
+  document.getElementById('albPhotoInfoPlace').value   = p.place   || '';
+  document.getElementById('albPhotoInfoDate').value    = p.date    || '';
+  document.getElementById('albPhotoInfoDetails').value = p.details || '';
+  document.getElementById('albPhotoInfoPreview').src   = p.url;
+  document.getElementById('albPhotoInfoPanel').style.display = '';
+};
+window.albSavePhotoInfo = function() {
+  if (_albEditingIdx < 0) return;
+  _albPhotos[_albEditingIdx].caption = document.getElementById('albPhotoInfoCaption').value.trim();
+  _albPhotos[_albEditingIdx].place   = document.getElementById('albPhotoInfoPlace').value.trim();
+  _albPhotos[_albEditingIdx].date    = document.getElementById('albPhotoInfoDate').value.trim();
+  _albPhotos[_albEditingIdx].details = document.getElementById('albPhotoInfoDetails').value.trim();
+  document.getElementById('albPhotoInfoPanel').style.display = 'none';
+  _albEditingIdx = -1;
+  albRenderPhotos();
+};
+window.albClosePhotoInfo = function() {
+  document.getElementById('albPhotoInfoPanel').style.display = 'none';
+  _albEditingIdx = -1;
+};
 
 function albCoverSetMode(mode) {
   const uploadArea = document.getElementById('albCoverUploadArea');
@@ -1708,7 +1755,7 @@ document.getElementById('albPhotoFile').addEventListener('change', async functio
       const ref = storage.ref('albums/photos/' + Date.now() + '_' + file.name);
       await ref.put(file);
       const url = await ref.getDownloadURL();
-      _albPhotos.push(url);
+      _albPhotos.push({ url, caption:'', place:'', date:'', details:'' });
       albRenderPhotos();
       done++;
       status.textContent = done < files.length ? 'Uploading ' + done + ' / ' + files.length + '…' : 'Uploaded ' + done + ' photo' + (done !== 1 ? 's' : '') + ' ✓';
@@ -1722,7 +1769,7 @@ function _albAddPhotoUrl() {
   const input = document.getElementById('albPhotoUrlInput');
   const url = input.value.trim();
   if (!url) return;
-  _albPhotos.push(url);
+  _albPhotos.push({ url, caption:'', place:'', date:'', details:'' });
   albRenderPhotos();
   input.value = '';
   input.focus();
@@ -1811,8 +1858,10 @@ window.editAlbum = id => {
       albCoverSetMode('upload');
     }
 
-    // Album photos
-    _albPhotos = Array.isArray(d.photos) ? d.photos.slice() : [];
+    // Album photos — support both old string[] and new object[] formats
+    _albPhotos = Array.isArray(d.photos) ? d.photos.map(p =>
+      typeof p === 'string' ? { url: p, caption:'', place:'', date:'', details:'' } : Object.assign({ caption:'', place:'', date:'', details:'' }, p)
+    ) : [];
     albRenderPhotos();
     document.getElementById('albPhotoUploadStatus').textContent = '';
     albPhotoSetMode('upload');

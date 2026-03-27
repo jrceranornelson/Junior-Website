@@ -823,7 +823,8 @@
 
         var id     = 'dyn-' + doc.id;
         var photos = Array.isArray(d.photos) ? d.photos : [];
-        var cover  = d.coverUrl || (photos[0] || '');
+        var firstUrl = photos[0] ? (typeof photos[0] === 'string' ? photos[0] : photos[0].url) : '';
+        var cover  = d.coverUrl || firstUrl;
 
         /* ── Card ── */
         var locIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>';
@@ -861,9 +862,15 @@
 
         /* ── Expanded panel ── */
         var photosHtml = photos.length
-          ? photos.map(function(url){
-              return '<div class="gallery-item" data-caption="' + escAttr(d.name||'') + '" data-place="' + escAttr(d.location||d.category||'') + '" data-date="" data-details="' + escAttr(d.description||'') + '">' +
-                '<img src="' + escAttr(url) + '" alt="' + escAttr(d.name||'') + '" loading="lazy" />' +
+          ? photos.map(function(p){
+              /* Support both old string format and new object format */
+              var url     = (typeof p === 'string') ? p : (p.url || '');
+              var caption = (typeof p === 'object' && p.caption) ? p.caption : (d.name||'');
+              var place   = (typeof p === 'object' && p.place)   ? p.place   : (d.location||d.category||'');
+              var date    = (typeof p === 'object' && p.date)    ? p.date    : '';
+              var details = (typeof p === 'object' && p.details) ? p.details : (d.description||'');
+              return '<div class="gallery-item" data-caption="' + escAttr(caption) + '" data-place="' + escAttr(place) + '" data-date="' + escAttr(date) + '" data-details="' + escAttr(details) + '">' +
+                '<img src="' + escAttr(url) + '" alt="' + escAttr(caption) + '" loading="lazy" />' +
                 '<button class="gallery-info-btn" aria-label="Photo details">i</button>' +
               '</div>';
             }).join('')
