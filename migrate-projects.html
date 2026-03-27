@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Migrate Projects → Firestore</title>
+  <style>
+    body { font-family: monospace; background: #0b1d3a; color: #c9a84c; padding: 40px; max-width: 700px; margin: 0 auto; }
+    h1 { color: #fff; margin-bottom: 8px; }
+    p  { color: rgba(255,255,255,0.6); margin-bottom: 32px; }
+    button { background: #c9a84c; color: #0b1d3a; border: none; padding: 14px 32px; font-size: 1rem; font-weight: 700; border-radius: 8px; cursor: pointer; }
+    button:disabled { opacity: 0.4; cursor: not-allowed; }
+    #log { margin-top: 32px; line-height: 2; font-size: 0.85rem; }
+    .ok  { color: #4caf50; }
+    .skip { color: #aaa; }
+    .err { color: #f44336; }
+  </style>
+</head>
+<body>
+  <h1>Projects Migration</h1>
+  <p>Adds the 6 static projects to Firestore. Safe to run multiple times — skips any that already exist.</p>
+  <button id="runBtn" onclick="runMigration()">Run Migration</button>
+  <div id="log"></div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script>
+  var PROJECTS = [
+    {
+      title:       'UNHDIP — United Honorary Diplomats International Platform',
+      description: 'UNHDIP is a global platform dedicated to connecting, empowering, and elevating honorary diplomats through international cooperation, dialogue, and strategic engagement. It strengthens diplomatic relationships, promotes shared initiatives, and highlights the pivotal role honorary diplomats play in building bridges between nations, institutions, and communities worldwide.',
+      url:         'https://unhdip.org',
+      logoUrl:     '/logos/unhdip.png',
+      tag:         'Diplomacy & Development',
+      order:       1,
+      createdAt:   new Date('2024-01-01T00:00:00Z')
+    },
+    {
+      title:       'OMNEDU — Instructio Pro Omnibus',
+      description: 'OMNEDU is an innovative educational platform committed to making quality learning more accessible, practical, and inclusive. Guided by the motto Instructio Pro Omnibus — "Education for All" — it empowers individuals and communities through affordable, relevant, and transformative education that meets people where they are.',
+      url:         'https://omnedu.com',
+      logoUrl:     '/logos/omnedu.png',
+      tag:         'Education',
+      order:       2,
+      createdAt:   new Date('2024-01-02T00:00:00Z')
+    },
+    {
+      title:       'Bòkatedral — Culture Meets Commerce',
+      description: 'Bòkatedral is a dynamic marketplace designed to connect people with quality products through a platform inspired by culture, opportunity, and entrepreneurship. More than a commercial brand, it reflects a vision of accessible trade, innovation, and value — a space where business and identity meet with purpose, celebrating Haitian creativity and enterprise on a global stage.',
+      url:         'https://www.bokatedral.com',
+      logoUrl:     '/logos/bokatedral.png',
+      tag:         'Culture & Identity',
+      order:       3,
+      createdAt:   new Date('2024-01-03T00:00:00Z')
+    },
+    {
+      title:       'Haiti Stole My Heart Foundation',
+      description: 'A foundation connecting global compassion to ground-level transformation in Haitian communities. Haiti Stole My Heart bridges the gap between international goodwill and local action — mobilising resources, partnerships, and volunteers to drive sustainable development, education support, and community resilience across Haiti.',
+      url:         'https://haitistolemyheart.org',
+      logoUrl:     '/logos/haitistolemyheart.png',
+      tag:         'Foundation',
+      order:       4,
+      createdAt:   new Date('2024-01-04T00:00:00Z')
+    },
+    {
+      title:       'Sprint Agility — Moving Organisations Forward',
+      description: 'Sprint Agility is an agile consulting and training company based in Australia, helping organisations move faster and smarter in an increasingly complex world. Through tailored coaching, workshops, and strategic advisory, Sprint Agility equips teams and leaders with the mindset, tools, and frameworks they need to deliver more value with less friction.',
+      url:         'https://sprintagility.com.au',
+      logoUrl:     '/logos/sprintagility.png',
+      tag:         'Business & Australia',
+      order:       5,
+      createdAt:   new Date('2024-01-05T00:00:00Z')
+    },
+    {
+      title:       'DOREDU — Education Without Barriers',
+      description: 'DOREDU is a trademark-registered nonprofit platform and organisation in the USA, focused on expanding access to education for underserved communities. It empowers immigrants, refugees, and marginalised populations through affordable, culturally relevant programmes that improve skills, social integration, and economic opportunity — ensuring that where you come from never limits where you can go.',
+      url:         'https://www.doredu.org',
+      logoUrl:     '/logos/doredu.png',
+      tag:         'Education & Social Impact',
+      order:       6,
+      createdAt:   new Date('2024-01-06T00:00:00Z')
+    }
+  ];
+
+  function log(msg, cls) {
+    var div = document.getElementById('log');
+    var line = document.createElement('div');
+    line.className = cls || '';
+    line.textContent = msg;
+    div.appendChild(line);
+  }
+
+  async function runMigration() {
+    var btn = document.getElementById('runBtn');
+    btn.disabled = true;
+    log('Starting migration…');
+
+    var added = 0, skipped = 0, errors = 0;
+
+    for (var i = 0; i < PROJECTS.length; i++) {
+      var p = PROJECTS[i];
+      try {
+        // Check if a document with this title already exists
+        var existing = await db.collection('projects')
+          .where('title', '==', p.title)
+          .limit(1)
+          .get();
+
+        if (!existing.empty) {
+          log('  SKIP  ' + p.title, 'skip');
+          skipped++;
+        } else {
+          await db.collection('projects').add({
+            title:       p.title,
+            description: p.description,
+            url:         p.url,
+            link:        p.url,
+            logoUrl:     p.logoUrl,
+            tag:         p.tag,
+            order:       p.order,
+            createdAt:   firebase.firestore.Timestamp.fromDate(p.createdAt)
+          });
+          log('  ADDED ' + p.title, 'ok');
+          added++;
+        }
+      } catch (err) {
+        log('  ERROR ' + p.title + ' — ' + err.message, 'err');
+        errors++;
+      }
+    }
+
+    log('');
+    log('Done — added: ' + added + '  skipped: ' + skipped + '  errors: ' + errors,
+        errors ? 'err' : 'ok');
+    btn.textContent = 'Migration complete';
+  }
+  </script>
+</body>
+</html>
