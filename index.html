@@ -701,7 +701,7 @@
 
       // Sort newest first, take top 3
       pool.sort(function(a, b) { return b.sortTs - a.sortTs; });
-      pool = pool.slice(0, 3);
+      
 
       grid.innerHTML = '';
       pool.forEach(function(item) {
