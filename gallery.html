@@ -856,7 +856,7 @@
     var dynPanels = document.getElementById('albumsDynPanels');
     var statGrid  = document.getElementById('albumsStatGrid');
 
-    db.collection('albums').orderBy('createdAt','desc').onSnapshot(function(snap) {
+    db.collection('albums').onSnapshot(function(snap) {
       if (snap.empty) {
         if (dynGrid)  dynGrid.style.display  = 'none';
         if (statGrid) statGrid.style.display = '';
@@ -875,7 +875,7 @@
 
         // Album card
         var card = document.createElement('article');
-        card.className = 'album-card reveal';
+        card.className = 'album-card';
         card.setAttribute('data-album-id', id);
         card.innerHTML =
           '<div class="album-stack-wrap">' +
@@ -919,14 +919,16 @@
           var aId = btn.getAttribute('data-album-id');
           var panel = document.getElementById('album-panel-' + aId);
           if (!panel) return;
-          var isOpen = panel.getAttribute('aria-hidden') === 'false';
+          var isOpen = panel.classList.contains('open');
           // Close all
-          dynPanels.querySelectorAll('.album-expanded').forEach(function(p){ p.setAttribute('aria-hidden','true'); });
-          dynGrid.querySelectorAll('.album-open-btn').forEach(function(b){ b.setAttribute('aria-expanded','false'); });
+          dynPanels.querySelectorAll('.album-expanded').forEach(function(p){ p.classList.remove('open'); p.setAttribute('aria-hidden','true'); });
+          dynGrid.querySelectorAll('.album-open-btn').forEach(function(b){ b.setAttribute('aria-expanded','false'); b.firstChild.nodeValue = 'View Album '; });
           if (!isOpen) {
+            panel.classList.add('open');
             panel.setAttribute('aria-hidden','false');
             btn.setAttribute('aria-expanded','true');
-            panel.scrollIntoView({behavior:'smooth',block:'start'});
+            btn.firstChild.nodeValue = 'Close Album ';
+            setTimeout(function(){ panel.scrollIntoView({behavior:'smooth',block:'start'}); }, 60);
           }
         });
       });
@@ -934,8 +936,8 @@
         btn.addEventListener('click', function() {
           var aId = btn.getAttribute('data-album-id');
           var panel = document.getElementById('album-panel-' + aId);
-          if (panel) panel.setAttribute('aria-hidden','true');
-          dynGrid.querySelectorAll('.album-open-btn[data-album-id="' + aId + '"]').forEach(function(b){ b.setAttribute('aria-expanded','false'); });
+          if (panel) { panel.classList.remove('open'); panel.setAttribute('aria-hidden','true'); }
+          dynGrid.querySelectorAll('.album-open-btn[data-album-id="' + aId + '"]').forEach(function(b){ b.setAttribute('aria-expanded','false'); b.firstChild.nodeValue = 'View Album '; });
         });
       });
 

@@ -931,7 +931,7 @@
 
 <!-- Album Modal -->
 <div class="modal-backdrop" id="albumModal">
-  <div class="modal">
+  <div class="modal" style="max-width:640px;">
     <div class="modal-header">
       <span class="modal-title" id="albumModalTitle">New Album</span>
       <button class="modal-close" data-close="albumModal">&times;</button>
@@ -939,11 +939,47 @@
     <div class="form-grid">
       <div class="form-group form-full"><label for="albName">Album Name *</label><input type="text" id="albName" placeholder="Bali 2024" /></div>
       <div class="form-group form-full"><label for="albDescription">Description</label><textarea id="albDescription" rows="3" placeholder="Short description of this album…"></textarea></div>
-      <div class="form-group"><label for="albCoverUrl">Cover Photo URL</label><input type="url" id="albCoverUrl" placeholder="https://…" /></div>
       <div class="form-group"><label for="albCategory">Category</label><input type="text" id="albCategory" placeholder="Travel, Work, Family…" /></div>
+      <div class="form-group"><label for="albLocation">Location</label><input type="text" id="albLocation" placeholder="Bali, Indonesia" /></div>
+
+      <!-- Cover Photo -->
       <div class="form-group form-full">
-        <label for="albPhotos">Photo URLs <span style="font-weight:400;color:var(--muted)">(one per line)</span></label>
-        <textarea id="albPhotos" rows="6" placeholder="https://example.com/photo1.jpg&#10;https://example.com/photo2.jpg"></textarea>
+        <label>Cover Photo</label>
+        <div style="display:flex;gap:8px;margin-bottom:8px;">
+          <button type="button" id="albCoverModeUpload" onclick="albCoverSetMode('upload')" style="font-size:12px;padding:5px 14px;border:1px solid var(--border);border-radius:6px;background:var(--accent,#c9a84c);color:#fff;cursor:pointer;">⬆ Upload file</button>
+          <button type="button" id="albCoverModeUrl" onclick="albCoverSetMode('url')" style="font-size:12px;padding:5px 14px;border:1px solid var(--border);border-radius:6px;background:transparent;cursor:pointer;">🔗 Paste URL</button>
+        </div>
+        <div id="albCoverUploadArea">
+          <input type="file" id="albCoverFile" accept="image/*" style="width:100%;" />
+          <div id="albCoverPreview" style="display:none;margin-top:8px;"><img id="albCoverPreviewImg" src="" alt="Cover preview" style="max-height:120px;width:100%;border-radius:6px;object-fit:cover;border:1px solid var(--border);" /></div>
+          <div id="albCoverUploadStatus" style="font-size:12px;color:var(--muted);margin-top:6px;"></div>
+        </div>
+        <div id="albCoverUrlArea" style="display:none;">
+          <input type="url" id="albCoverUrlInput" placeholder="https://…" style="width:100%;" />
+          <div id="albCoverPreviewUrl" style="display:none;margin-top:8px;"><img id="albCoverPreviewUrlImg" src="" alt="Cover preview" style="max-height:120px;width:100%;border-radius:6px;object-fit:cover;border:1px solid var(--border);" /></div>
+        </div>
+        <input type="hidden" id="albCoverUrl" />
+      </div>
+
+      <!-- Album Photos -->
+      <div class="form-group form-full">
+        <label>Album Photos</label>
+        <div id="albPhotosList" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;"></div>
+        <div style="display:flex;gap:8px;margin-bottom:8px;">
+          <button type="button" id="albPhotoModeUpload" onclick="albPhotoSetMode('upload')" style="font-size:12px;padding:5px 14px;border:1px solid var(--border);border-radius:6px;background:var(--accent,#c9a84c);color:#fff;cursor:pointer;">⬆ Upload photos</button>
+          <button type="button" id="albPhotoModeUrl" onclick="albPhotoSetMode('url')" style="font-size:12px;padding:5px 14px;border:1px solid var(--border);border-radius:6px;background:transparent;cursor:pointer;">🔗 Add URL</button>
+        </div>
+        <div id="albPhotoUploadArea">
+          <input type="file" id="albPhotoFile" accept="image/*" multiple style="width:100%;" />
+          <div id="albPhotoUploadStatus" style="font-size:12px;color:var(--muted);margin-top:6px;"></div>
+        </div>
+        <div id="albPhotoUrlArea" style="display:none;">
+          <div style="display:flex;gap:8px;">
+            <input type="url" id="albPhotoUrlInput" placeholder="https://… then press Enter or click Add" style="flex:1;" />
+            <button type="button" id="albPhotoUrlAdd" style="padding:8px 14px;background:var(--navy,#1a2a4a);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:12px;white-space:nowrap;">Add</button>
+          </div>
+        </div>
+        <input type="hidden" id="albPhotos" />
       </div>
     </div>
     <div class="form-actions" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
@@ -1555,7 +1591,7 @@ document.getElementById('saveGalleryBtn').addEventListener('click', async () => 
 function loadAlbumDropdown(preselect) {
   const sel = document.getElementById('gAlbum');
   if (!sel) return;
-  db.collection('albums').orderBy('createdAt','desc').get().then(snap => {
+  db.collection('albums').get().then(snap => {
     while (sel.options.length > 1) sel.remove(1);
     snap.forEach(doc => {
       const opt = document.createElement('option');
@@ -1568,11 +1604,140 @@ function loadAlbumDropdown(preselect) {
 }
 
 /* ══════════════════════════════════════════════════
+   ALBUM MODAL HELPERS
+══════════════════════════════════════════════════ */
+let _albPhotos = [];
+
+function albRenderPhotos() {
+  const list = document.getElementById('albPhotosList');
+  if (!list) return;
+  list.innerHTML = '';
+  _albPhotos.forEach(function(url, i) {
+    const item = document.createElement('div');
+    item.style.cssText = 'position:relative;width:72px;height:72px;flex-shrink:0;';
+    item.innerHTML =
+      '<img src="' + esc(url) + '" style="width:72px;height:72px;object-fit:cover;border-radius:4px;border:1px solid var(--border);" onerror="this.style.background=\'#333\'" />' +
+      '<button type="button" onclick="albRemovePhoto(' + i + ')" style="position:absolute;top:-6px;right:-6px;background:#e53e3e;color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:11px;cursor:pointer;line-height:18px;padding:0;">×</button>';
+    list.appendChild(item);
+  });
+  const h = document.getElementById('albPhotos');
+  if (h) h.value = _albPhotos.join('\n');
+}
+window.albRemovePhoto = function(i) { _albPhotos.splice(i, 1); albRenderPhotos(); };
+
+function albCoverSetMode(mode) {
+  const uploadArea = document.getElementById('albCoverUploadArea');
+  const urlArea    = document.getElementById('albCoverUrlArea');
+  const btnUp      = document.getElementById('albCoverModeUpload');
+  const btnUrl     = document.getElementById('albCoverModeUrl');
+  const gold = 'var(--accent,#c9a84c)';
+  if (mode === 'upload') {
+    uploadArea.style.display = '';
+    urlArea.style.display    = 'none';
+    btnUp.style.background   = gold;  btnUp.style.color = '#fff';
+    btnUrl.style.background  = 'transparent'; btnUrl.style.color = '';
+  } else {
+    uploadArea.style.display = 'none';
+    urlArea.style.display    = '';
+    btnUp.style.background   = 'transparent'; btnUp.style.color = '';
+    btnUrl.style.background  = gold;  btnUrl.style.color = '#fff';
+  }
+}
+
+function albPhotoSetMode(mode) {
+  const uploadArea = document.getElementById('albPhotoUploadArea');
+  const urlArea    = document.getElementById('albPhotoUrlArea');
+  const btnUp      = document.getElementById('albPhotoModeUpload');
+  const btnUrl     = document.getElementById('albPhotoModeUrl');
+  const gold = 'var(--accent,#c9a84c)';
+  if (mode === 'upload') {
+    uploadArea.style.display = '';
+    urlArea.style.display    = 'none';
+    btnUp.style.background   = gold;  btnUp.style.color = '#fff';
+    btnUrl.style.background  = 'transparent'; btnUrl.style.color = '';
+  } else {
+    uploadArea.style.display = 'none';
+    urlArea.style.display    = '';
+    btnUp.style.background   = 'transparent'; btnUp.style.color = '';
+    btnUrl.style.background  = gold;  btnUrl.style.color = '#fff';
+  }
+}
+
+/* Cover photo — file upload */
+document.getElementById('albCoverFile').addEventListener('change', async function() {
+  const file = this.files[0];
+  if (!file) return;
+  const status = document.getElementById('albCoverUploadStatus');
+  const preview = document.getElementById('albCoverPreview');
+  const previewImg = document.getElementById('albCoverPreviewImg');
+  status.textContent = 'Uploading…';
+  try {
+    const ref = storage.ref('albums/covers/' + Date.now() + '_' + file.name);
+    await ref.put(file);
+    const url = await ref.getDownloadURL();
+    document.getElementById('albCoverUrl').value = url;
+    previewImg.src = url;
+    preview.style.display = '';
+    status.textContent = 'Uploaded ✓';
+  } catch(e) { status.textContent = 'Upload failed: ' + e.message; }
+});
+
+/* Cover photo — URL input */
+document.getElementById('albCoverUrlInput').addEventListener('input', function() {
+  const url = this.value.trim();
+  document.getElementById('albCoverUrl').value = url;
+  const previewUrl = document.getElementById('albCoverPreviewUrl');
+  const previewUrlImg = document.getElementById('albCoverPreviewUrlImg');
+  if (url) {
+    previewUrlImg.src = url;
+    previewUrl.style.display = '';
+  } else {
+    previewUrl.style.display = 'none';
+  }
+});
+
+/* Album photos — file upload (multi) */
+document.getElementById('albPhotoFile').addEventListener('change', async function() {
+  const files = Array.from(this.files);
+  if (!files.length) return;
+  const status = document.getElementById('albPhotoUploadStatus');
+  status.textContent = 'Uploading 0 / ' + files.length + '…';
+  let done = 0;
+  for (const file of files) {
+    try {
+      const ref = storage.ref('albums/photos/' + Date.now() + '_' + file.name);
+      await ref.put(file);
+      const url = await ref.getDownloadURL();
+      _albPhotos.push(url);
+      albRenderPhotos();
+      done++;
+      status.textContent = done < files.length ? 'Uploading ' + done + ' / ' + files.length + '…' : 'Uploaded ' + done + ' photo' + (done !== 1 ? 's' : '') + ' ✓';
+    } catch(e) { status.textContent = 'Error: ' + e.message; }
+  }
+  this.value = '';
+});
+
+/* Album photos — URL add button */
+function _albAddPhotoUrl() {
+  const input = document.getElementById('albPhotoUrlInput');
+  const url = input.value.trim();
+  if (!url) return;
+  _albPhotos.push(url);
+  albRenderPhotos();
+  input.value = '';
+  input.focus();
+}
+document.getElementById('albPhotoUrlAdd').addEventListener('click', _albAddPhotoUrl);
+document.getElementById('albPhotoUrlInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') { e.preventDefault(); _albAddPhotoUrl(); }
+});
+
+/* ══════════════════════════════════════════════════
    ALBUMS
 ══════════════════════════════════════════════════ */
 function loadAlbums() {
   const list = document.getElementById('albumsAdminList');
-  db.collection('albums').orderBy('createdAt','desc').onSnapshot(snap => {
+  db.collection('albums').onSnapshot(snap => {
     list.innerHTML = '';
     if (snap.empty) { list.innerHTML = '<div class="empty-state">No albums yet — click "+ New Album".</div>'; return; }
     const ul = document.createElement('div'); ul.className = 'items-list';
@@ -1598,8 +1763,23 @@ function loadAlbums() {
 
 document.getElementById('newAlbumBtn').addEventListener('click', () => {
   document.getElementById('albumModalTitle').textContent = 'New Album';
-  ['albName','albDescription','albCoverUrl','albCategory','albPhotos'].forEach(id => document.getElementById(id).value='');
+  ['albName','albDescription','albCoverUrl','albCategory','albLocation','albPhotos'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
   document.getElementById('albDocId').value = '';
+  // Reset cover photo
+  document.getElementById('albCoverFile').value = '';
+  document.getElementById('albCoverUrlInput').value = '';
+  document.getElementById('albCoverPreview').style.display = 'none';
+  document.getElementById('albCoverPreviewUrl').style.display = 'none';
+  document.getElementById('albCoverUploadStatus').textContent = '';
+  albCoverSetMode('upload');
+  // Reset album photos
+  _albPhotos = [];
+  albRenderPhotos();
+  document.getElementById('albPhotoFile').value = '';
+  document.getElementById('albPhotoUploadStatus').textContent = '';
+  albPhotoSetMode('upload');
   openModal('albumModal');
 });
 
@@ -1609,10 +1789,33 @@ window.editAlbum = id => {
     document.getElementById('albumModalTitle').textContent = 'Edit Album';
     document.getElementById('albName').value        = d.name        || '';
     document.getElementById('albDescription').value = d.description || '';
-    document.getElementById('albCoverUrl').value    = d.coverUrl    || '';
     document.getElementById('albCategory').value    = d.category    || '';
-    document.getElementById('albPhotos').value      = Array.isArray(d.photos) ? d.photos.join('\n') : '';
+    document.getElementById('albLocation').value    = d.location    || '';
     document.getElementById('albDocId').value       = id;
+
+    // Cover photo — show in URL mode since we have a stored URL
+    const coverUrl = d.coverUrl || '';
+    document.getElementById('albCoverUrl').value = coverUrl;
+    if (coverUrl) {
+      document.getElementById('albCoverUrlInput').value = coverUrl;
+      const previewUrlImg = document.getElementById('albCoverPreviewUrlImg');
+      previewUrlImg.src = coverUrl;
+      document.getElementById('albCoverPreviewUrl').style.display = '';
+      albCoverSetMode('url');
+    } else {
+      document.getElementById('albCoverUrlInput').value = '';
+      document.getElementById('albCoverPreviewUrl').style.display = 'none';
+      document.getElementById('albCoverPreview').style.display = 'none';
+      document.getElementById('albCoverUploadStatus').textContent = '';
+      albCoverSetMode('upload');
+    }
+
+    // Album photos
+    _albPhotos = Array.isArray(d.photos) ? d.photos.slice() : [];
+    albRenderPhotos();
+    document.getElementById('albPhotoUploadStatus').textContent = '';
+    albPhotoSetMode('upload');
+
     openModal('albumModal');
   });
 };
@@ -1624,14 +1827,13 @@ window.deleteAlbum = id => {
 
 document.getElementById('saveAlbumBtn').addEventListener('click', async () => {
   const id = document.getElementById('albDocId').value;
-  const photosRaw = document.getElementById('albPhotos').value.trim();
-  const photos = photosRaw ? photosRaw.split('\n').map(u => u.trim()).filter(u => u) : [];
   const data = {
     name:        document.getElementById('albName').value.trim(),
     description: document.getElementById('albDescription').value.trim(),
     coverUrl:    document.getElementById('albCoverUrl').value.trim(),
     category:    document.getElementById('albCategory').value.trim(),
-    photos:      photos,
+    location:    document.getElementById('albLocation').value.trim(),
+    photos:      _albPhotos.slice(),
   };
   if (!data.name) { toast('Album name is required.','error'); return; }
   try {
