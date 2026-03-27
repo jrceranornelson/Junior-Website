@@ -921,9 +921,12 @@ body.preloading { overflow: hidden; }
   overflow: hidden;
   flex-shrink: 0;
   border-radius: 12px 12px 0 0;
+  background: #0b1d3a;
 }
 
 .project-card-img img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -977,7 +980,7 @@ body.preloading { overflow: hidden; }
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  flex: 1;
+  max-height: calc(1.7 * 0.9rem * 3);
 }
 
 .project-card-link {

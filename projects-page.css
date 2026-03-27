@@ -175,8 +175,11 @@
   overflow: hidden;
   flex-shrink: 0;
   border-radius: 12px 12px 0 0;
+  background: #0b1d3a;
 }
 .pp-card-img img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -232,6 +235,7 @@
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  max-height: calc(1.7 * 0.9rem * 3);
 }
 
 /* ─── KEY HIGHLIGHTS ─── */
