@@ -882,7 +882,24 @@
       <div class="form-group"><label for="pUrl">Project URL</label><input type="url" id="pUrl" placeholder="https://…" /></div>
       <div class="form-group"><label for="pTag">Tag / Category</label><input type="text" id="pTag" placeholder="Education, Diplomacy…" /></div>
       <div class="form-group"><label for="pOrder">Display Order</label><input type="number" id="pOrder" placeholder="0" min="0" /></div>
-      <div class="form-group"><label for="pLogoUrl">Logo URL</label><input type="url" id="pLogoUrl" placeholder="https://…" /></div>
+      <div class="form-group form-full" id="pLogoGroup">
+        <label>Logo Image</label>
+        <div style="display:flex;gap:8px;margin-bottom:10px;">
+          <button type="button" id="pLogoModeUpload" onclick="pLogoSetMode('upload')" style="font-size:12px;padding:5px 14px;border:1px solid var(--border);border-radius:6px;background:var(--accent,#c9a84c);color:#fff;cursor:pointer;">⬆ Upload file</button>
+          <button type="button" id="pLogoModeUrl" onclick="pLogoSetMode('url')" style="font-size:12px;padding:5px 14px;border:1px solid var(--border);border-radius:6px;background:transparent;cursor:pointer;">🔗 Paste URL</button>
+        </div>
+        <div id="pLogoUploadArea">
+          <input type="file" id="pLogoFile" accept="image/*" style="width:100%;" />
+          <div id="pLogoPreview" style="display:none;margin-top:8px;">
+            <img id="pLogoPreviewImg" src="" alt="Preview" style="max-height:80px;max-width:200px;border-radius:6px;object-fit:contain;border:1px solid var(--border);" />
+          </div>
+          <div id="pLogoUploadStatus" style="font-size:12px;color:var(--muted);margin-top:6px;"></div>
+        </div>
+        <div id="pLogoUrlArea" style="display:none;">
+          <input type="url" id="pLogoUrlInput" placeholder="https://…" style="width:100%;" />
+        </div>
+        <input type="hidden" id="pLogoUrl" />
+      </div>
     </div>
     <div class="form-actions" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
       <button class="btn btn-primary" id="saveProjectBtn">Save Project</button>
@@ -2192,11 +2209,68 @@ function loadProjects() {
   db.collection('projects').orderBy('createdAt','desc').onSnapshot(s => render(s.docs), () => db.collection('projects').onSnapshot(s => render(s.docs)));
 }
 
+// Logo field toggle & upload
+function pLogoSetMode(mode) {
+  var uploadArea  = document.getElementById('pLogoUploadArea');
+  var urlArea     = document.getElementById('pLogoUrlArea');
+  var btnUpload   = document.getElementById('pLogoModeUpload');
+  var btnUrl      = document.getElementById('pLogoModeUrl');
+  if (!uploadArea) return;
+  if (mode === 'upload') {
+    uploadArea.style.display = '';
+    urlArea.style.display    = 'none';
+    btnUpload.style.background = 'var(--accent,#c9a84c)';
+    btnUpload.style.color      = '#fff';
+    btnUrl.style.background    = 'transparent';
+    btnUrl.style.color         = '';
+  } else {
+    uploadArea.style.display = 'none';
+    urlArea.style.display    = '';
+    btnUrl.style.background    = 'var(--accent,#c9a84c)';
+    btnUrl.style.color         = '#fff';
+    btnUpload.style.background = 'transparent';
+    btnUpload.style.color      = '';
+  }
+}
+
+document.getElementById('pLogoFile').addEventListener('change', function() {
+  var file = this.files[0];
+  if (!file) return;
+  // Show local preview immediately
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    document.getElementById('pLogoPreviewImg').src = e.target.result;
+    document.getElementById('pLogoPreview').style.display = '';
+  };
+  reader.readAsDataURL(file);
+  // Upload to Firebase Storage
+  var status = document.getElementById('pLogoUploadStatus');
+  status.textContent = 'Uploading…';
+  document.getElementById('pLogoUrl').value = '';
+  var ref = firebase.storage().ref('projects/logos/' + file.name);
+  ref.put(file).then(function(snap) {
+    return snap.ref.getDownloadURL();
+  }).then(function(url) {
+    document.getElementById('pLogoUrl').value = url;
+    status.textContent = 'Uploaded ✓';
+  }).catch(function(err) {
+    status.textContent = 'Upload failed: ' + err.message;
+  });
+});
+
+document.getElementById('pLogoUrlInput').addEventListener('input', function() {
+  document.getElementById('pLogoUrl').value = this.value.trim();
+});
+
 document.getElementById('newProjectBtn').addEventListener('click', () => {
   document.getElementById('projectModalTitle').textContent = 'New Project';
-  ['pTitle','pDescription','pUrl','pTag','pLogoUrl'].forEach(id => document.getElementById(id).value='');
+  ['pTitle','pDescription','pUrl','pTag','pLogoUrl','pLogoUrlInput'].forEach(id => { var el = document.getElementById(id); if (el) el.value = ''; });
   document.getElementById('pOrder').value = '0';
   document.getElementById('pDocId').value = '';
+  document.getElementById('pLogoFile').value = '';
+  document.getElementById('pLogoPreview').style.display = 'none';
+  document.getElementById('pLogoUploadStatus').textContent = '';
+  pLogoSetMode('upload');
   openModal('projectModal');
 });
 
@@ -2209,7 +2283,12 @@ window.editProject = id => {
     document.getElementById('pUrl').value         = d.url || d.link || '';
     document.getElementById('pTag').value         = d.tag         || '';
     document.getElementById('pOrder').value       = d.order !== undefined ? d.order : 0;
-    document.getElementById('pLogoUrl').value     = d.logoUrl     || '';
+    document.getElementById('pLogoUrl').value      = d.logoUrl || '';
+    document.getElementById('pLogoUrlInput').value = d.logoUrl || '';
+    document.getElementById('pLogoFile').value     = '';
+    document.getElementById('pLogoPreview').style.display = 'none';
+    document.getElementById('pLogoUploadStatus').textContent = '';
+    pLogoSetMode(d.logoUrl ? 'url' : 'upload');
     document.getElementById('pDocId').value       = id;
     openModal('projectModal');
   });
