@@ -136,6 +136,12 @@
     .map-wrap-title { font-family:'Montserrat',sans-serif; font-size:0.72rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--navy); padding:14px 16px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:8px; }
     #adminMap { height:400px; width:100%; }
 
+    /* ═══════════════════════════════ GALLERY TABS ═══════════════════════════════ */
+    .gallery-tabs { display:flex; gap:4px; margin-bottom:24px; border-bottom:2px solid var(--border); padding-bottom:0; }
+    .gallery-tab { font-family:'Montserrat',sans-serif; font-size:0.75rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; padding:10px 20px; border:none; background:none; cursor:pointer; color:var(--muted); border-bottom:2px solid transparent; margin-bottom:-2px; transition:color .15s,border-color .15s; }
+    .gallery-tab:hover { color:var(--navy); }
+    .gallery-tab.active { color:var(--gold); border-bottom-color:var(--gold); }
+
     /* ═══════════════════════════════ FORMS ═══════════════════════════════ */
     .form-panel { background:var(--white); border:1px solid var(--border); border-radius:2px; padding:28px; margin-bottom:28px; }
     .form-panel-title { font-family:'Montserrat',sans-serif; font-size:0.9rem; font-weight:700; color:var(--navy); margin-bottom:20px; padding-bottom:14px; border-bottom:1px solid var(--border); }
@@ -380,33 +386,47 @@
 
     <!-- ════════════ GALLERY MANAGER ════════════ -->
     <section class="admin-section hidden" id="section-gallery">
-      <div class="section-header">
+      <div class="section-header" style="margin-bottom:20px;">
         <div>
-          <h1 class="section-title">Gallery</h1>
-          <p class="section-sub">Upload photos — add coordinates to place them on the map.</p>
+          <h1 class="section-title">Gallery Manager</h1>
+          <p class="section-sub">Manage photos, albums, and location pins.</p>
         </div>
-        <button class="btn btn-primary" id="uploadPhotoBtn">+ Upload Photo</button>
       </div>
-      <div id="galleryAdminGrid" class="gallery-admin-grid">
-        <div class="admin-spinner" style="grid-column:1/-1"><div class="spinner"></div></div>
-      </div>
-      <!-- Albums subsection -->
-      <div class="section-header" style="margin-top:36px;">
-        <div>
-          <h2 class="section-title" style="font-size:1.1rem;">Albums</h2>
-          <p class="section-sub">Create photo albums that appear on the Gallery page.</p>
-        </div>
-        <button class="btn btn-gold" id="newAlbumBtn">+ New Album</button>
-      </div>
-      <div id="albumsAdminList"><div class="admin-spinner"><div class="spinner"></div></div></div>
 
-      <!-- Live photo map -->
-      <div class="map-wrap">
-        <div class="map-wrap-title">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 14 8 14s8-8.75 8-14a8 8 0 0 0-8-8z"/></svg>
-          Photo Locations — Live Map
+      <!-- Tabs -->
+      <div class="gallery-tabs">
+        <button class="gallery-tab active" data-gtab="photos">Photos</button>
+        <button class="gallery-tab" data-gtab="albums">Albums</button>
+        <button class="gallery-tab" data-gtab="map">Map</button>
+      </div>
+
+      <!-- Tab: Photos -->
+      <div id="gtab-photos" class="gallery-tab-panel">
+        <div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
+          <button class="btn btn-primary" id="uploadPhotoBtn">+ Upload Photo</button>
         </div>
-        <div id="adminMap"></div>
+        <div id="galleryAdminGrid" class="gallery-admin-grid">
+          <div class="admin-spinner" style="grid-column:1/-1"><div class="spinner"></div></div>
+        </div>
+      </div>
+
+      <!-- Tab: Albums -->
+      <div id="gtab-albums" class="gallery-tab-panel" style="display:none;">
+        <div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
+          <button class="btn btn-gold" id="newAlbumBtn">+ New Album</button>
+        </div>
+        <div id="albumsAdminList"><div class="admin-spinner"><div class="spinner"></div></div></div>
+      </div>
+
+      <!-- Tab: Map -->
+      <div id="gtab-map" class="gallery-tab-panel" style="display:none;">
+        <div class="map-wrap" style="margin-top:0;">
+          <div class="map-wrap-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 14 8 14s8-8.75 8-14a8 8 0 0 0-8-8z"/></svg>
+            Photo Locations — Live Map (auto-updates)
+          </div>
+          <div id="adminMap"></div>
+        </div>
       </div>
     </section>
 
@@ -1176,8 +1196,21 @@ function showSection(name) {
   document.querySelectorAll('.sidebar-link[data-section]').forEach(a => {
     a.classList.toggle('active', a.dataset.section === name);
   });
-  if (name === 'gallery' && !window._mapInited) initMap();
 }
+
+/* ── Gallery tab switching ── */
+document.querySelectorAll('.gallery-tab[data-gtab]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.gallery-tab[data-gtab]').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.gallery-tab-panel').forEach(p => p.style.display = 'none');
+    btn.classList.add('active');
+    document.getElementById('gtab-' + btn.dataset.gtab).style.display = '';
+    if (btn.dataset.gtab === 'map') {
+      if (!window._mapInited) initMap();
+      setTimeout(() => { if (adminMap) adminMap.invalidateSize(); }, 120);
+    }
+  });
+});
 
 document.querySelectorAll('.sidebar-link[data-section]').forEach(a => {
   a.addEventListener('click', () => {
@@ -1434,9 +1467,11 @@ let mapMarkers = {};
 function initMap() {
   if (window._mapInited) return;
   window._mapInited = true;
-  adminMap = L.map('adminMap', { scrollWheelZoom: false }).setView([20, 0], 2);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap contributors'
+  adminMap = L.map('adminMap', { scrollWheelZoom: false, worldCopyJump: true, minZoom: 2 }).setView([18, 10], 2);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    subdomains: 'abcd',
+    maxZoom: 19
   }).addTo(adminMap);
 
   // Custom gold icon
@@ -1531,7 +1566,7 @@ window.editGallery = id => {
       let found = '';
       snap.forEach(albumDoc => {
         const photos = Array.isArray(albumDoc.data().photos) ? albumDoc.data().photos : [];
-        if (photos.includes(imgUrl)) found = albumDoc.id;
+        if (photos.some(p => (typeof p === 'string' ? p : p.url) === imgUrl)) found = albumDoc.id;
       });
       loadAlbumDropdown(found);
     }).catch(() => loadAlbumDropdown());
@@ -1595,10 +1630,17 @@ document.getElementById('saveGalleryBtn').addEventListener('click', async () => 
   try {
     if (id) { await db.collection('gallery').doc(id).update(data); toast('Photo updated!','success'); }
     else { data.createdAt = firebase.firestore.FieldValue.serverTimestamp(); await db.collection('gallery').add(data); toast('Photo saved!','success'); }
-    // Add photo to selected album
+    // Add photo to selected album as a photo object
     if (selectedAlbum && imageUrl) {
+      const photoObj = {
+        url:     imageUrl,
+        caption: document.getElementById('gDetails').value.trim(),
+        place:   document.getElementById('gPlace').value.trim(),
+        date:    document.getElementById('gDate').value.trim(),
+        details: document.getElementById('gDetails').value.trim(),
+      };
       await db.collection('albums').doc(selectedAlbum).update({
-        photos: firebase.firestore.FieldValue.arrayUnion(imageUrl)
+        photos: firebase.firestore.FieldValue.arrayUnion(photoObj)
       }).catch(() => {});
     }
     closeModal('galleryModal'); galleryUploadUrl = '';
