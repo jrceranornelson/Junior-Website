@@ -369,6 +369,21 @@ function initWorldMap() {
      to Nominatim geocoding when no coordinates are saved. */
   if (typeof firebase !== 'undefined' && firebase.apps.length) {
     const firestoreDb = window.db || firebase.firestore();
+
+    /* Also listen to manual map_markers (added from Admin → Gallery Manager → Map) */
+    firestoreDb.collection('map_markers').onSnapshot(snapshot => {
+      snapshot.forEach(doc => {
+        const d = doc.data();
+        if (!d.name) return;
+        const lat = parseFloat(d.lat), lng = parseFloat(d.lng);
+        if (isNaN(lat) || isNaN(lng)) return;
+        const key = d.name.trim().toLowerCase();
+        if (_markers.has(key)) return;
+        const photos = d.imageUrl ? [d.imageUrl] : ['https://placehold.co/220x145/0b1d3a/c9a84c?text=' + encodeURIComponent(d.name)];
+        placeMarker(d.name, [lat, lng], photos);
+      });
+    });
+
     firestoreDb.collection('gallery').onSnapshot(snapshot => {
       /* Group by place; capture first available lat/lng per place */
       const byPlace = {};

@@ -135,6 +135,25 @@
     .map-wrap { background:var(--white); border:1px solid var(--border); border-radius:2px; overflow:hidden; margin-top:28px; }
     .map-wrap-title { font-family:'Montserrat',sans-serif; font-size:0.72rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--navy); padding:14px 16px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:8px; }
     #adminMap { height:400px; width:100%; }
+    /* Pin form */
+    .pin-panel { background:var(--white); border:1px solid var(--border); border-radius:2px; margin-bottom:16px; }
+    .pin-panel-header { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; border-bottom:1px solid var(--border); }
+    .pin-panel-title { font-family:'Montserrat',sans-serif; font-size:0.72rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--navy); display:flex; align-items:center; gap:8px; }
+    .pin-form-body { padding:16px; border-bottom:1px solid var(--border); }
+    .pin-geocode-row { display:flex; gap:8px; }
+    .pin-geocode-row input { flex:1; }
+    .pin-coords-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px; }
+    .pin-list { padding:0; margin:0; list-style:none; }
+    .pin-list-item { display:flex; align-items:center; gap:10px; padding:10px 16px; border-bottom:1px solid var(--border); }
+    .pin-list-item:last-child { border-bottom:none; }
+    .pin-list-dot { width:12px; height:12px; border-radius:50%; background:var(--gold); flex-shrink:0; }
+    .pin-list-name { flex:1; font-family:'Inter',sans-serif; font-size:0.82rem; color:var(--navy); }
+    .pin-list-thumb { width:40px; height:30px; object-fit:cover; border-radius:2px; flex-shrink:0; }
+    .pin-geocode-status { font-family:'Inter',sans-serif; font-size:0.75rem; color:var(--muted); margin-top:4px; min-height:16px; }
+    .toggle-row { display:flex; gap:6px; }
+    .toggle-mode-btn { font-family:'Montserrat',sans-serif; font-size:0.68rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; padding:6px 14px; border:1px solid var(--border); border-radius:6px; background:transparent; color:var(--muted); cursor:pointer; transition:background .15s, color .15s, border-color .15s; }
+    .toggle-mode-btn.active { background:var(--gold,#c9a84c); color:#fff; border-color:var(--gold,#c9a84c); }
+    .toggle-mode-btn:hover:not(.active) { border-color:var(--navy); color:var(--navy); }
 
     /* ═══════════════════════════════ GALLERY TABS ═══════════════════════════════ */
     .gallery-tabs { display:flex; gap:4px; margin-bottom:24px; border-bottom:2px solid var(--border); padding-bottom:0; }
@@ -282,6 +301,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
         Projects
       </button>
+      <button class="sidebar-link" data-section="books">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        Books
+      </button>
       <button class="sidebar-link" data-section="about">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         About Me
@@ -361,6 +384,11 @@
           <div class="stat-value" id="stat-academic">—</div>
           <div class="stat-sub">Publications</div>
         </div>
+        <div class="stat-card">
+          <div class="stat-label">Books</div>
+          <div class="stat-value" id="stat-books">—</div>
+          <div class="stat-sub">Published titles</div>
+        </div>
         <div class="stat-card stat-card--green">
           <div class="stat-label">Page Views</div>
           <div class="stat-value" id="stat-pageviews">—</div>
@@ -420,6 +448,80 @@
 
       <!-- Tab: Map -->
       <div id="gtab-map" class="gallery-tab-panel" style="display:none;">
+
+        <!-- Manual Pins Panel -->
+        <div class="pin-panel">
+          <div class="pin-panel-header">
+            <span class="pin-panel-title">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 14 8 14s8-8.75 8-14a8 8 0 0 0-8-8z"/></svg>
+              Manual Map Pins
+            </span>
+            <button class="btn btn-primary btn-sm" id="addPinToggleBtn">+ Add Pin</button>
+          </div>
+
+          <!-- Add pin form (hidden by default) -->
+          <div id="pinAddForm" style="display:none;" class="pin-form-body">
+            <div class="form-group">
+              <label>Location Name</label>
+              <div class="pin-geocode-row">
+                <input type="text" id="pinName" placeholder="e.g. Paris, France" />
+                <button class="btn btn-ghost btn-sm" id="pinGeocodeBtn">Geocode</button>
+              </div>
+              <p class="pin-geocode-status" id="pinGeocodeStatus"></p>
+            </div>
+            <div class="pin-coords-row">
+              <div class="form-group">
+                <label>Latitude</label>
+                <input type="number" id="pinLat" step="any" placeholder="48.8566" />
+              </div>
+              <div class="form-group">
+                <label>Longitude</label>
+                <input type="number" id="pinLng" step="any" placeholder="2.3522" />
+              </div>
+            </div>
+            <div style="margin:14px 0 8px;">
+              <label style="font-family:'Montserrat',sans-serif;font-size:0.62rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--navy);display:block;margin-bottom:6px;">Cover Photo</label>
+              <div class="toggle-row">
+                <button class="toggle-mode-btn active" id="pinCoverUploadBtn" onclick="pinCoverSetMode('upload')">Upload</button>
+                <button class="toggle-mode-btn" id="pinCoverUrlBtn" onclick="pinCoverSetMode('url')">URL</button>
+              </div>
+            </div>
+            <!-- Upload zone -->
+            <div id="pinCoverUploadArea">
+              <div class="upload-zone" id="pinCoverZone" tabindex="0">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+                <p>Drag &amp; drop or click to upload</p>
+                <input type="file" id="pinCoverFileInput" accept="image/*" style="display:none;" />
+              </div>
+              <div id="pinCoverPreviewUpload" style="display:none;margin-top:8px;position:relative;width:100px;">
+                <img id="pinCoverPreviewUploadImg" style="width:100px;height:70px;object-fit:cover;border-radius:4px;display:block;" />
+                <button onclick="clearPinCoverUpload()" style="position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;background:var(--danger,#e53935);color:#fff;border:none;cursor:pointer;font-size:0.7rem;line-height:1;display:flex;align-items:center;justify-content:center;">&times;</button>
+              </div>
+              <div id="pinCoverUploadProgress" style="display:none;font-family:'Inter',sans-serif;font-size:0.75rem;color:var(--muted);margin-top:6px;"></div>
+            </div>
+            <!-- URL input -->
+            <div id="pinCoverUrlArea" style="display:none;">
+              <div class="form-group" style="margin-top:6px;">
+                <label>Cover Photo URL</label>
+                <input type="url" id="pinCoverUrl" placeholder="https://..." />
+              </div>
+              <div id="pinCoverPreviewUrl" style="display:none;margin-top:8px;">
+                <img id="pinCoverPreviewUrlImg" style="width:100px;height:70px;object-fit:cover;border-radius:4px;display:block;" />
+              </div>
+            </div>
+            <div class="form-actions" style="margin-top:16px;">
+              <button class="btn btn-primary btn-sm" id="savePinBtn">Save Pin</button>
+              <button class="btn btn-ghost btn-sm" id="cancelPinBtn">Cancel</button>
+            </div>
+          </div>
+
+          <!-- Existing pins list -->
+          <ul class="pin-list" id="pinsList">
+            <li style="padding:10px 16px;font-family:'Inter',sans-serif;font-size:0.82rem;color:var(--muted);">No manual pins yet.</li>
+          </ul>
+        </div>
+
+        <!-- Live map -->
         <div class="map-wrap" style="margin-top:0;">
           <div class="map-wrap-title">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 14 8 14s8-8.75 8-14a8 8 0 0 0-8-8z"/></svg>
@@ -432,14 +534,31 @@
 
     <!-- ════════════ VIDEOS MANAGER ════════════ -->
     <section class="admin-section hidden" id="section-videos">
-      <div class="section-header">
+      <div class="section-header" style="margin-bottom:20px;">
         <div>
-          <h1 class="section-title">Videos</h1>
-          <p class="section-sub">Manage gallery videos — YouTube, Vimeo, or direct links.</p>
+          <h1 class="section-title">Video Manager</h1>
+          <p class="section-sub">Manage videos and video albums.</p>
         </div>
-        <button class="btn btn-primary" id="addVideoBtn">+ Add Video</button>
       </div>
-      <div id="videosList"><div class="admin-spinner"><div class="spinner"></div></div></div>
+      <!-- Tabs -->
+      <div class="gallery-tabs">
+        <button class="gallery-tab active" data-vtab="videos">Videos</button>
+        <button class="gallery-tab" data-vtab="albums">Albums</button>
+      </div>
+      <!-- Tab: Videos -->
+      <div id="vtab-videos" class="video-tab-panel">
+        <div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
+          <button class="btn btn-primary" id="addVideoBtn">+ Add Video</button>
+        </div>
+        <div id="videosList"><div class="admin-spinner"><div class="spinner"></div></div></div>
+      </div>
+      <!-- Tab: Albums -->
+      <div id="vtab-albums" class="video-tab-panel" style="display:none;">
+        <div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
+          <button class="btn btn-gold" id="newVideoAlbumBtn">+ New Album</button>
+        </div>
+        <div id="videoAlbumsList"><div class="admin-spinner"><div class="spinner"></div></div></div>
+      </div>
     </section>
 
     <!-- ════════════ MUSIC MANAGER ════════════ -->
@@ -552,6 +671,18 @@
         <button class="btn btn-primary" id="newProjectBtn">+ New Project</button>
       </div>
       <div id="projectsList"><div class="admin-spinner"><div class="spinner"></div></div></div>
+    </section>
+
+    <!-- ════════════ BOOKS MANAGER ════════════ -->
+    <section class="admin-section hidden" id="section-books">
+      <div class="section-header">
+        <div>
+          <h1 class="section-title">Books</h1>
+          <p class="section-sub">Manage your published books and buy links shown on the Books page.</p>
+        </div>
+        <button class="btn btn-primary" id="newBookBtn">+ New Book</button>
+      </div>
+      <div id="booksList"><div class="admin-spinner"><div class="spinner"></div></div></div>
     </section>
 
     <!-- ════════════ ABOUT ME ════════════ -->
@@ -843,6 +974,49 @@
   </div>
 </div>
 
+<!-- Video Album Modal -->
+<div class="modal-backdrop" id="videoAlbumModal">
+  <div class="modal" style="max-width:660px;">
+    <div class="modal-header">
+      <span class="modal-title" id="videoAlbumModalTitle">New Video Album</span>
+      <button class="modal-close" data-close="videoAlbumModal">&times;</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-group form-full"><label for="vaName">Album Name *</label><input type="text" id="vaName" placeholder="Diplomacy Series" /></div>
+      <div class="form-group form-full"><label for="vaDescription">Description</label><textarea id="vaDescription" rows="2" placeholder="Short description…"></textarea></div>
+      <div class="form-group form-full">
+        <label>Cover Image</label>
+        <div style="display:flex;gap:8px;margin-bottom:8px;">
+          <button type="button" id="vaCoverModeUpload" onclick="vaCoverSetMode('upload')" style="font-size:12px;padding:5px 14px;border:1px solid var(--border);border-radius:6px;background:var(--accent,#c9a84c);color:#fff;cursor:pointer;">⬆ Upload</button>
+          <button type="button" id="vaCoverModeUrl" onclick="vaCoverSetMode('url')" style="font-size:12px;padding:5px 14px;border:1px solid var(--border);border-radius:6px;background:transparent;cursor:pointer;">🔗 Paste URL</button>
+        </div>
+        <div id="vaCoverUploadArea">
+          <input type="file" id="vaCoverFile" accept="image/*" style="width:100%;" />
+          <div id="vaCoverUploadStatus" style="font-size:12px;color:var(--muted);margin-top:6px;"></div>
+          <div id="vaCoverPreview" style="display:none;margin-top:8px;"><img id="vaCoverPreviewImg" src="" style="max-height:100px;border-radius:4px;" /></div>
+        </div>
+        <div id="vaCoverUrlArea" style="display:none;">
+          <input type="url" id="vaCoverUrlInput" placeholder="https://…" style="width:100%;" />
+          <div id="vaCoverPreviewUrl" style="display:none;margin-top:8px;"><img id="vaCoverPreviewUrlImg" src="" style="max-height:100px;border-radius:4px;" /></div>
+        </div>
+        <input type="hidden" id="vaCoverUrl" />
+      </div>
+      <div class="form-group form-full">
+        <label>Videos in this album</label>
+        <p style="font-size:0.78rem;color:var(--muted);margin:0 0 8px;">Select the videos to include:</p>
+        <div id="vaVideoChecklist" style="max-height:260px;overflow-y:auto;border:1px solid var(--border);border-radius:6px;padding:8px;display:flex;flex-direction:column;gap:6px;">
+          <div style="color:var(--muted);font-size:0.82rem;padding:8px;">Loading videos…</div>
+        </div>
+      </div>
+    </div>
+    <div class="form-actions" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
+      <button class="btn btn-primary" id="saveVideoAlbumBtn">Save Album</button>
+      <button class="btn btn-ghost" data-close="videoAlbumModal">Cancel</button>
+    </div>
+    <input type="hidden" id="vaDocId" />
+  </div>
+</div>
+
 <!-- Music Modal -->
 <div class="modal-backdrop" id="musicModal">
   <div class="modal">
@@ -1118,6 +1292,53 @@
   </div>
 </div>
 
+<!-- Books Modal -->
+<div class="modal-backdrop" id="bookModal">
+  <div class="modal" style="max-width:700px;">
+    <div class="modal-header">
+      <span class="modal-title" id="bookModalTitle">New Book</span>
+      <button class="modal-close" data-close="bookModal">&times;</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-group form-full"><label for="bkTitle">Title *</label><input type="text" id="bkTitle" placeholder="Book title" /></div>
+      <div class="form-group form-full"><label for="bkSubtitle">Subtitle <span style="font-weight:400;color:var(--muted)">(optional)</span></label><input type="text" id="bkSubtitle" placeholder="A subtitle or tagline" /></div>
+      <div class="form-group"><label for="bkYear">Published Year</label><input type="text" id="bkYear" placeholder="2024" /></div>
+      <div class="form-group"><label for="bkGenre">Genre / Category</label><input type="text" id="bkGenre" placeholder="Non-fiction, Diplomacy…" /></div>
+      <div class="form-group form-full"><label for="bkDescription">Description</label><textarea id="bkDescription" rows="4" placeholder="A compelling description of the book…"></textarea></div>
+      <div class="form-group"><label for="bkOrder">Display Order <span style="font-weight:400;color:var(--muted)">(lower = first)</span></label><input type="number" id="bkOrder" placeholder="1" min="0" /></div>
+      <div class="form-group form-full">
+        <label>Cover Image</label>
+        <div class="upload-zone" id="bookCoverZone">
+          <div class="upload-zone-icon"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+          <div class="upload-zone-label">Click or drag to upload cover</div>
+          <div class="upload-zone-text">JPG, PNG, WebP — max 5MB</div>
+          <input type="file" id="bookCoverFile" accept="image/*" style="display:none" />
+        </div>
+        <div class="upload-progress" id="bookCoverProgress"><div class="upload-progress-bar" id="bookCoverProgressBar" style="width:0%"></div></div>
+        <div id="bookCoverPreview" style="margin-top:10px;"></div>
+        <label for="bkCoverUrl" style="margin-top:12px;display:block;">Or paste cover URL</label>
+        <input type="url" id="bkCoverUrl" placeholder="https://… (optional if uploading above)" />
+      </div>
+    </div>
+
+    <!-- Buy Links -->
+    <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div style="font-family:'Montserrat',sans-serif;font-size:0.82rem;font-weight:700;color:var(--navy);">Buy Links</div>
+        <button type="button" class="btn btn-gold btn-sm" id="addBuyLinkBtn">+ Add Retailer</button>
+      </div>
+      <div id="bkBuyLinksContainer" style="display:flex;flex-direction:column;gap:8px;"></div>
+      <p style="font-size:0.78rem;color:var(--muted);margin-top:8px;">Add each retailer where readers can purchase this book. The favicon will be shown automatically.</p>
+    </div>
+
+    <div class="form-actions" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
+      <button class="btn btn-primary" id="saveBookBtn">Save Book</button>
+      <button class="btn btn-ghost" data-close="bookModal">Cancel</button>
+    </div>
+    <input type="hidden" id="bkDocId" />
+  </div>
+</div>
+
 <!-- Toast -->
 <div class="toast" id="toast"></div>
 
@@ -1283,6 +1504,7 @@ function initDashboard() {
   loadGallery();
   loadAlbums();
   loadVideos();
+  loadVideoAlbums();
   loadMusic();
   loadAcademic();
   loadAffiliations();
@@ -1291,6 +1513,7 @@ function initDashboard() {
   loadMessages();
   loadSubscribers();
   loadProjects();
+  loadBooks();
   loadAbout();
   loadSocial();
 }
@@ -1304,6 +1527,7 @@ function loadStats() {
   db.collection('gallery').onSnapshot(s => stat('stat-gallery').textContent = s.size);
   db.collection('subscribers').onSnapshot(s => stat('stat-subscribers').textContent = s.size);
   db.collection('projects').onSnapshot(s => stat('stat-projects').textContent = s.size);
+  db.collection('books').onSnapshot(s => stat('stat-books').textContent = s.size);
   db.collection('music').onSnapshot(s => stat('stat-music').textContent = s.size);
   db.collection('academic').onSnapshot(s => stat('stat-academic').textContent = s.size);
   db.collection('messages').where('read','==',false).onSnapshot(s => {
@@ -1480,10 +1704,11 @@ function initMap() {
     iconSize: [22, 22], iconAnchor: [11, 11], popupAnchor: [0, -14], className: ''
   });
 
-  // Live feed — add/remove markers as photos change
+  // Live feed — gallery photos with lat/lng
   db.collection('gallery').onSnapshot(snap => {
     // Clear removed
     Object.keys(mapMarkers).forEach(id => {
+      if (id.startsWith('pin_')) return; // skip manual pins
       if (!snap.docs.find(d => d.id === id)) {
         adminMap.removeLayer(mapMarkers[id]);
         delete mapMarkers[id];
@@ -1505,7 +1730,212 @@ function initMap() {
       }
     });
   });
+
+  // Live feed — manual map_markers pins
+  db.collection('map_markers').onSnapshot(snap => {
+    // Remove deleted
+    Object.keys(mapMarkers).forEach(id => {
+      if (!id.startsWith('pin_')) return;
+      const docId = id.slice(4);
+      if (!snap.docs.find(d => d.id === docId)) {
+        adminMap.removeLayer(mapMarkers[id]);
+        delete mapMarkers[id];
+      }
+    });
+    // Add/update
+    snap.forEach(doc => {
+      const d = doc.data();
+      const lat = parseFloat(d.lat), lng = parseFloat(d.lng);
+      if (isNaN(lat) || isNaN(lng)) return;
+      const key = 'pin_' + doc.id;
+      if (mapMarkers[key]) {
+        mapMarkers[key].setLatLng([lat, lng]);
+      } else {
+        const m = L.marker([lat, lng], { icon: goldIcon })
+          .addTo(adminMap)
+          .bindPopup(`<strong>${esc(d.name||'Pin')}</strong>${d.imageUrl ? `<br><img src="${esc(d.imageUrl)}" style="max-width:160px;margin-top:6px;border-radius:2px;" />` : ''}`);
+        mapMarkers[key] = m;
+      }
+    });
+  });
 }
+
+/* ── Manual Map Pins ─────────────────────────────────────────── */
+(function () {
+  let pinCoverMode = 'upload';
+  let pinCoverUploadedUrl = '';
+
+  window.pinCoverSetMode = function (mode) {
+    pinCoverMode = mode;
+    document.getElementById('pinCoverUploadBtn').classList.toggle('active', mode === 'upload');
+    document.getElementById('pinCoverUrlBtn').classList.toggle('active', mode === 'url');
+    document.getElementById('pinCoverUploadArea').style.display = mode === 'upload' ? '' : 'none';
+    document.getElementById('pinCoverUrlArea').style.display   = mode === 'url'    ? '' : 'none';
+  };
+
+  window.clearPinCoverUpload = function () {
+    pinCoverUploadedUrl = '';
+    document.getElementById('pinCoverPreviewUpload').style.display = 'none';
+    document.getElementById('pinCoverPreviewUploadImg').src = '';
+    document.getElementById('pinCoverZone').style.display = '';
+  };
+
+  // Upload zone wiring
+  const zone      = document.getElementById('pinCoverZone');
+  const fileInput = document.getElementById('pinCoverFileInput');
+  if (zone) {
+    zone.addEventListener('click', () => fileInput.click());
+    zone.addEventListener('dragover',  e => { e.preventDefault(); zone.style.borderColor = 'var(--navy)'; });
+    zone.addEventListener('dragleave', () => { zone.style.borderColor = ''; });
+    zone.addEventListener('drop', e => {
+      e.preventDefault(); zone.style.borderColor = '';
+      if (e.dataTransfer.files[0]) uploadPinCover(e.dataTransfer.files[0]);
+    });
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files[0]) uploadPinCover(fileInput.files[0]);
+    });
+  }
+
+  // URL input live preview
+  const urlInput = document.getElementById('pinCoverUrl');
+  if (urlInput) {
+    urlInput.addEventListener('input', () => {
+      const url = urlInput.value.trim();
+      const prev = document.getElementById('pinCoverPreviewUrl');
+      const img  = document.getElementById('pinCoverPreviewUrlImg');
+      if (url) { img.src = url; prev.style.display = ''; }
+      else     { prev.style.display = 'none'; }
+    });
+  }
+
+  async function uploadPinCover(file) {
+    if (!file.type.startsWith('image/')) { toast('Please select an image.', 'error'); return; }
+    if (file.size > 5 * 1024 * 1024)    { toast('File too large — max 5MB.', 'error'); return; }
+    const prog = document.getElementById('pinCoverUploadProgress');
+    prog.style.display = 'block'; prog.textContent = 'Uploading…';
+    const ref  = storage.ref('map_pins/' + Date.now() + '_' + file.name.replace(/[^a-z0-9.]/gi, '_'));
+    const task = ref.put(file);
+    task.on('state_changed',
+      s => { prog.textContent = 'Uploading… ' + Math.round(s.bytesTransferred / s.totalBytes * 100) + '%'; },
+      e => { toast('Upload failed: ' + e.message, 'error'); prog.style.display = 'none'; },
+      async () => {
+        pinCoverUploadedUrl = await ref.getDownloadURL();
+        prog.style.display = 'none';
+        document.getElementById('pinCoverZone').style.display = 'none';
+        document.getElementById('pinCoverPreviewUploadImg').src = pinCoverUploadedUrl;
+        document.getElementById('pinCoverPreviewUpload').style.display = '';
+      }
+    );
+  }
+
+  // Toggle form
+  document.getElementById('addPinToggleBtn').addEventListener('click', () => {
+    const f = document.getElementById('pinAddForm');
+    const isOpen = f.style.display !== 'none';
+    f.style.display = isOpen ? 'none' : '';
+    document.getElementById('addPinToggleBtn').textContent = isOpen ? '+ Add Pin' : '− Cancel';
+  });
+  document.getElementById('cancelPinBtn').addEventListener('click', () => {
+    document.getElementById('pinAddForm').style.display = 'none';
+    document.getElementById('addPinToggleBtn').textContent = '+ Add Pin';
+    resetPinForm();
+  });
+
+  // Geocode button
+  document.getElementById('pinGeocodeBtn').addEventListener('click', async () => {
+    const name   = document.getElementById('pinName').value.trim();
+    const status = document.getElementById('pinGeocodeStatus');
+    if (!name) { status.textContent = 'Enter a location name first.'; return; }
+    status.textContent = 'Geocoding…';
+    try {
+      const r = await fetch('https://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(name) + '&format=json&limit=1', { headers: { 'Accept-Language': 'en' } });
+      const data = await r.json();
+      if (data && data[0]) {
+        document.getElementById('pinLat').value = parseFloat(data[0].lat).toFixed(6);
+        document.getElementById('pinLng').value = parseFloat(data[0].lon).toFixed(6);
+        status.textContent = '✓ ' + data[0].display_name.split(',').slice(0, 3).join(', ');
+      } else {
+        status.textContent = 'Location not found — enter coordinates manually.';
+      }
+    } catch (e) {
+      status.textContent = 'Geocoding failed — enter coordinates manually.';
+    }
+  });
+
+  // Save pin
+  document.getElementById('savePinBtn').addEventListener('click', async () => {
+    const name = document.getElementById('pinName').value.trim();
+    const lat  = parseFloat(document.getElementById('pinLat').value);
+    const lng  = parseFloat(document.getElementById('pinLng').value);
+    if (!name)        { toast('Enter a location name.', 'error'); return; }
+    if (isNaN(lat) || isNaN(lng)) { toast('Enter valid coordinates.', 'error'); return; }
+    const imageUrl = pinCoverMode === 'upload'
+      ? pinCoverUploadedUrl
+      : document.getElementById('pinCoverUrl').value.trim();
+    try {
+      await db.collection('map_markers').add({
+        name, lat, lng, imageUrl: imageUrl || '',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      toast('Pin added — it will appear on the map immediately!', 'success');
+      document.getElementById('pinAddForm').style.display = 'none';
+      document.getElementById('addPinToggleBtn').textContent = '+ Add Pin';
+      resetPinForm();
+    } catch (e) {
+      toast('Error saving pin: ' + e.message, 'error');
+    }
+  });
+
+  function resetPinForm() {
+    document.getElementById('pinName').value = '';
+    document.getElementById('pinLat').value  = '';
+    document.getElementById('pinLng').value  = '';
+    document.getElementById('pinGeocodeStatus').textContent = '';
+    pinCoverUploadedUrl = '';
+    document.getElementById('pinCoverUrl').value = '';
+    document.getElementById('pinCoverPreviewUrl').style.display = 'none';
+    document.getElementById('pinCoverPreviewUpload').style.display = 'none';
+    document.getElementById('pinCoverZone').style.display = '';
+    pinCoverSetMode('upload');
+  }
+
+  // Live list of existing pins
+  db.collection('map_markers').orderBy('createdAt', 'desc').onSnapshot(
+    snap => renderPinsList(snap.docs),
+    () => db.collection('map_markers').onSnapshot(snap => renderPinsList(snap.docs))
+  );
+
+  function renderPinsList(docs) {
+    const list = document.getElementById('pinsList');
+    if (!docs.length) {
+      list.innerHTML = '<li style="padding:10px 16px;font-family:\'Inter\',sans-serif;font-size:0.82rem;color:var(--muted);">No manual pins yet.</li>';
+      return;
+    }
+    list.innerHTML = '';
+    docs.forEach(doc => {
+      const d = doc.data();
+      const li = document.createElement('li');
+      li.className = 'pin-list-item';
+      li.innerHTML = `
+        <span class="pin-list-dot"></span>
+        ${d.imageUrl ? `<img src="${esc(d.imageUrl)}" class="pin-list-thumb" onerror="this.style.display='none'" />` : ''}
+        <span class="pin-list-name">${esc(d.name)} <small style="color:var(--muted);">(${(+d.lat||0).toFixed(4)}, ${(+d.lng||0).toFixed(4)})</small></span>
+        <button class="btn btn-danger btn-sm" onclick="deleteMapPin('${doc.id}','${esc(d.imageUrl||'')}')">Delete</button>`;
+      list.appendChild(li);
+    });
+  }
+})();
+
+window.deleteMapPin = async function (id, imageUrl) {
+  if (!confirm('Delete this map pin?')) return;
+  try {
+    await db.collection('map_markers').doc(id).delete();
+    if (imageUrl && imageUrl.includes('firebasestorage')) {
+      try { await storage.refFromURL(imageUrl).delete(); } catch(e) {}
+    }
+    toast('Pin deleted.', 'success');
+  } catch (e) { toast('Error: ' + e.message, 'error'); }
+};
 
 function loadGallery() {
   const grid = document.getElementById('galleryAdminGrid');
@@ -2167,6 +2597,173 @@ document.getElementById('saveVideoBtn').addEventListener('click', async () => {
       toast('Video saved!','success');
     }
     closeModal('videoModal');
+  } catch(e) { toast(e.message,'error'); }
+});
+
+/* ══════════════════════════════════════════════════
+   VIDEO TABS
+══════════════════════════════════════════════════ */
+document.querySelectorAll('.gallery-tab[data-vtab]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.gallery-tab[data-vtab]').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.video-tab-panel').forEach(p => p.style.display = 'none');
+    btn.classList.add('active');
+    document.getElementById('vtab-' + btn.dataset.vtab).style.display = '';
+  });
+});
+
+/* ══════════════════════════════════════════════════
+   VIDEO ALBUMS
+══════════════════════════════════════════════════ */
+function loadVideoAlbums() {
+  const list = document.getElementById('videoAlbumsList');
+  db.collection('albums').where('type', '==', 'video').onSnapshot(snap => {
+    list.innerHTML = '';
+    if (snap.empty) { list.innerHTML = '<div class="empty-state">No video albums yet — click "+ New Album".</div>'; return; }
+    const ul = document.createElement('div'); ul.className = 'items-list';
+    snap.forEach(doc => {
+      const d = doc.data();
+      const count = Array.isArray(d.videoIds) ? d.videoIds.length : 0;
+      const card = document.createElement('div'); card.className = 'item-card';
+      card.innerHTML = `
+        ${d.coverUrl ? `<img class="item-card-img" src="${esc(d.coverUrl)}" onerror="this.style.display='none'" />` : '<div class="item-card-img-ph" style="background:#0b1d3a;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>'}
+        <div class="item-card-body">
+          <div class="item-card-title">${esc(d.name||'Untitled')}</div>
+          <div class="item-card-meta">${count} video${count!==1?'s':''}${d.description?' · '+esc(d.description.slice(0,60)):''}</div>
+        </div>
+        <div class="item-card-actions">
+          <button class="btn btn-ghost btn-sm">Edit</button>
+          <button class="btn btn-danger btn-sm">Delete</button>
+        </div>`;
+      card.querySelector('.btn-ghost').addEventListener('click', () => editVideoAlbum(doc.id));
+      card.querySelector('.btn-danger').addEventListener('click', () => deleteVideoAlbum(doc.id));
+      ul.appendChild(card);
+    });
+    list.appendChild(ul);
+  }, () => { list.innerHTML = '<div class="empty-state">Could not load video albums.</div>'; });
+}
+
+/* Cover image helpers */
+function vaCoverSetMode(mode) {
+  const gold = 'var(--accent,#c9a84c)';
+  const up = document.getElementById('vaCoverModeUpload'), ur = document.getElementById('vaCoverModeUrl');
+  const ua = document.getElementById('vaCoverUploadArea'),  ura = document.getElementById('vaCoverUrlArea');
+  if (mode === 'upload') {
+    ua.style.display = ''; ura.style.display = 'none';
+    up.style.background = gold; up.style.color = '#fff';
+    ur.style.background = 'transparent'; ur.style.color = '';
+  } else {
+    ua.style.display = 'none'; ura.style.display = '';
+    up.style.background = 'transparent'; up.style.color = '';
+    ur.style.background = gold; ur.style.color = '#fff';
+  }
+}
+document.getElementById('vaCoverFile').addEventListener('change', async function() {
+  const file = this.files[0]; if (!file) return;
+  const status = document.getElementById('vaCoverUploadStatus');
+  status.textContent = 'Uploading…';
+  try {
+    const ref = storage.ref('video_albums/covers/' + Date.now() + '_' + file.name);
+    await ref.put(file);
+    const url = await ref.getDownloadURL();
+    document.getElementById('vaCoverUrl').value = url;
+    document.getElementById('vaCoverPreviewImg').src = url;
+    document.getElementById('vaCoverPreview').style.display = '';
+    status.textContent = 'Uploaded ✓';
+  } catch(e) { status.textContent = 'Upload failed: ' + e.message; }
+});
+document.getElementById('vaCoverUrlInput').addEventListener('input', function() {
+  const url = this.value.trim();
+  document.getElementById('vaCoverUrl').value = url;
+  const prev = document.getElementById('vaCoverPreviewUrl');
+  document.getElementById('vaCoverPreviewUrlImg').src = url;
+  prev.style.display = url ? '' : 'none';
+});
+
+/* Populate video checklist */
+async function loadVaChecklist(selectedIds) {
+  const box = document.getElementById('vaVideoChecklist');
+  box.innerHTML = '<div style="color:var(--muted);font-size:0.82rem;padding:8px;">Loading…</div>';
+  try {
+    const snap = await db.collection('gallery_videos').get();
+    box.innerHTML = '';
+    if (snap.empty) { box.innerHTML = '<div style="color:var(--muted);font-size:0.82rem;padding:8px;">No videos found — add videos first.</div>'; return; }
+    snap.forEach(doc => {
+      const d = doc.data();
+      const thumb = d.thumbnailUrl || getVideoThumb(d.videoUrl || '');
+      const row = document.createElement('label');
+      row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:6px 8px;cursor:pointer;border-radius:4px;';
+      row.innerHTML =
+        `<input type="checkbox" value="${esc(doc.id)}" ${selectedIds && selectedIds.includes(doc.id) ? 'checked' : ''} style="flex-shrink:0;" />` +
+        (thumb ? `<img src="${esc(thumb)}" style="width:48px;height:34px;object-fit:cover;border-radius:3px;flex-shrink:0;" />` : '<div style="width:48px;height:34px;background:#0b1d3a;border-radius:3px;flex-shrink:0;"></div>') +
+        `<span style="font-size:0.85rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(d.title||'Untitled')}</span>`;
+      row.addEventListener('mouseover', () => row.style.background = 'rgba(0,0,0,0.04)');
+      row.addEventListener('mouseout', () => row.style.background = '');
+      box.appendChild(row);
+    });
+  } catch(e) { box.innerHTML = '<div style="color:var(--muted);font-size:0.82rem;padding:8px;">Could not load videos.</div>'; }
+}
+
+document.getElementById('newVideoAlbumBtn').addEventListener('click', () => {
+  document.getElementById('videoAlbumModalTitle').textContent = 'New Video Album';
+  ['vaName','vaDescription','vaCoverUrl'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('vaDocId').value = '';
+  document.getElementById('vaCoverUrlInput').value = '';
+  document.getElementById('vaCoverPreview').style.display = 'none';
+  document.getElementById('vaCoverPreviewUrl').style.display = 'none';
+  document.getElementById('vaCoverUploadStatus').textContent = '';
+  vaCoverSetMode('upload');
+  loadVaChecklist([]);
+  openModal('videoAlbumModal');
+});
+
+window.editVideoAlbum = id => {
+  db.collection('albums').doc(id).get().then(doc => {
+    const d = doc.data();
+    document.getElementById('videoAlbumModalTitle').textContent = 'Edit Video Album';
+    document.getElementById('vaName').value        = d.name        || '';
+    document.getElementById('vaDescription').value = d.description || '';
+    document.getElementById('vaDocId').value       = id;
+    const cover = d.coverUrl || '';
+    document.getElementById('vaCoverUrl').value = cover;
+    if (cover) {
+      document.getElementById('vaCoverUrlInput').value = cover;
+      document.getElementById('vaCoverPreviewUrlImg').src = cover;
+      document.getElementById('vaCoverPreviewUrl').style.display = '';
+      vaCoverSetMode('url');
+    } else {
+      document.getElementById('vaCoverUrlInput').value = '';
+      document.getElementById('vaCoverPreviewUrl').style.display = 'none';
+      document.getElementById('vaCoverPreview').style.display = 'none';
+      document.getElementById('vaCoverUploadStatus').textContent = '';
+      vaCoverSetMode('upload');
+    }
+    loadVaChecklist(Array.isArray(d.videoIds) ? d.videoIds : []);
+    openModal('videoAlbumModal');
+  });
+};
+
+window.deleteVideoAlbum = id => {
+  if (!confirm('Delete this video album?')) return;
+  db.collection('albums').doc(id).delete().then(() => toast('Album deleted.','success')).catch(e => toast(e.message,'error'));
+};
+
+document.getElementById('saveVideoAlbumBtn').addEventListener('click', async () => {
+  const id   = document.getElementById('vaDocId').value;
+  const name = document.getElementById('vaName').value.trim();
+  if (!name) { toast('Album name is required.','error'); return; }
+  const selected = Array.from(document.querySelectorAll('#vaVideoChecklist input[type=checkbox]:checked')).map(cb => cb.value);
+  const data = {
+    type:        'video',
+    name:        name,
+    description: document.getElementById('vaDescription').value.trim(),
+    coverUrl:    document.getElementById('vaCoverUrl').value.trim(),
+    videoIds:    selected,
+  };
+  try {
+    if (id) { await db.collection('albums').doc(id).update(data); toast('Album updated!','success'); }
+    else { data.createdAt = firebase.firestore.FieldValue.serverTimestamp(); await db.collection('albums').add(data); toast('Album saved!','success'); }
+    closeModal('videoAlbumModal');
   } catch(e) { toast(e.message,'error'); }
 });
 
@@ -2835,6 +3432,214 @@ document.getElementById('saveProjectBtn').addEventListener('click', async () => 
     if (id) { await db.collection('projects').doc(id).update(data); toast('Project updated!','success'); }
     else { data.createdAt = firebase.firestore.FieldValue.serverTimestamp(); await db.collection('projects').add(data); toast('Project added!','success'); }
     closeModal('projectModal');
+  } catch(e) { toast(e.message,'error'); }
+});
+
+/* ══════════════════════════════════════════════════
+   BOOKS
+══════════════════════════════════════════════════ */
+
+const BOOK_PLATFORMS = {
+  'amazon.com':         'Amazon',
+  'barnesandnoble.com': 'Barnes & Noble',
+  'books.apple.com':    'Apple Books',
+  'play.google.com':    'Google Play',
+  'kobo.com':           'Kobo',
+  'bookshop.org':       'Bookshop.org',
+  'audible.com':        'Audible',
+  'scribd.com':         'Scribd',
+};
+
+function buildBuyLinkRow(link) {
+  var row = document.createElement('div');
+  row.className = 'bk-link-row';
+  row.style.cssText = 'display:flex;gap:8px;align-items:center;background:var(--light);padding:8px 10px;border-radius:2px;border:1px solid var(--border);';
+
+  var selHtml = '<select class="bl-platform" style="padding:7px 10px;border:1px solid var(--border);border-radius:2px;font-family:Inter,sans-serif;font-size:0.85rem;background:var(--white);color:var(--black);min-width:160px;">';
+  Object.entries(BOOK_PLATFORMS).forEach(function([domain, name]) {
+    var sel = (link && link.domain === domain) ? ' selected' : '';
+    selHtml += '<option value="' + domain + '"' + sel + '>' + name + '</option>';
+  });
+  selHtml += '<option value="custom"' + (link && link.domain && !BOOK_PLATFORMS[link.domain] ? ' selected' : '') + '>Custom…</option>';
+  selHtml += '</select>';
+
+  var customDomain = (link && link.domain && !BOOK_PLATFORMS[link.domain]) ? link.domain : '';
+  var customDisp = customDomain ? '' : 'none';
+  var customHtml = '<input class="bl-custom-domain" type="text" placeholder="domain.com" value="' + esc(customDomain) + '" style="display:' + customDisp + ';padding:7px 10px;border:1px solid var(--border);border-radius:2px;font-family:Inter,sans-serif;font-size:0.85rem;flex:0 0 130px;" />';
+
+  var urlVal = link && link.url ? esc(link.url) : '';
+  var urlHtml = '<input class="bl-url" type="url" placeholder="https://…" value="' + urlVal + '" style="flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:2px;font-family:Inter,sans-serif;font-size:0.85rem;" />';
+
+  row.innerHTML = selHtml + customHtml + urlHtml + '<button type="button" class="btn btn-danger btn-sm" style="flex-shrink:0;" title="Remove">&times;</button>';
+
+  // Toggle custom domain input
+  row.querySelector('.bl-platform').addEventListener('change', function() {
+    row.querySelector('.bl-custom-domain').style.display = this.value === 'custom' ? '' : 'none';
+  });
+  // Remove button
+  row.querySelector('.btn-danger').addEventListener('click', function() { row.remove(); });
+
+  return row;
+}
+
+function getBuyLinks() {
+  var links = [];
+  document.querySelectorAll('#bkBuyLinksContainer .bk-link-row').forEach(function(row) {
+    var domain = row.querySelector('.bl-platform').value;
+    if (domain === 'custom') domain = row.querySelector('.bl-custom-domain').value.trim();
+    var url    = row.querySelector('.bl-url').value.trim();
+    var platformName = BOOK_PLATFORMS[domain] || domain;
+    if (url && domain) links.push({ domain: domain, url: url, platform: platformName });
+  });
+  return links;
+}
+
+function loadBooks() {
+  const list = document.getElementById('booksList');
+  const render = docs => {
+    if (!docs.length) { list.innerHTML = '<div class="empty-state">No books yet — click "+ New Book" to add one.</div>'; return; }
+    list.innerHTML = '';
+    const ul = document.createElement('div'); ul.className = 'items-list';
+    docs.forEach(doc => {
+      const d = doc.data();
+      const card = document.createElement('div'); card.className = 'item-card';
+      const linksCount = Array.isArray(d.buyLinks) ? d.buyLinks.length : 0;
+      const meta = [d.genre, d.publishedYear, linksCount + ' retailer' + (linksCount !== 1 ? 's' : '')].filter(Boolean).join(' · ');
+      card.innerHTML = `
+        ${d.coverUrl ? `<img class="item-card-img" src="${esc(d.coverUrl)}" alt="${esc(d.title||'')}" onerror="this.style.display='none'" style="object-position:top center;" />` : '<div class="item-card-img-ph"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>'}
+        <div class="item-card-body">
+          <div class="item-card-title">${esc(d.title||'Untitled')}${d.subtitle ? '<span style="font-weight:400;color:var(--muted);font-size:0.82rem;"> — '+esc(d.subtitle)+'</span>' : ''}</div>
+          <div class="item-card-meta">${esc(meta)}</div>
+        </div>
+        <div class="item-card-actions">
+          <button class="btn btn-ghost btn-sm" onclick="editBook('${doc.id}')">Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteBook('${doc.id}')">Delete</button>
+        </div>`;
+      ul.appendChild(card);
+    });
+    list.appendChild(ul);
+  };
+  db.collection('books').orderBy('order','asc').onSnapshot(
+    s => render(s.docs),
+    () => db.collection('books').orderBy('createdAt','desc').onSnapshot(
+      s => render(s.docs),
+      () => db.collection('books').onSnapshot(s => render(s.docs), () => {
+        list.innerHTML = '<div class="empty-state">Could not load books.</div>';
+      })
+    )
+  );
+}
+
+let bookCoverUploadUrl = '';
+
+document.getElementById('newBookBtn').addEventListener('click', () => {
+  document.getElementById('bookModalTitle').textContent = 'New Book';
+  ['bkTitle','bkSubtitle','bkYear','bkGenre','bkDescription','bkCoverUrl'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('bkOrder').value = '0';
+  document.getElementById('bkDocId').value = '';
+  document.getElementById('bkBuyLinksContainer').innerHTML = '';
+  document.getElementById('bookCoverPreview').innerHTML = '';
+  document.getElementById('bookCoverProgress').style.display = 'none';
+  bookCoverUploadUrl = '';
+  openModal('bookModal');
+});
+
+window.editBook = id => {
+  db.collection('books').doc(id).get().then(doc => {
+    const d = doc.data();
+    document.getElementById('bookModalTitle').textContent = 'Edit Book';
+    document.getElementById('bkTitle').value       = d.title       || '';
+    document.getElementById('bkSubtitle').value    = d.subtitle    || '';
+    document.getElementById('bkYear').value        = d.publishedYear || '';
+    document.getElementById('bkGenre').value       = d.genre       || '';
+    document.getElementById('bkDescription').value = d.description || '';
+    document.getElementById('bkCoverUrl').value    = d.coverUrl    || '';
+    document.getElementById('bkOrder').value       = d.order !== undefined ? d.order : 0;
+    document.getElementById('bkDocId').value       = id;
+    bookCoverUploadUrl = d.coverUrl || '';
+    const prev = document.getElementById('bookCoverPreview');
+    prev.innerHTML = d.coverUrl
+      ? `<img src="${esc(d.coverUrl)}" style="max-height:110px;border-radius:4px;margin-top:8px;" />`
+      : '';
+    document.getElementById('bookCoverProgress').style.display = 'none';
+    // Populate buy links
+    const container = document.getElementById('bkBuyLinksContainer');
+    container.innerHTML = '';
+    (d.buyLinks || []).forEach(link => container.appendChild(buildBuyLinkRow(link)));
+    openModal('bookModal');
+  });
+};
+
+window.deleteBook = id => {
+  if (!confirm('Delete this book permanently?')) return;
+  db.collection('books').doc(id).delete().then(() => toast('Book deleted.','success')).catch(e => toast(e.message,'error'));
+};
+
+document.getElementById('addBuyLinkBtn').addEventListener('click', () => {
+  document.getElementById('bkBuyLinksContainer').appendChild(buildBuyLinkRow(null));
+});
+
+// Cover image upload
+(function() {
+  const zone  = document.getElementById('bookCoverZone');
+  const input = document.getElementById('bookCoverFile');
+  zone.addEventListener('click', () => input.click());
+  zone.addEventListener('dragover',  e => { e.preventDefault(); zone.style.borderColor = 'var(--navy)'; });
+  zone.addEventListener('dragleave', () => { zone.style.borderColor = ''; });
+  zone.addEventListener('drop', e => {
+    e.preventDefault(); zone.style.borderColor = '';
+    if (e.dataTransfer.files[0]) uploadBookCover(e.dataTransfer.files[0]);
+  });
+  input.addEventListener('change', () => { if (input.files[0]) uploadBookCover(input.files[0]); });
+})();
+
+async function uploadBookCover(file) {
+  if (!file.type.startsWith('image/')) { toast('Please select an image file.','error'); return; }
+  if (file.size > 5*1024*1024) { toast('File too large — max 5MB.','error'); return; }
+  const prog = document.getElementById('bookCoverProgress');
+  const bar  = document.getElementById('bookCoverProgressBar');
+  const prev = document.getElementById('bookCoverPreview');
+  prog.style.display = 'block'; bar.style.width = '0%';
+  const ref  = storage.ref('books/covers/' + Date.now() + '_' + file.name.replace(/[^a-z0-9.]/gi,'_'));
+  const task = ref.put(file);
+  task.on('state_changed',
+    s => { bar.style.width = Math.round(s.bytesTransferred/s.totalBytes*100)+'%'; },
+    e => { toast('Upload failed: '+e.message,'error'); prog.style.display='none'; },
+    async () => {
+      bookCoverUploadUrl = await ref.getDownloadURL();
+      document.getElementById('bkCoverUrl').value = bookCoverUploadUrl;
+      prev.innerHTML = `<img src="${esc(bookCoverUploadUrl)}" style="max-height:110px;border-radius:4px;margin-top:8px;" />`;
+      prog.style.display = 'none';
+      toast('Cover uploaded!','success');
+    }
+  );
+}
+
+document.getElementById('saveBookBtn').addEventListener('click', async () => {
+  const id      = document.getElementById('bkDocId').value;
+  const coverUrl = document.getElementById('bkCoverUrl').value.trim() || bookCoverUploadUrl;
+  const orderVal = parseInt(document.getElementById('bkOrder').value, 10);
+  const data = {
+    title:        document.getElementById('bkTitle').value.trim(),
+    subtitle:     document.getElementById('bkSubtitle').value.trim(),
+    publishedYear:document.getElementById('bkYear').value.trim(),
+    genre:        document.getElementById('bkGenre').value.trim(),
+    description:  document.getElementById('bkDescription').value.trim(),
+    coverUrl:     coverUrl,
+    order:        isNaN(orderVal) ? 0 : orderVal,
+    buyLinks:     getBuyLinks(),
+  };
+  if (!data.title) { toast('Book title is required.','error'); return; }
+  try {
+    if (id) {
+      await db.collection('books').doc(id).update(data);
+      toast('Book updated!','success');
+    } else {
+      data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+      await db.collection('books').add(data);
+      toast('Book added!','success');
+    }
+    closeModal('bookModal');
   } catch(e) { toast(e.message,'error'); }
 });
 

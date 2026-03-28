@@ -376,6 +376,21 @@ ul  { list-style: none; }
   color: var(--navy);
 }
 
+.about-body a,
+.about-lead a,
+.about-closing a {
+  color: var(--gold);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  transition: color 0.2s;
+}
+.about-body a:hover,
+.about-lead a:hover,
+.about-closing a:hover {
+  color: var(--navy);
+}
+
 .about-closing {
   font-family: 'Montserrat', sans-serif;
   font-size: clamp(1rem, 1.8vw, 1.15rem);

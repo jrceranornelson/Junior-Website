@@ -42,4 +42,15 @@
   );
 
   blocks.forEach((block) => observer.observe(block));
+
+  // Fallback: after preloader finishes (~3s), reveal any blocks still
+  // in the viewport that the observer may have missed.
+  setTimeout(() => {
+    document.querySelectorAll('.block-reveal:not(.revealed)').forEach((block) => {
+      const rect = block.getBoundingClientRect();
+      if (rect.top < window.innerHeight) {
+        block.classList.add('revealed');
+      }
+    });
+  }, 3500);
 })();

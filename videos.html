@@ -71,7 +71,6 @@
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       gap: 28px;
-      margin-top: 40px;
     }
 
     /* ── Video card ── */
@@ -219,6 +218,86 @@
       line-height: 1;
     }
     .vc-desc-text { margin: 0; }
+
+    /* ── Section heading (reusable) ── */
+    .vp-section-label {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--accent, #c9a96e); margin-bottom: 8px;
+    }
+    .vp-section-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 800;
+      color: var(--text, #1a1a2e); margin: 0 0 4px;
+    }
+    .vp-section-line {
+      width: 40px; height: 3px; background: var(--accent, #c9a96e);
+      border-radius: 2px; margin: 10px 0 0;
+    }
+    .vp-section-header { margin-bottom: 36px; }
+    .vp-section-divider {
+      border: none; border-top: 1px solid rgba(0,0,0,0.07);
+      margin: 0 0 60px;
+    }
+
+    /* ── Video Albums ── */
+    .va-section { padding: 0 0 20px; }
+    .va-section-header { margin-bottom: 28px; }
+    .va-section-label { font-family:'Montserrat',sans-serif; font-size:0.7rem; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:var(--accent,#c9a96e); margin-bottom:8px; }
+    .va-section-title { font-family:'Montserrat',sans-serif; font-size:1.5rem; font-weight:800; color:var(--text,#1a1a2e); margin:0; }
+
+    .va-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:24px; margin-bottom:16px; }
+
+    .va-card {
+      background:var(--card-bg,#fff);
+      border-radius:14px;
+      overflow:hidden;
+      box-shadow:0 2px 16px rgba(0,0,0,0.07);
+      transition:transform 0.25s, box-shadow 0.25s;
+    }
+    .va-card:hover { transform:translateY(-3px); box-shadow:0 8px 28px rgba(0,0,0,0.12); }
+    .va-thumb {
+      position:relative;
+      width:100%;
+      padding-top:56.25%;
+      background: linear-gradient(135deg,#1a1a2e,#2d2d4e);
+      overflow:hidden;
+    }
+    .va-thumb img { position:absolute;inset:0;width:100%;height:100%;object-fit:cover; }
+    .va-thumb-placeholder { position:absolute;inset:0;display:flex;align-items:center;justify-content:center; }
+    .va-count-badge {
+      position:absolute;bottom:10px;right:10px;
+      background:var(--accent,#c9a96e);color:#fff;
+      font-family:'Montserrat',sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
+      padding:4px 10px;border-radius:20px;
+    }
+    .va-info { padding:14px 16px 16px; }
+    .va-name { font-family:'Montserrat',sans-serif;font-size:0.95rem;font-weight:700;color:var(--text,#1a1a2e);margin:0 0 4px; }
+    .va-desc { font-family:'Inter',sans-serif;font-size:0.8rem;color:var(--muted,#6b7280);margin:0 0 12px; }
+    .va-open-btn {
+      display:inline-flex;align-items:center;gap:6px;
+      font-family:'Montserrat',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
+      background:var(--navy,#0b1d3a);color:#fff;
+      border:none;border-radius:8px;padding:9px 18px;cursor:pointer;
+      transition:background 0.2s;
+    }
+    .va-open-btn:hover { background:var(--accent,#c9a96e); }
+    .va-btn-arrow { width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;transition:transform 0.25s; }
+    .va-open-btn[aria-expanded="true"] .va-btn-arrow { transform:rotate(180deg); }
+
+    .va-expanded {
+      overflow:hidden;max-height:0;opacity:0;
+      transition:max-height 0.55s cubic-bezier(0.4,0,0.2,1), opacity 0.4s ease, margin-top 0.35s ease;
+      margin-top:0;
+    }
+    .va-expanded.open { max-height:3000px;opacity:1;margin-top:0;margin-bottom:32px; }
+    .va-expanded-header {
+      display:flex;align-items:center;justify-content:space-between;
+      padding:16px 0 14px;border-bottom:1px solid rgba(0,0,0,0.08);margin-bottom:20px;
+    }
+    .va-expanded-title { font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--text,#1a1a2e);margin:0; }
+    .va-close-btn { background:none;border:1px solid var(--muted,#6b7280);border-radius:6px;padding:5px 12px;font-size:0.75rem;cursor:pointer;color:var(--muted,#6b7280); }
+    .va-close-btn:hover { border-color:var(--navy,#0b1d3a);color:var(--navy,#0b1d3a); }
 
     /* ── Empty state ── */
     .vp-empty {
@@ -376,6 +455,7 @@
         <li><a href="/projects" class="nav-link" data-i18n="nav-projects">Projects</a></li>
         <li><a href="/gallery"  class="nav-link active" data-i18n="nav-gallery">Gallery</a></li>
         <li><a href="/music"    class="nav-link" data-i18n="nav-music">Music</a></li>
+        <li><a href="/books" class="nav-link" data-i18n="nav-books">Books</a></li>
         <li><a href="/academic" class="nav-link" data-i18n="nav-academic">Academic</a></li>
         <li><a href="/blog"     class="nav-link" data-i18n="nav-blog">Blog &amp; Library</a></li>
         <li class="nav-cta-drawer-li"><a href="/#contact" class="nav-cta-drawer" data-i18n="nav-cta">Contact</a></li>
@@ -403,9 +483,27 @@
     <div class="vp-hero-line"></div>
   </header>
 
+  <!-- VIDEO ALBUMS -->
+  <section id="vp-albums-section" class="vp-section va-section" style="display:none;padding-bottom:0;">
+    <div class="container">
+      <div class="vp-section-header">
+        <p class="vp-section-label">Collections</p>
+        <h2 class="vp-section-title">Video Albums</h2>
+        <div class="vp-section-line"></div>
+      </div>
+      <div id="va-grid" class="va-grid"></div>
+      <div id="va-panels"></div>
+    </div>
+  </section>
+
   <!-- VIDEO GRID -->
   <section class="vp-section">
     <div class="container">
+      <div class="vp-section-header">
+        <p class="vp-section-label">Watch</p>
+        <h2 class="vp-section-title">All Videos</h2>
+        <div class="vp-section-line"></div>
+      </div>
       <div id="vp-grid-container">
         <div class="vp-spinner"></div>
       </div>
@@ -664,6 +762,201 @@
         container.innerHTML = `<div class="vp-empty"><p>Could not load videos.</p></div>`;
       }
     );
+
+  })();
+  </script>
+
+  <!-- Video Albums logic -->
+  <script>
+  (function () {
+    function getYouTubeId(url) {
+      const m = (url||'').match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&\n?#]+)/);
+      return m ? m[1] : null;
+    }
+    function isDirectFile(url) {
+      return /\.(mp4|mov|webm|ogg|avi|mkv)(\?|$)/i.test(url||'');
+    }
+    function getEmbedUrl(url) {
+      const yt = getYouTubeId(url);
+      if (yt) return 'https://www.youtube.com/embed/' + yt + '?autoplay=1&rel=0';
+      const tt = (url||'').match(/tiktok\.com\/@[^/]+\/video\/(\d+)/);
+      if (tt) return 'https://www.tiktok.com/embed/v2/' + tt[1];
+      return url;
+    }
+    function esc(s) {
+      return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    /* Reuse the shared video modal already in the page */
+    const modal  = document.getElementById('vpModal');
+    const player = document.getElementById('vpm-player');
+    const mTitle = document.getElementById('vpm-title');
+    const mMeta  = document.getElementById('vpm-meta');
+    const mDesc  = document.getElementById('vpm-desc');
+
+    function openVideo(d) {
+      const url = d.videoUrl || '';
+      if (isDirectFile(url)) {
+        player.innerHTML = `<video src="${esc(url)}" controls autoplay playsinline style="width:100%;height:100%;background:#000;"></video>`;
+      } else {
+        player.innerHTML = `<iframe src="${esc(getEmbedUrl(url))}" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
+      }
+      mTitle.textContent = d.title || '';
+      mMeta.textContent  = [d.place, d.date].filter(Boolean).join(' · ');
+      mDesc.textContent  = d.description || '';
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    async function fetchVideosByIds(ids) {
+      if (!ids || !ids.length) return [];
+      const results = [];
+      for (let i = 0; i < ids.length; i += 10) {
+        const chunk = ids.slice(i, i + 10);
+        try {
+          const snap = await db.collection('gallery_videos')
+            .where(firebase.firestore.FieldPath.documentId(), 'in', chunk).get();
+          snap.docs.forEach(d => results.push({ id: d.id, ...d.data() }));
+        } catch(e) { console.error('fetchVideosByIds chunk error:', e); }
+      }
+      return results;
+    }
+
+    function renderExpandedVideos(albumId, videos) {
+      const panel = document.getElementById('va-panel-' + albumId);
+      if (!panel) return;
+      const inner = panel.querySelector('.va-expanded-inner');
+      if (!inner) return;
+      if (!videos.length) {
+        inner.innerHTML = '<p style="font-family:Inter,sans-serif;color:var(--muted,#6b7280);padding:20px 0;">No videos in this album yet.</p>';
+        return;
+      }
+      const grid = document.createElement('div');
+      grid.className = 'vp-grid';
+      grid.style.marginTop = '0';
+      videos.forEach(d => {
+        const yt = getYouTubeId(d.videoUrl || '');
+        const thumb = d.thumbnailUrl || (yt ? 'https://img.youtube.com/vi/' + yt + '/hqdefault.jpg' : '');
+        const card = document.createElement('article');
+        card.className = 'vc';
+        card.innerHTML = `
+          <div class="vc-thumb">
+            ${thumb
+              ? `<img src="${esc(thumb)}" alt="${esc(d.title)}" loading="lazy" />`
+              : `<div class="vc-thumb-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>`
+            }
+            <div class="vc-play">
+              <div class="vc-play-btn">
+                <svg viewBox="0 0 24 24" fill="#fff"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              </div>
+            </div>
+          </div>
+          <div class="vc-info">
+            <p class="vc-title">${esc(d.title)}</p>
+            <p class="vc-meta">${[d.place, d.date].filter(Boolean).map(esc).join(' · ')}</p>
+          </div>`;
+        card.addEventListener('click', () => openVideo(d));
+        grid.appendChild(card);
+      });
+      inner.innerHTML = '';
+      inner.appendChild(grid);
+    }
+
+    const albumsSection = document.getElementById('vp-albums-section');
+    const vaGrid        = document.getElementById('va-grid');
+    const vaPanels      = document.getElementById('va-panels');
+
+    db.collection('albums').where('type', '==', 'video').onSnapshot(snapshot => {
+      if (snapshot.empty) { albumsSection.style.display = 'none'; return; }
+      albumsSection.style.display = '';
+
+      const albums = snapshot.docs
+        .map(d => ({ id: d.id, ...d.data() }))
+        .sort((a, b) => {
+          const ta = a.createdAt ? (a.createdAt.toMillis ? a.createdAt.toMillis() : 0) : 0;
+          const tb = b.createdAt ? (b.createdAt.toMillis ? b.createdAt.toMillis() : 0) : 0;
+          return tb - ta;
+        });
+
+      vaGrid.innerHTML   = '';
+      vaPanels.innerHTML = '';
+
+      albums.forEach(a => {
+        const count = (a.videoIds || []).length;
+
+        /* Album card */
+        const card = document.createElement('div');
+        card.className = 'va-card';
+        card.innerHTML = `
+          <div class="va-thumb">
+            ${a.coverUrl
+              ? `<img src="${esc(a.coverUrl)}" alt="${esc(a.name)}" loading="lazy" />`
+              : `<div class="va-thumb-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>`
+            }
+            <span class="va-count-badge">${count} video${count !== 1 ? 's' : ''}</span>
+          </div>
+          <div class="va-info">
+            <p class="va-name">${esc(a.name)}</p>
+            ${a.description ? `<p class="va-desc">${esc(a.description)}</p>` : ''}
+            <button class="va-open-btn" data-va-id="${esc(a.id)}" aria-expanded="false">
+              <span>View Album</span>
+              <svg class="va-btn-arrow" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+          </div>`;
+        vaGrid.appendChild(card);
+
+        /* Expanded panel */
+        const panel = document.createElement('div');
+        panel.className = 'va-expanded';
+        panel.id = 'va-panel-' + a.id;
+        panel.setAttribute('aria-hidden', 'true');
+        panel.innerHTML = `
+          <div class="va-expanded-header">
+            <h3 class="va-expanded-title">${esc(a.name)}</h3>
+            <button class="va-close-btn" data-va-close="${esc(a.id)}">Close</button>
+          </div>
+          <div class="va-expanded-inner"><div class="vp-spinner"></div></div>`;
+        vaPanels.appendChild(panel);
+
+        /* Open button handler */
+        card.querySelector('.va-open-btn').addEventListener('click', async function () {
+          const id = this.dataset.vaId;
+          const panelEl = document.getElementById('va-panel-' + id);
+          const isOpen  = panelEl.classList.contains('open');
+
+          /* Close all panels */
+          vaPanels.querySelectorAll('.va-expanded.open').forEach(p => {
+            p.classList.remove('open');
+            p.setAttribute('aria-hidden', 'true');
+          });
+          vaGrid.querySelectorAll('.va-open-btn').forEach(b => {
+            b.setAttribute('aria-expanded', 'false');
+            b.querySelector('span').textContent = 'View Album';
+          });
+
+          if (!isOpen) {
+            panelEl.classList.add('open');
+            panelEl.setAttribute('aria-hidden', 'false');
+            this.setAttribute('aria-expanded', 'true');
+            this.querySelector('span').textContent = 'Close Album';
+            const videos = await fetchVideosByIds(a.videoIds || []);
+            renderExpandedVideos(a.id, videos);
+            setTimeout(() => panelEl.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60);
+          }
+        });
+      });
+
+      /* Close-button delegation */
+      vaPanels.addEventListener('click', e => {
+        const btn = e.target.closest('[data-va-close]');
+        if (!btn) return;
+        const id = btn.dataset.vaClose;
+        const p  = document.getElementById('va-panel-' + id);
+        if (p) { p.classList.remove('open'); p.setAttribute('aria-hidden', 'true'); }
+        const ob = vaGrid.querySelector(`.va-open-btn[data-va-id="${id}"]`);
+        if (ob) { ob.setAttribute('aria-expanded', 'false'); ob.querySelector('span').textContent = 'View Album'; }
+      });
+    }, err => console.error('video albums error:', err));
 
   })();
   </script>

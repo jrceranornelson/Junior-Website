@@ -62,7 +62,9 @@
       "Bash(head -15 grep -n \"darkToggle\\\\|nav-right\\\\|lang-switcher\\\\|lang-btn\" /Users/jrceranornelson/junior-website/projects.html)",
       "Bash(head -15 grep -n \"darkToggle\\\\|nav-right\\\\|lang-switcher\" /Users/jrceranornelson/junior-website/contact.html)",
       "mcp__claude_ai_Netlify__netlify-project-services-reader",
-      "mcp__claude_ai_Netlify__netlify-deploy-services-reader"
+      "mcp__claude_ai_Netlify__netlify-deploy-services-reader",
+      "Bash(firebase deploy:*)",
+      "Bash(npx firebase:*)"
     ]
   }
 }
