@@ -55,10 +55,7 @@ function loadFirestoreSocialConfig(callback) {
         // Admin changed a value — re-render Instagram only
         const igContainer = document.getElementById('ig-embed');
         const igFallback  = document.getElementById('ig-fallback');
-        const wrapEl      = document.getElementById('ig-embed-container')
-                              ?.querySelector('.embed-wrap');
         if (igContainer) igContainer.innerHTML = '';
-        if (wrapEl)      wrapEl.classList.remove('embed-wrap--fallback');
         if (igFallback)  igFallback.classList.remove('visible');
         initInstagram();
       }
@@ -101,9 +98,6 @@ function initInstagram() {
   const postUrl    = igCfg.latestPostUrl || '';
   const container  = document.getElementById('ig-embed');
   const fallback   = document.getElementById('ig-fallback');
-  const wrapEl     = document.getElementById('ig-embed-container')
-                       ?.querySelector('.embed-wrap');
-
   // Detect placeholder URL
   const isPlaceholder =
     !postUrl ||
@@ -111,8 +105,6 @@ function initInstagram() {
     postUrl === 'https://www.instagram.com/p/REPLACE_WITH_YOUR_POST_ID/';
 
   if (isPlaceholder) {
-    // Show fallback profile link + instructions
-    if (wrapEl)   wrapEl.classList.add('embed-wrap--fallback');
     if (fallback) fallback.classList.add('visible');
     return;
   }
@@ -263,65 +255,30 @@ function initFacebook() {
   processFB();
 }
 
-/* ─── 6. FLUID SCROLL REVEAL ────────────────────────────── */
-/*
- * Each .fluid-block starts:
- *   opacity:0  translateY(56px) scale(0.97)  blur(6px)
- *
- * IntersectionObserver adds .fluid-visible to trigger the CSS
- * transition to natural position. .fluid-delay staggers the
- * content block 160 ms after the media block.
- *
- * Effect: media "flows in", then text content "melts" into place.
- */
-function initFluidReveal() {
-  const blocks = document.querySelectorAll('.fluid-block');
+/* ─── 6. SCROLL REVEAL ──────────────────────────────────── */
+function initReveal() {
+  const blocks = document.querySelectorAll('.reveal');
   if (!blocks.length) return;
 
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          entry.target.classList.add('fluid-visible');
+          entry.target.classList.add('visible');
           observer.unobserve(entry.target);
         }
       });
     },
-    {
-      threshold:   0.10,
-      rootMargin: '0px 0px -40px 0px',
-    }
+    { threshold: 0.10, rootMargin: '0px 0px -40px 0px' }
   );
 
   blocks.forEach((b) => observer.observe(b));
 }
 
-/* ─── 7. SUBTLE PARALLAX ON EMBED FRAMES ────────────────── */
-/*
- * Gives embed containers a gentle vertical drift as you scroll,
- * creating the "floating layers" feel.
- */
-function initParallax() {
-  const wraps = document.querySelectorAll('.embed-wrap');
-
-  function onScroll() {
-    const scrollY = window.scrollY;
-    wraps.forEach((wrap) => {
-      const rect   = wrap.getBoundingClientRect();
-      const center = rect.top + rect.height / 2;
-      const offset = (window.innerHeight / 2 - center) * 0.04;
-      wrap.style.transform = `translateY(${offset}px)`;
-    });
-  }
-
-  window.addEventListener('scroll', onScroll, { passive: true });
-}
-
 /* ─── INIT ──────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
   initNavbar();
-  initFluidReveal();
-  initParallax();
+  initReveal();
 
   // Load Firestore overrides first, then render embeds
   loadFirestoreSocialConfig(() => {
